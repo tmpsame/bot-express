@@ -140,6 +140,6 @@ module.exports = class Flow {
             return this._collect();
         }
         // If we have no parameters to confirm, we finish this conversationw with final reply.
-        return this.skill.finish(this.message_platform_type, this.message_platform, this.bot_event, this.conversation);
+        return this.skill.finish(this.message_platform, this.bot_event, this.conversation);
     }
 };

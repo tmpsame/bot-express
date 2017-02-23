@@ -7,6 +7,7 @@ let Promise = require('bluebird');
 module.exports = class Line {
 
     constructor(channel_id, channel_secret, channel_access_token){
+        this.type = "line";
         this._channel_id = channel_id;
         this._channel_secret = channel_secret;
         this._channel_access_token = channel_access_token;

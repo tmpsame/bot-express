@@ -4,7 +4,7 @@ let Promise = require('bluebird');
 let Wfc = require('../service/waterfall-cafe');
 let yyyymmdd = require('../service/yyyymmdd');
 
-module.exports = class ActionShowMenu {
+module.exports = class SkillShowMenu {
 
     constructor() {
         this.required_parameter = {
@@ -98,7 +98,7 @@ module.exports = class ActionShowMenu {
         return parsed_value;
     }
 
-    finish(message_platform_type, message_platform, bot_event, conversation){
+    finish(bot, bot_event, conversation){
         return Wfc.getMenu(conversation.confirmed.date).then(
             (response) => {
                 let messages;
@@ -138,7 +138,7 @@ module.exports = class ActionShowMenu {
                     }
                 }
 
-                return message_platform.reply_message(bot_event.replyToken, messages);
+                return bot.reply_message(bot_event.replyToken, messages);
             },
             (response) => {
                 return Promise.reject("Failed to get today's menu.");

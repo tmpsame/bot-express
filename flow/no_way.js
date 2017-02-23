@@ -32,7 +32,7 @@ module.exports = class AnotherStartConversationFlow extends Flow {
                 }
             break;
             default:
-                throw(`Unsupported message platform type: "${options.message_platform_type}"`);
+                throw(`Unsupported message platform type: "${this.message_platform_type}"`);
             break;
         }
 

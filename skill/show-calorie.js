@@ -4,7 +4,7 @@ let Promise = require('bluebird');
 let Wfc = require('../service/waterfall-cafe');
 let yyyymmdd = require('../service/yyyymmdd');
 
-module.exports = class ActionShowCalorie {
+module.exports = class SkillShowCalorie {
 
     constructor() {
         this.required_parameter = {
@@ -90,7 +90,7 @@ module.exports = class ActionShowCalorie {
         return parsed_value;
     }
 
-    finish(bot_type, bot, bot_event, conversation){
+    finish(bot, bot_event, conversation){
         return Wfc.getMenu(conversation.confirmed.date).then(
             (response) => {
                 let messages;
