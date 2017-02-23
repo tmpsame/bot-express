@@ -26,7 +26,8 @@ app.use('/webhook', bot_dock({
     line_channel_secret: process.env.LINE_CHANNEL_SECRET,
     line_channel_access_token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
-    default_skill: 'fulfill'
+    default_skill: 'fulfill',
+    skill_path: '../skill'
 }));
 
 module.exports = app;
