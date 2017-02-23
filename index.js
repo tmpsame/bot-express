@@ -9,6 +9,11 @@ let express = require("express");
 let router = express.Router();
 let body_parser = require("body-parser");
 let memory = require("memory-cache");
+let start_conversation_flow = require('./flow/start_conversation');
+let reply_flow = require('./flow/reply');
+let change_intent_flow = require('./flow/change_intent');
+let change_parameter_flow = require('./flow/change_parameter');
+let no_way_flow = require('./flow/no_way');
 let Line = require("./service/line");
 let Apiai = require("./service/apiai");
 
