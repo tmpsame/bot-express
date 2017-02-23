@@ -53,7 +53,7 @@ module.exports = (options) => {
         // Signature Validation
         switch(options.message_platform_type){
             case "line":
-                if (!mpi.validate_signature(req.get('X-Line-Signature'), req.rawBody)){
+                if (!message_platform.validate_signature(req.get('X-Line-Signature'), req.rawBody)){
                     throw(`Signature validation failed.`);
                 }
             break;
