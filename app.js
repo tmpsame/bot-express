@@ -6,12 +6,14 @@
 ** Import Packages
 */
 let express = require("express");
+let logger = require('morgan');
 let bot_dock = require("./index");
 
 /*
 ** Middleware Configuration
 */
 let app = express();
+app.use(logger('dev'));
 app.listen(process.env.PORT || 5000, () => {
     console.log(`server is running...`);
 });
