@@ -24,7 +24,7 @@ module.exports = class AnotherStartConversationFlow extends Flow {
         // Check if the event is supported one in this flow.
         switch(this.message_platform_type){
             case "line":
-                if (this.bot_event.type != "message" !! this.bot_event.message.type != "text"){
+                if (this.bot_event.type != "message" || this.bot_event.message.type != "text"){
                     console.log("This is unsupported event type in this flow.");
                     return new Promise((resolve, reject) => {
                         resolve();
