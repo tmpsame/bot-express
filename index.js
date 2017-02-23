@@ -202,7 +202,7 @@ module.exports = (options) => {
 
                     // Check if this is Change Intent Flow.
                     if (possibly_change_intent_flow){
-                        let promise_flow_completed = apiai.identify_intent(session_id, text).then(
+                        promise_flow_completed = apiai.identify_intent(session_id, text).then(
                             (response) => {
                                 if (response.result.action != "input.unknown"){
                                     /*
