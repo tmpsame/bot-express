@@ -108,6 +108,7 @@ module.exports = (options) => {
                         throw(`Unsupported message platform type: "${options.message_platform_type}"`);
                     break;
                 } // End of Check if this event type is supported in this flow.
+                console.log("This event tyep is supported.");
 
                 // Set session id for api.ai and text to identify intent.
                 let session_id;
@@ -124,6 +125,8 @@ module.exports = (options) => {
 
                 promise_flow_completed = apiai.identify_intent(session_id, text).then(
                     (response) => {
+                        console.log(`Intent is ${response.result.action}`);
+
                         // Instantiate the conversation object. This will be saved as Bot Memory.
                         conversation = {
                             intent: response.result,
@@ -135,10 +138,6 @@ module.exports = (options) => {
                             }
                         };
                         try {
-                            let message_platform = {
-                                type: options.message_platform_type,
-                                options: options
-                            };
                             flow = new start_conversation_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
                         } catch(err) {
                             return Promise.reject(err);
