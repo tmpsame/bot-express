@@ -1,6 +1,5 @@
 'use strict';
 
-let Line = require("../service/line");
 let Promise = require("bluebird");
 
 module.exports = class SkillFulfill {

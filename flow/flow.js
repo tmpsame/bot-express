@@ -39,7 +39,8 @@ module.exports = class Flow {
             Skill = require(`${this.skill_path}${intent}`);
         } catch (err){
             console.log(`Cannnot import ${this.skill_path}${intent}`);
-            throw(`Cannnot import ${this.skill_path}${intent}`);
+            console.log(err);
+            throw(err);
         }
         return new Skill();
     }
