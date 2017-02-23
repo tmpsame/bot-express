@@ -97,10 +97,11 @@ module.exports = (options) => {
             let promise_flow_completed;
             let flow;
 
-            /*
-            ** Start Conversation Flow.
-            */
             if (!conversation){
+                /*
+                ** Start Conversation Flow.
+                */
+
                 // Check if this event type is supported in this flow.
                 switch(options.message_platform_type){
                     case "line":
@@ -156,10 +157,11 @@ module.exports = (options) => {
                 );
             // End of Start Conversation Flow.
             } else {
-                /*
-                ** Reply Flow
-                */
                 if (!!conversation.confirming){
+                    /*
+                    ** Reply Flow
+                    */
+
                     // Check if the event is supported one in this flow.
                     switch(options.message_platform_type){
                         case "line":
@@ -179,7 +181,7 @@ module.exports = (options) => {
                         return Promise.reject(err);
                     }
                     promise_flow_completed = flow.run();
-                // End of Reply Flow
+                    // End of Reply Flow
                 } else {
                     // Check if this is Change Intent Flow from event type.
                     let session_id;
@@ -200,12 +202,13 @@ module.exports = (options) => {
 
                     // Check if this is Change Intent Flow.
                     if (possibly_change_intent_flow){
-                        promise_flow_completed = apiai.identify_intent(session_id, text).then(
+                        let promise_flow_completed = apiai.identify_intent(session_id, text).then(
                             (response) => {
-                                /*
-                                ** Change Intent Flow
-                                */
                                 if (response.result.action != "input.unknown"){
+                                    /*
+                                    ** Change Intent Flow
+                                    */
+
                                     // Set new intent while keeping other data.
                                     conversation.intent = response.result;
                                     try {
@@ -214,74 +217,40 @@ module.exports = (options) => {
                                         return Promise.reject(err);
                                     }
                                     return flow.run();
-                                }
-
-                                // Assume this is Change Parameter Flow. If it is not, an exception will be thrown when flow runs.
-                                if (conversation.previous.confirmed){
-                                    try {
-                                        flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
-                                    } catch(err){
-                                        return Promise.reject(err);
-                                    }
-                                    return flow.run().then(
-                                        // Change Parameter Flow
-                                        (response) => {
-                                            return response;
-                                        },
-                                        (response) => {
-                                            // No Way Flow
-                                            if (response == "failed_to_parse_parameter"){
-                                                conversation = {
-                                                    intent: {action:"input.unknown"},
-                                                    confirmed: {},
-                                                    to_confirm: {},
-                                                    confirming: null,
-                                                    previous: {
-                                                        confirmed: null
+                                    // End of Change Intent Flow
+                                } else {
+                                    if (conversation.previous.confirmed){
+                                        /*
+                                        ** Assume this is Change Parameter Flow.
+                                        */
+                                        try {
+                                            flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                        } catch(err){
+                                            return Promise.reject(err);
+                                        }
+                                        return flow.run().then(
+                                            (response) => {
+                                                // Now it is confirmed this is Change Parameter Flow.
+                                                return response;
+                                            },
+                                            (response) => {
+                                                if (response == "failed_to_parse_parameter"){
+                                                    /*
+                                                    ** Now it turned to be No Way Flow.
+                                                    */
+                                                    try {
+                                                        flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                                    } catch(err){
+                                                        return Promise.reject(err);
                                                     }
+                                                    return flow.run();
                                                 }
-                                                try {
-                                                    flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
-                                                } catch(err){
-                                                    return Promise.reject(err);
-                                                }
-                                                return flow.run();
                                             }
-                                        }
-                                    );
-                                } // End of Assume this is Change Parameter Flow.
-                            },
-                            (response) => {
-                                console.log("Failed to identify intent.");
-                                return Promise.reject(response);
-                            }
-                        );
-                    // End of Check if this is Change Intent Flow.
-                    } else {
-                        // Assume this is Change Parameter Flow.
-                        if (conversation.previous.confirmed){
-                            try {
-                                flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
-                            } catch(err){
-                                return Promise.reject(err);
-                            }
-                            return flow.run().then(
-                                // Change Parameter Flow
-                                (response) => {
-                                    return response;
-                                },
-                                (response) => {
-                                    // No Way Flow
-                                    if (response == "failed_to_parse_parameter"){
-                                        conversation = {
-                                            intent: {action:"input.unknown"},
-                                            confirmed: {},
-                                            to_confirm: {},
-                                            confirming: null,
-                                            previous: {
-                                                confirmed: null
-                                            }
-                                        }
+                                        ); // End of Assume this is Change Parameter Flow.
+                                    } else {
+                                        /*
+                                        ** No Way Flow.
+                                        */
                                         try {
                                             flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
                                         } catch(err){
@@ -290,8 +259,50 @@ module.exports = (options) => {
                                         return flow.run();
                                     }
                                 }
-                            );
-                        } // End of Assume this is Change Parameter Flow.
+                            },
+                            (response) => {
+                                // Failed to identify intent.
+                                return Promise.reject(response);
+                            }
+                        );
+                    } else {
+                        if (conversation.previous.confirmed){
+                            /*
+                            ** Assume this is Change Parameter Flow.
+                            */
+                            try {
+                                flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                            } catch(err){
+                                return Promise.reject(err);
+                            }
+                            return flow.run().then(
+                                (response) => {
+                                    // It is confirmd this is Change Parameter Flow.
+                                    return response;
+                                },
+                                (response) => {
+                                    if (response == "failed_to_parse_parameter"){
+                                        // It turned out to be No Way Flow.
+                                        try {
+                                            flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                        } catch(err){
+                                            return Promise.reject(err);
+                                        }
+                                        return flow.run();
+                                    }
+                                }
+                            ); // End of Assume this is Change Parameter Flow.
+                        } else {
+                            /*
+                            ** No Way Flow
+                            */
+                            try {
+                                flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                            } catch(err){
+                                return Promise.reject(err);
+                            }
+                            return flow.run();
+                        }
                     }
                 }
             }
@@ -300,14 +311,14 @@ module.exports = (options) => {
             promise_flow_completed.then(
                 (response) => {
                     console.log("End of webhook process.");
-                    //console.log(flow.conversation);
+                    console.log(flow.conversation);
 
                     // Update memory.
                     memory.put(memory_id, flow.conversation, options.memory_retention);
                 },
                 (response) => {
                     console.log("Failed to process event.");
-                    //console.log(response);
+                    console.log(response);
 
                     // Clear memory.
                     memory.put(memory_id, null);

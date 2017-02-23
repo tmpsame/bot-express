@@ -7,7 +7,7 @@ let Promise = require('bluebird');
 let Flow = require("./flow");
 
 
-module.exports = class AnotherStartConversationFlow extends Flow {
+module.exports = class NoWayFlow extends Flow {
     /*
     ** ### No Way Flow ###
     ** - Check if the event is supported one in this flow.
@@ -15,6 +15,15 @@ module.exports = class AnotherStartConversationFlow extends Flow {
     */
 
     constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill) {
+        conversation = {
+            intent: {action:"input.unknown"},
+            confirmed: {},
+            to_confirm: {},
+            confirming: null,
+            previous: {
+                confirmed: null
+            }
+        }
         super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);
     }
 
@@ -35,6 +44,7 @@ module.exports = class AnotherStartConversationFlow extends Flow {
                 throw(`Unsupported message platform type: "${this.message_platform_type}"`);
             break;
         }
+        console.log("This event is supported type.");
 
         // Run final action.
         return super.finish();
