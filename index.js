@@ -3,7 +3,7 @@
 const REQUIRED_OPTIONS = ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"];
 const DEFAULT_MESSAGE_PLATFORM_TYPE = "line";
 const DEFAULT_MEMORY_RETENTION = 60000;
-const DEFAULT_SKILL_PATH = "../../skill";
+const DEFAULT_SKILL_PATH = "../skill";
 
 let express = require("express");
 let router = express.Router();
