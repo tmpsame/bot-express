@@ -58,7 +58,7 @@ module.exports = class ChangeParameterFlow extends Flow {
         } catch(err){
             // It turned out this is not Change Parameter Flow.
             console.log("\n### It turned out this is not Change Parameter Flow. ###\n");
-            return Promise.reject(err);
+            return Promise.reject("failed_to_parse_parameter");
         }
 
         // Run final action.
