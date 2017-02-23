@@ -12,6 +12,9 @@ let bot_dock = require("./index");
 ** Middleware Configuration
 */
 let app = express();
+app.listen(process.env.PORT || 5000, () => {
+    console.log(`server is running...`);
+});
 
 /*
 ** Router Configuration
