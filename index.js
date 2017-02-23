@@ -26,6 +26,7 @@ module.exports = (options) => {
             throw(`Required option: "${req_opt}" not set`);
         }
     }
+    console.log("Required options all set.");
 
     // Set optional options.
     options.message_platform_type = options.message_platform_type || DEFAULT_MESSAGE_PLATFORM_TYPE;
@@ -49,7 +50,7 @@ module.exports = (options) => {
                 throw(`Unsupported message platform type: "${options.message_platform_type}"`);
             break;
         } // End of Instantiate Message Platform.
-
+        console.log("Message Platform instantiated.");
 
         // Signature Validation
         switch(options.message_platform_type){
@@ -62,6 +63,7 @@ module.exports = (options) => {
                 throw(`Unsupported message platform type: "${options.message_platform_type}"`);
             break;
         } // End of Signature Validation
+        console.log("Signature Validation suceeded.");
 
         // Process Event
         let bot_events = [];
@@ -74,6 +76,8 @@ module.exports = (options) => {
             break;
         }
         for (let bot_event of bot_events){
+            console.log(bot_event);
+
             // Recall Memory
             let memory_id;
             switch(options.message_platform_type){
