@@ -8,6 +8,7 @@ const DEFAULT_SKILL_PATH = "../../skill";
 let express = require("express");
 let router = express.Router();
 let body_parser = require("body-parser");
+let memory = require("memory-cache");
 let Line = require("./service/line");
 let Apiai = require("./service/apiai");
 
