@@ -15,7 +15,6 @@ module.exports = class SkillFulfill {
                     type: "text",
                     text: conversation.intent.fulfillment.speech
                 }];
-                let
                 return message_platform.reply_message(bot_event.replyToken, messages);
             break;
             default:
