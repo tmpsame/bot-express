@@ -303,7 +303,7 @@ module.exports = (options) => {
                     //console.log(flow.conversation);
 
                     // Update memory.
-                    memory.put(memory_id, flow.conversation, memory_retention);
+                    memory.put(memory_id, flow.conversation, options.memory_retention);
                 },
                 (response) => {
                     console.log("Failed to process event.");
