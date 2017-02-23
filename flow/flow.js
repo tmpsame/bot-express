@@ -1,7 +1,5 @@
 'use strict';
 
-const APIAI_CLIENT_ACCESS_TOKEN = process.env.APIAI_CLIENT_ACCESS_TOKEN;
-
 let Promise = require('bluebird');
 let apiai = require('apiai');
 
@@ -38,7 +36,7 @@ module.exports = class Flow {
 
         let Skill;
         try {
-            Skill = require(this.skill_path + intent);
+            Skill = require(`${this.skill_path}${intent}`);
         } catch (err){
             console.log(`Cannnot import ${this.skill_path}${intent}`);
             throw(`Cannnot import ${this.skill_path}${intent}`);
