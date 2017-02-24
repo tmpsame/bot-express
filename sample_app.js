@@ -1,13 +1,11 @@
 'use strict';
 
-// This file is for test. Not required in npm package.
-
 /*
 ** Import Packages
 */
 let express = require("express");
 let logger = require('morgan');
-let bot_dock = require("./index");
+let bot_express = require("./index");
 
 /*
 ** Middleware Configuration
@@ -21,13 +19,13 @@ app.listen(process.env.PORT || 5000, () => {
 /*
 ** Router Configuration
 */
-app.use('/webhook', bot_dock({
+app.use('/webhook', bot_express({
     line_channel_id: process.env.LINE_CHANNEL_ID,
     line_channel_secret: process.env.LINE_CHANNEL_SECRET,
     line_channel_access_token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
     default_skill: 'apologize',
-    skill_path: '../skill/'
+    skill_path: './sample_skill/'
 }));
 
 module.exports = app;

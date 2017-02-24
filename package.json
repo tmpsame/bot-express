@@ -1,15 +1,16 @@
 {
-  "description": "A Chat Bot builder framework based on flow and skill model.",
+  "description": "Chat Bot builder framework based on flow and skill model.",
   "main": "index.js",
-  "name": "bot-dock",
+  "name": "bot-express",
   "version": "0.0.0",
   "private": false,
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nkjm/bot-dock.git"
+    "url": "git+https://github.com/nkjm/bot-express.git"
   },
   "license": "MIT",
-  "author": "Kazuki Nakajima",
+  "keywords": ["bot", "line", "ai"],
+  "author": "Kazuki Nakajima <nkjm.kzk@gmail.com>",
   "dependencies": {
     "apiai": "^4.0.0",
     "bluebird": "^3.4.7",

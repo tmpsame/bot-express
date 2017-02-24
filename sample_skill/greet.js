@@ -2,16 +2,14 @@
 
 let Promise = require("bluebird");
 
-module.exports = class SkillApologize {
-
-    constructor() {
-    }
+module.exports = class SkillGreet {
 
     finish(bot, bot_event, conversation){
         let messages = [{
             type: "text",
-            text: "ごめんなさい。よくわかりませんでした。"
+            text: conversation.intent.fulfillment.speech
         }];
         return bot.reply_message(bot_event.replyToken, messages);
     }
+    
 };

@@ -1,10 +1,10 @@
 'use strict';
 
 let Promise = require('bluebird');
-let Wfc = require('../service/waterfall-cafe');
-let yyyymmdd = require('../service/yyyymmdd');
+let Wfc = require('../sample_service/waterfall-cafe');
+let yyyymmdd = require('../sample_service/yyyymmdd');
 
-module.exports = class SkillShowMenu {
+module.exports = class SkillShowCalorie {
 
     constructor() {
         this.required_parameter = {
@@ -31,23 +31,15 @@ module.exports = class SkillShowMenu {
                     }
                 },
                 parse: this.parse_date
-            }
-        };
-
-        this.optional_parameter = {
+            },
             plate: {
+                message_to_confirm: {
+                    type: "text",
+                    text: "どのプレートですか？"
+                },
                 parse: this.parse_plate
             }
-        };
-
-        this.plate_mapping = {
-            a: "Plate A",
-            b: "Plate B",
-            don: "丼セット",
-            noodle: "麺",
-            pasta: "パスタ",
-            p600: "Plate 600"
-        };
+        }
     }
 
     parse_date(value){
@@ -110,31 +102,26 @@ module.exports = class SkillShowMenu {
                 } else {
                     console.log("Got menu.");
 
-                    // Generate text composed of food menu.
-                    messages = [{
-                        type: "text",
-                        text: ""
-                    }];
-                    if (conversation.confirmed.plate){
-                        // Reply specific menu.
-                        for (let food of response){
-                            if (food.plate == conversation.confirmed.plate){
-                                messages[0].text = this.plate_mapping[conversation.confirmed.plate] + "は「" + food.menu + "」";
-                            }
-                        }
-                    } else {
-                        // Reply all menus.
-                        for (let food of response){
-                            if (food.plate && food.menu){
-                                messages[0].text += this.plate_mapping[food.plate] + "は「" + food.menu + "」、\n";
-                            }
+                    // Identify the calorie.
+                    let calorie;
+                    let menu;
+                    for (let food of response){
+                        if (food.plate == conversation.confirmed.plate){
+                            calorie = food.calorie;
+                            menu = food.menu;
                         }
                     }
 
-                    if (messages[0].text == ""){
-                        messages[0].text == "おかしいなぁ。メニューが見当たりませんでした。ごめんね。";
+                    if (!calorie || !menu){
+                        messages = [{
+                            type: "text",
+                            text: "不思議なことにカロリー情報が見つかりませんでした。ごめんね。"
+                        }]
                     } else {
-                        messages[0].text += "です。";
+                        messages = [{
+                            type: "text",
+                            text: menu + "は" + calorie + "kcalです。"
+                        }]
                     }
                 }
 
