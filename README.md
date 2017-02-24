@@ -1,6 +1,6 @@
 # 概要
 
-Node.jsで稼働するChat Botを開発するためのフレームワーク。文脈の理解、必要なパラメータの収集などの機能が搭載されており、開発者はSkillを追加するだけでBotの能力を拡張できることが特徴です。現在対応しているメッセージアプリはLINEですが、近々にFacebook MessengerやSlack等への対応を見込んでいます。
+Node.jsで稼働するChat Botを開発するためのフレームワーク。文脈の理解、必要なパラメータの収集などの機能が搭載されており、開発者はSkillを追加するだけでBotの能力を拡張できます。現在対応しているメッセージアプリはLINEのみですが、近々にFacebook MessengerやSlack等への対応を見込んでいます。
 
 # 必要なサービス
 
@@ -33,11 +33,13 @@ app.use('/webhook', bot_dock({
     line_channel_access_token: 'あなたのLINE Channel Access Token', // 必須
     apiai_client_access_token: 'あなたのAPIAI Client Access Token', // 必須
     default_skill: 'あなたのskill', // 必須。Intentが特定されなかった場合に使うSkill
-    skill_path: 'Skillのファイルが保存されるPATH。このアプリのルートディレクトリからの相対PATHで指定', オプション。デフォルトは'./skill'
+    skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline
     memory_retention: ミリ秒 // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
 }));
 ```
+
+[sample_app.js](./sample_app.js)でこのファイルの全体像を確認することができます。
 
 ## api.aiによる意図判定のセットアップ
 
@@ -52,7 +54,7 @@ Intentに対応するスキルを作成するため、skillディレクトリ直
 ## skillファイルの構成
 
 skillファイルはbot-expressフレームワークを使う中で開発者が唯一必ずBot独自の処理を記述する必要のあるファイルです。
-skillファイルは大きく3つのパートで構成されます。
+skillファイルは大きく3つのパートで構成されます。下記にパート毎のサンプルコードと説明がありますが、skillファイルの全体像を確認するには、[sample_skill/change-light-color.js](./sample_skill/change-light-color.js)を参照してみてください。
 
 **constructor()**
 
@@ -125,7 +127,7 @@ finish(bot, bot_event, conversation){
                 type: "text",
                 text: "了解しましたー。"
             }];
-            return bot.reply_message(bot_event.replyToken, messages);
+            return bot.reply(bot_event.replyToken, messages);
         },
         (response) => {
             return Promise.reject("Failed to change light color.");
