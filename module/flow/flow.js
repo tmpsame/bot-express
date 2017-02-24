@@ -115,6 +115,11 @@ module.exports = class Flow {
             throw("This is not the parameter we care about.");
         }
 
+        if (parsed_value === false){
+            // This means user defined skill says this value does not fit to this parameter.
+            throw(`The value does not fit to this parameter.`);
+        }
+
         console.log(`Adding parameter {${key}: "${parsed_value}"}`);
 
         // Add the parameter to "confirmed".

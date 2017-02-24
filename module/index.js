@@ -238,7 +238,7 @@ module.exports = (options) => {
                                                 return response;
                                             },
                                             (response) => {
-                                                if (response == "failed_to_parse_parameter"){
+                                                if (response == "no_fit"){
                                                     /*
                                                     ** Now it turned to be No Way Flow.
                                                     */
@@ -285,7 +285,7 @@ module.exports = (options) => {
                                     return response;
                                 },
                                 (response) => {
-                                    if (response == "failed_to_parse_parameter"){
+                                    if (response == "no_fit"){
                                         // It turned out to be No Way Flow.
                                         try {
                                             flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);

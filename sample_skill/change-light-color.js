@@ -31,7 +31,7 @@ module.exports = class SkillChangeLightColor {
     // サポートする色かどうかを判別しカラーコードに変化する
     parse_color(value){
         if (value === null || value == ""){
-            throw("Value is emppty.");
+            return false;
         }
 
         let parsed_value = {};
@@ -44,7 +44,7 @@ module.exports = class SkillChangeLightColor {
             }
         }
         if (!found_color){
-            throw(`Unable to identify color: ${value}.`);
+            return false
         }
         return parsed_value;
     }

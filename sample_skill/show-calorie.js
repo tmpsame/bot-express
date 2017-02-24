@@ -44,7 +44,7 @@ module.exports = class SkillShowCalorie {
 
     parse_date(value){
         if (value === null || value == ""){
-            throw("Value is emppty.");
+            return false;
         }
         let parsed_value;
         if (value.match(/一昨日/) || value.match(/おととい/)){
@@ -61,7 +61,7 @@ module.exports = class SkillShowCalorie {
             parsed_value = value;
         } else {
             // This is not suitable parameter for date.
-            throw(`${value} is not suitable for date.`);
+            return false;
         }
         return parsed_value;
     }

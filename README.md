@@ -39,13 +39,15 @@ app.use('/webhook', bot_dock({
 }));
 ```
 
-## スキルの追加
+## api.aiによる意図判定のセットアップ
 
 bot-expressは現在のところユーザーが発したメッセージから意図を判定するための自然言語処理にapi.aiを利用します。従ってまずapi.aiのアカウントを開設し、このアプリに対応するエージェントを作成する必要があります。
 
-api.aiでエージェントを作成したら次にIntentを作成します。これはBotのスキルに該当するもので、ユーザーがBotのどのスキルを利用したいのかという意図を表すものになります。Intentごとにユーザーが発する可能性のある例文を複数登録し、Intentの判定精度を高めていきます。同時に、各Intentには必ずactionを設定してください。actionに設定された文字列は、ユーザーの求めるIntentをBotが判断する拠り所になります。
+api.aiでエージェントを作成したら次にIntentを作成します。ユーザーが「何をしたいのか」をあらわすもので、ここでIntentを作成するということはその意図をBotが理解できるようにするということであり、同時にその意図に対応するBotのスキルを作成することになります。このapi.ai上でおこなう設定としては、Intentごとにユーザーが発する可能性のある例文を複数登録し、Intentの判定精度を高めていきます。同時に、各Intentには必ずactionを設定してください。actionに設定された文字列は、ユーザーの求めるIntentをBotが判断する拠り所になります。
 
-最後にskillディレクトリ直下にskillファイルを追加します。このskillファイル名はapi.aiのIntentで設定したactionの値と同一である必要があります。例えば、api.aiで「ライトの色を変更する」というIntentを登録し、そのactionに **change-light-color** という値を設定したとすると、このIntentに対応するskillファイル名は **change-light-color.js** となります。
+## スキルの追加
+
+Intentに対応するスキルを作成するため、skillディレクトリ直下にskillファイルを追加します。このskillファイル名はapi.aiのIntentで設定したactionの値と同一である必要があります。例えば、api.aiで「ライトの色を変更する」というIntentを登録し、そのactionに **change-light-color** という値を設定したとすると、このIntentに対応するskillファイル名は **change-light-color.js** となります。
 
 ## skillファイルの構成
 
@@ -88,7 +90,7 @@ constructor() {
 ```
 parse_color(value){
     if (value === null || value == ""){
-        throw("Value is emppty.");
+        return false;
     }
 
     let parsed_value = {};
@@ -101,7 +103,7 @@ parse_color(value){
         }
     }
     if (!found_color){
-        throw(`Unable to identify color: ${value}.`);
+        return false;
     }
     return parsed_value;
 }
@@ -109,7 +111,7 @@ parse_color(value){
 
 適切な値が判定できた場合には、その値をそのまま返すか、変換が必要であれば変換した値を返します。上記の例ではCOLOR_MAPPINGSという定数にサポートする色一覧が設定されている前提で、その値に一致するかどうかを判定しています。また、一致した場合には同じくCOLOR_MAPPINGSに設定されている対応カラーコードに値を置き換え、それを返すという処理になっています。
 
-適切な値が判定できなかった場合には例外を投げます。
+適切な値が判定できなかった場合にはfalseを返してください。
 
 **finish(bot, bot_event, conversation)**
 
@@ -153,3 +155,5 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 ```
 
 おそらく必ず必要になるのがconfirmedです。ここにはconstructor()でこのスキルで必須とされたパラメータとその値が収められています。前述の例ではconversation.confirmed.colorとして特定した色を取得しています。
+
+このfinish()によって、開発者は自由に最終的なアクションを作成することができます。単に決まったフレーズを返信することもできますし、上記例のように他のクラウドサービスと連携して、IoTとドッキングさせることもできます。返信することだけが最終的なアクションではなく、アイデア次第で様々なモノ、サービスと連携できます。

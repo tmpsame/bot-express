@@ -65,7 +65,7 @@ module.exports = class ChangeParameterFlow extends Flow {
             }
         }
         if (!is_fit){
-            return Promise.reject("failed_to_parse_parameter");
+            return Promise.reject("no_fit");
         }
 
         // Run final action.
