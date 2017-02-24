@@ -15,7 +15,7 @@ module.exports = class NoWayFlow extends Flow {
     */
 
     constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill) {
-        conversation.intent: {action:"input.unknown"};
+        conversation.intent = {action:"input.unknown"};
         conversation.to_confirm = {};
         conversation.confirming = null;
         super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);
