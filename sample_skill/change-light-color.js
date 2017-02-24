@@ -57,7 +57,7 @@ module.exports = class SkillChangeLightColor {
                     type: "text",
                     text: "了解しましたー。"
                 }];
-                return bot.reply_message(bot_event.replyToken, messages);
+                return bot.reply(bot_event.replyToken, messages);
             },
             (response) => {
                 return Promise.reject("Failed to change light color.");

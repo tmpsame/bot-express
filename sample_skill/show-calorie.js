@@ -125,7 +125,7 @@ module.exports = class SkillShowCalorie {
                     }
                 }
 
-                return bot.reply_message(bot_event.replyToken, messages);
+                return bot.reply(bot_event.replyToken, messages);
             },
             (response) => {
                 return Promise.reject("Failed to get today's menu.");

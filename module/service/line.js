@@ -13,7 +13,7 @@ module.exports = class Line {
         this._channel_access_token = channel_access_token;
     }
 
-    push_message(to, messages){
+    send(to, messages){
         return new Promise((resolve, reject) => {
             let headers = {
                 'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ module.exports = class Line {
         });
     }
 
-    reply_message(reply_token, messages){
+    reply(reply_token, messages){
         return new Promise((resolve, reject) => {
             let headers = {
                 'Content-Type': 'application/json',

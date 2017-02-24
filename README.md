@@ -15,6 +15,8 @@ $ npm install bot-express --save
 
 # 利用方法
 
+## ミドルウェア設定
+
 まずbot-expressをインポートします。
 
 ```
@@ -30,12 +32,124 @@ app.use('/webhook', bot_dock({
     line_channel_secret: 'あなたのLINE Channel Secret', // 必須
     line_channel_access_token: 'あなたのLINE Channel Access Token', // 必須
     apiai_client_access_token: 'あなたのAPIAI Client Access Token', // 必須
-    default_skill: 'あなたのskill', // 必須
-    skill_path: 'Skillのファイルが保存される相対PATH', オプション。デフォルトは'./skill'
-    message_platform_type: 'line', // オプション。現在サポートされているのはlineのみ。デフォルトはline
-    memory_retention: Botが会話を記憶する期間をミリ秒で指定 // オプション。デフォルトは60000 (60秒)
+    default_skill: 'あなたのskill', // 必須。Intentが特定されなかった場合に使うSkill
+    skill_path: 'Skillのファイルが保存されるPATH。このアプリのルートディレクトリからの相対PATHで指定', オプション。デフォルトは'./skill'
+    message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline
+    memory_retention: ミリ秒 // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
 }));
 ```
 
-最後にskillディレクトリ直下にskillファイルを追加します。このskillファイル名はapi.aiが返すresponse.result.actionの値と同一である必要があります。例えば、api.aiでchange-light-colorというactionを返すintentを設定したとすると、このintentに対応するskillファイル名はchange-light-color.jsとなります。
+## スキルの追加
+
+bot-expressは現在のところユーザーが発したメッセージから意図を判定するための自然言語処理にapi.aiを利用します。従ってまずapi.aiのアカウントを開設し、このアプリに対応するエージェントを作成する必要があります。
+
+api.aiでエージェントを作成したら次にIntentを作成します。これはBotのスキルに該当するもので、ユーザーがBotのどのスキルを利用したいのかという意図を表すものになります。Intentごとにユーザーが発する可能性のある例文を複数登録し、Intentの判定精度を高めていきます。同時に、各Intentには必ずactionを設定してください。actionに設定された文字列は、ユーザーの求めるIntentをBotが判断する拠り所になります。
+
+最後にskillディレクトリ直下にskillファイルを追加します。このskillファイル名はapi.aiのIntentで設定したactionの値と同一である必要があります。例えば、api.aiで「ライトの色を変更する」というIntentを登録し、そのactionに **change-light-color** という値を設定したとすると、このIntentに対応するskillファイル名は **change-light-color.js** となります。
+
+## skillファイルの構成
+
+skillファイルはbot-expressフレームワークを使う中で開発者が唯一必ずBot独自の処理を記述する必要のあるファイルです。
+skillファイルは大きく3つのパートで構成されます。
+
+**constructor()**
+
+このスキルが完結するのに必要なパラメータ、およびそのパラメータを確認するためのメッセージを設定します。
+例えば「ライトの色を変更する」というスキルの場合、「色」の指定が不可欠となるので、これをrequired_parameterプロパティに登録します。
+
 ```
+constructor() {
+    this.required_parameter = {
+        color: {
+            message_to_confirm: {
+                type: "text",
+                text: "何色にしますか？"
+            },
+            parse: this.parse_color
+        }
+    };
+}
+```
+
+上記のサンプルコードではrequired_parameterプロパティにcolorが登録されているのがわかります。また、このパラメータを収集する際、ユーザーに確認するメッセージをmessage_to_confirmに設定します。message_to_confirmのフォーマットは各メッセージプラットフォームのAPIに依存します。上記はLINEの例です。
+
+また、parseでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
+
+パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは全て埋まらない限りユーザーに確認が送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
+
+いずれのパラメータも特定されればconversation.confirmedに登録され、後述のfinish()の中で参照することができます。
+
+**parse_パラメータ(value)**
+
+ユーザーが発したメッセージからパラメータを特定、変換する処理をパラメータごとに記述します。
+
+例えば、ユーザーが「ライトの色を変えてください」というメッセージを送信すると、Botはcolorパラメータが埋まっていないことに気付き、「何色にしますか？」と質問します。それに対しユーザーが「赤色」と返信したとします。Botはこの時、このメッセージにサポートする色が指定されているかどうか、また、最終的にライトの色を変更するために色をカラーコードに変換する必要があります。この判定処理、および変換処理を必要に応じてparse_パラメータ()に記述します。
+
+```
+parse_color(value){
+    if (value === null || value == ""){
+        throw("Value is emppty.");
+    }
+
+    let parsed_value = {};
+
+    let found_color = false;
+    for (let color_mapping of COLOR_MAPPINGS){
+        if (value.replace("色", "") == color_mapping.label){
+            parsed_value = color_mapping.code;
+            found_color = true;
+        }
+    }
+    if (!found_color){
+        throw(`Unable to identify color: ${value}.`);
+    }
+    return parsed_value;
+}
+```
+
+適切な値が判定できた場合には、その値をそのまま返すか、変換が必要であれば変換した値を返します。上記の例ではCOLOR_MAPPINGSという定数にサポートする色一覧が設定されている前提で、その値に一致するかどうかを判定しています。また、一致した場合には同じくCOLOR_MAPPINGSに設定されている対応カラーコードに値を置き換え、それを返すという処理になっています。
+
+適切な値が判定できなかった場合には例外を投げます。
+
+**finish(bot, bot_event, conversation)**
+
+パラメータが全て揃ったら実行する処理を記述します。
+
+```
+finish(bot, bot_event, conversation){
+    return Hue.change_color(conversation.confirmed.color).then(
+        (response) => {
+            let messages = [{
+                type: "text",
+                text: "了解しましたー。"
+            }];
+            return bot.reply_message(bot_event.replyToken, messages);
+        },
+        (response) => {
+            return Promise.reject("Failed to change light color.");
+        }
+    );
+}
+```
+
+上記の例では別途定義されているライトの色を変更するサービスであるHue.change_color(color)を実行し、成功したら「了解しましたー。」というメッセージをユーザーに返信しています。
+
+finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。上記例ではbot.reply()メソッドを利用しています。現在のところこのインスタンスでサポートしているメソッドはreply()とsend()のみです。
+
+第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたeventオブジェクトが収められています。
+
+第三引数（上記例ではconversation）はこれまでの会話の記録です。このconversationは下記のような構造になっています。
+
+```
+{
+    intent: api.aiから返されたresult,
+    to_confirm: 確認しなければならないパラメータのリスト,
+    confirmed: 確認済みのパラメータのリスト,
+    confirming: 現在確認中のパラメータ
+    previous: {
+        confirmed: 前回の会話で確認したパラメータのリスト
+    }
+}
+```
+
+おそらく必ず必要になるのがconfirmedです。ここにはconstructor()でこのスキルで必須とされたパラメータとその値が収められています。前述の例ではconversation.confirmed.colorとして特定した色を取得しています。

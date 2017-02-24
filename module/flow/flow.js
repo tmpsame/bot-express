@@ -75,7 +75,7 @@ module.exports = class Flow {
         // Send question to the user.
         switch(this.message_platform_type){
             case "line":
-                return this.message_platform.reply_message(this.bot_event.replyToken, messages);
+                return this.message_platform.reply(this.bot_event.replyToken, messages);
             break;
             default:
                 throw(`Unsupported message platform type: "${options.message_platform_type}"`);

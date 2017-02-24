@@ -9,7 +9,7 @@ module.exports = class SkillApologize {
             type: "text",
             text: "ごめんなさい。よくわかりませんでした。"
         }];
-        return bot.reply_message(bot_event.replyToken, messages);
+        return bot.reply(bot_event.replyToken, messages);
     }
-    
+
 };

@@ -9,7 +9,7 @@ module.exports = class SkillGreet {
             type: "text",
             text: conversation.intent.fulfillment.speech
         }];
-        return bot.reply_message(bot_event.replyToken, messages);
+        return bot.reply(bot_event.replyToken, messages);
     }
-    
+
 };
