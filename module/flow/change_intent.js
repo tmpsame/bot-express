@@ -16,6 +16,8 @@ module.exports = class ChangeIntentFlow extends Flow {
     */
 
     constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill) {
+        conversation.to_confirm = {};
+        conversation.confirming = null;
         super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);
     }
 
