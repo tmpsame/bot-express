@@ -41,6 +41,11 @@ module.exports = (options) => {
     } else {
         options.skill_path = DEFAULT_SKILL_PATH;
     }
+    if (options.enable_ask_retry === null){
+        options.enable_ask_retry = false;
+    }
+    options.message_to_ask_retry = options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
+
 
     // Instantiate api.ai instance
     let apiai = new Apiai(options.apiai_client_access_token);
@@ -228,7 +233,7 @@ module.exports = (options) => {
                                         ** Assume this is Change Parameter Flow.
                                         */
                                         try {
-                                            flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                            flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill, options.enable_ask_retry, options.message_to_ask_retry);
                                         } catch(err){
                                             return Promise.reject(err);
                                         }
@@ -275,7 +280,7 @@ module.exports = (options) => {
                             ** Assume this is Change Parameter Flow.
                             */
                             try {
-                                flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill, options.enable_ask_retry, options.message_to_ask_retry);
                             } catch(err){
                                 return Promise.reject(err);
                             }

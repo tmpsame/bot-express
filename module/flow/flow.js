@@ -145,12 +145,12 @@ module.exports = class Flow {
         console.log(`We have ${Object.keys(this.conversation.to_confirm).length} parameters to confirm.`);
     }
 
-    ask_retry(){
+    ask_retry(message_text){
         switch(this.message_platform_type){
             case "line":
                 let messages = [{
                     type: "text",
-                    text: "ごめんなさい、もうちょっと端的かつ正確にお願いできますか？"
+                    text: message_text
                 }];
                 return this.message_platform.reply(this.bot_event.replyToken, messages);
             break;

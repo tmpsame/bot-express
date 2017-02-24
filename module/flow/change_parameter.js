@@ -15,8 +15,10 @@ module.exports = class ChangeParameterFlow extends Flow {
     ** - Run final action.
     */
 
-    constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill) {
+    constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill, enable_ask_retry, message_to_ask_retry) {
         super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);
+        this.enable_ask_retry = enable_ask_retry;
+        this.message_to_ask_retry = message_to_ask_retry;
     }
 
     run(){
@@ -65,8 +67,8 @@ module.exports = class ChangeParameterFlow extends Flow {
             }
         }
         if (!is_fit){
-            if (param_value.length <= 10){
-                return super.ask_retry();
+            if (this.enable_ask_retry && param_value.length <= 10){
+                return super.ask_retry(this.message_to_ask_retry);
             }
             return Promise.reject("no_fit");
         }
