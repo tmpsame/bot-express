@@ -83,7 +83,11 @@ module.exports = class Flow {
         }
     }
 
-    add_parameter(key, value){
+    change_parameter(key, value){
+        this.add_parameter(key, value, true);
+    }
+
+    add_parameter(key, value, is_change = false){
         console.log(`Parsing parameter {${key}: "${value}"}`);
 
         let parsed_value;
@@ -119,7 +123,9 @@ module.exports = class Flow {
         Object.assign(this.conversation.confirmed, param);
 
         // At the same time, add the parameter key to previously confirmed list. The order of this list is newest first.
-        this.conversation.previous.confirmed.unshift(key);
+        if (!is_change){
+            this.conversation.previous.confirmed.unshift(key);
+        }
 
         // Remove item from to_confirm.
         if (this.conversation.to_confirm[key]){

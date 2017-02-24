@@ -56,9 +56,10 @@ module.exports = class ChangeParameterFlow extends Flow {
         for (let previously_confirmed_param_key of this.conversation.previous.confirmed){
             try {
                 console.log(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
-                super.add_parameter(previously_confirmed_param_key, param_value);
+                super.change_parameter(previously_confirmed_param_key, param_value);
                 is_fit = true;
                 console.log(`Great fit!`);
+                break;
             } catch(err){
             }
         }
