@@ -52,12 +52,17 @@ module.exports = class ChangeParameterFlow extends Flow {
             break;
         }
 
-        try {
-            super.add_parameter(this.conversation.previous.confirmed, param_value);
-            console.log("\n### This is for sure Change Parameter Flow. ###\n");
-        } catch(err){
-            // It turned out this is not Change Parameter Flow.
-            console.log("\n### It turned out this is not Change Parameter Flow. ###\n");
+        let is_fit = false;
+        for (let previously_confirmed_param_key of this.conversation.previous.confirmed){
+            try {
+                console.log(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
+                super.add_parameter(previously_confirmed_param_key, param_value);
+                is_fit = true;
+                console.log(`Great fit!`);
+            } catch(err){
+            }
+        }
+        if (!is_fit){
             return Promise.reject("failed_to_parse_parameter");
         }
 

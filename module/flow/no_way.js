@@ -21,7 +21,7 @@ module.exports = class NoWayFlow extends Flow {
             to_confirm: {},
             confirming: null,
             previous: {
-                confirmed: null
+                confirmed: []
             }
         }
         super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);

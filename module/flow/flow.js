@@ -118,8 +118,8 @@ module.exports = class Flow {
         param[key] = parsed_value;
         Object.assign(this.conversation.confirmed, param);
 
-        // At the same time, save the parameter key as "previously confirmed" thing.
-        this.conversation.previous.confirmed = key;
+        // At the same time, add the parameter key to previously confirmed list. The order of this list is newest first.
+        this.conversation.previous.confirmed.unshift(key);
 
         // Remove item from to_confirm.
         if (this.conversation.to_confirm[key]){

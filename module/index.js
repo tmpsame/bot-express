@@ -144,7 +144,7 @@ module.exports = (options) => {
                             to_confirm: {},
                             confirming: null,
                             previous: {
-                                confirmed: null
+                                confirmed: []
                             }
                         };
                         try {
@@ -223,7 +223,7 @@ module.exports = (options) => {
                                     return flow.run();
                                     // End of Change Intent Flow
                                 } else {
-                                    if (conversation.previous.confirmed){
+                                    if (conversation.previous.confirmed.length > 0){
                                         /*
                                         ** Assume this is Change Parameter Flow.
                                         */
@@ -270,7 +270,7 @@ module.exports = (options) => {
                             }
                         );
                     } else {
-                        if (conversation.previous.confirmed){
+                        if (conversation.previous.confirmed.length > 0){
                             /*
                             ** Assume this is Change Parameter Flow.
                             */
