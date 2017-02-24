@@ -16,8 +16,8 @@ module.exports = class ReplyFlow extends Flow {
     ** - Run final action.
     */
 
-    constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill) {
-        super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);
+    constructor(message_platform, bot_event, conversation, options) {
+        super(message_platform, bot_event, conversation, options);
     }
 
     run(){
@@ -25,7 +25,7 @@ module.exports = class ReplyFlow extends Flow {
 
         // Add Parameter from message text or postback data.
         let param_value;
-        switch(this.message_platform_type){
+        switch(this.message_platform.type){
             case "line":
                 if (this.bot_event.type == "message"){
                     param_value = this.bot_event.message.text;
@@ -34,7 +34,7 @@ module.exports = class ReplyFlow extends Flow {
                 }
             break;
             default:
-                throw(`Unsupported message platform type: "${this.message_platform_type}"`);
+                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
             break;
         }
 

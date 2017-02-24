@@ -153,7 +153,7 @@ module.exports = (options) => {
                             }
                         };
                         try {
-                            flow = new start_conversation_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                            flow = new start_conversation_flow(message_platform, bot_event, conversation, options);
                         } catch(err) {
                             return Promise.reject(err);
                         }
@@ -185,7 +185,7 @@ module.exports = (options) => {
                     }
 
                     try {
-                        flow = new reply_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                        flow = new reply_flow(message_platform, bot_event, conversation, options);
                     } catch(err){
                         return Promise.reject(err);
                     }
@@ -221,7 +221,7 @@ module.exports = (options) => {
                                     // Set new intent while keeping other data.
                                     conversation.intent = response.result;
                                     try {
-                                        flow = new change_intent_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                        flow = new change_intent_flow(message_platform, bot_event, conversation, options);
                                     } catch(err){
                                         return Promise.reject(err);
                                     }
@@ -233,7 +233,7 @@ module.exports = (options) => {
                                         ** Assume this is Change Parameter Flow.
                                         */
                                         try {
-                                            flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill, options.enable_ask_retry, options.message_to_ask_retry);
+                                            flow = new change_parameter_flow(message_platform, bot_event, conversation, options);
                                         } catch(err){
                                             return Promise.reject(err);
                                         }
@@ -248,7 +248,7 @@ module.exports = (options) => {
                                                     ** Now it turned to be No Way Flow.
                                                     */
                                                     try {
-                                                        flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                                        flow = new no_way_flow(message_platform, bot_event, conversation, options);
                                                     } catch(err){
                                                         return Promise.reject(err);
                                                     }
@@ -261,7 +261,7 @@ module.exports = (options) => {
                                         ** No Way Flow.
                                         */
                                         try {
-                                            flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                            flow = new no_way_flow(message_platform, bot_event, conversation, options);
                                         } catch(err){
                                             return Promise.reject(err);
                                         }
@@ -280,7 +280,7 @@ module.exports = (options) => {
                             ** Assume this is Change Parameter Flow.
                             */
                             try {
-                                flow = new change_parameter_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill, options.enable_ask_retry, options.message_to_ask_retry);
+                                flow = new change_parameter_flow(message_platform, bot_event, conversation, options);
                             } catch(err){
                                 return Promise.reject(err);
                             }
@@ -293,7 +293,7 @@ module.exports = (options) => {
                                     if (response == "no_fit"){
                                         // It turned out to be No Way Flow.
                                         try {
-                                            flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                            flow = new no_way_flow(message_platform, bot_event, conversation, options);
                                         } catch(err){
                                             return Promise.reject(err);
                                         }
@@ -306,7 +306,7 @@ module.exports = (options) => {
                             ** No Way Flow
                             */
                             try {
-                                flow = new no_way_flow(options.message_platform_type, message_platform, bot_event, conversation, options.skill_path, options.default_skill);
+                                flow = new no_way_flow(message_platform, bot_event, conversation, options);
                             } catch(err){
                                 return Promise.reject(err);
                             }

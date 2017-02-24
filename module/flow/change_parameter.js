@@ -15,17 +15,17 @@ module.exports = class ChangeParameterFlow extends Flow {
     ** - Run final action.
     */
 
-    constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill, enable_ask_retry, message_to_ask_retry) {
-        super(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill);
-        this.enable_ask_retry = enable_ask_retry;
-        this.message_to_ask_retry = message_to_ask_retry;
+    constructor(message_platform, bot_event, conversation, options) {
+        super(message_platform, bot_event, conversation, options);
+        this.enable_ask_retry = options.enable_ask_retry;
+        this.message_to_ask_retry = options.message_to_ask_retry;
     }
 
     run(){
         console.log("\n### ASSUME This is Change Parameter Flow. ###\n");
 
         // Check if the event is supported one in this flow.
-        switch(this.message_platform_type){
+        switch(this.message_platform.type){
             case "line":
                 if ((this.bot_event.type != "message" || this.bot_event.message.type != "text") && this.bot_event.type != "postback" ){
                     console.log("This is unsupported event type in this flow.");
@@ -35,13 +35,13 @@ module.exports = class ChangeParameterFlow extends Flow {
                 }
             break;
             default:
-                throw(`Unsupported message platform type: "${options.message_platform_type}"`);
+                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
             break;
         }
 
         // Add Parameter from message text or postback data.
         let param_value;
-        switch(this.message_platform_type){
+        switch(this.message_platform.type){
             case "line":
                 if (this.bot_event.type == "message"){
                     param_value = this.bot_event.message.text;
@@ -50,7 +50,7 @@ module.exports = class ChangeParameterFlow extends Flow {
                 }
             break;
             default:
-                throw(`Unsupported message platform type: "${this.message_platform_type}"`);
+                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
             break;
         }
 

@@ -4,13 +4,12 @@ let Promise = require('bluebird');
 let apiai = require('apiai');
 
 module.exports = class Flow {
-    constructor(message_platform_type, message_platform, bot_event, conversation, skill_path, default_skill){
-        this.message_platform_type = message_platform_type;
+    constructor(message_platform, bot_event, conversation, options){
         this.message_platform = message_platform;
         this.bot_event = bot_event;
         this.conversation = conversation;
-        this.skill_path = skill_path;
-        this.default_skill = default_skill;
+        this.skill_path = options.skill_path;
+        this.default_skill = options.default_skill;
         this.skill = this._instantiate_skill(this.conversation.intent.action);
 
         if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
@@ -73,12 +72,12 @@ module.exports = class Flow {
         this.conversation.confirming = Object.keys(this.conversation.to_confirm)[0];
 
         // Send question to the user.
-        switch(this.message_platform_type){
+        switch(this.message_platform.type){
             case "line":
                 return this.message_platform.reply(this.bot_event.replyToken, messages);
             break;
             default:
-                throw(`Unsupported message platform type: "${options.message_platform_type}"`);
+                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
             break;
         }
     }
@@ -146,7 +145,7 @@ module.exports = class Flow {
     }
 
     ask_retry(message_text){
-        switch(this.message_platform_type){
+        switch(this.message_platform.type){
             case "line":
                 let messages = [{
                     type: "text",
@@ -155,7 +154,7 @@ module.exports = class Flow {
                 return this.message_platform.reply(this.bot_event.replyToken, messages);
             break;
             default:
-                throw(`Unsupported message platform type: "${this.message_platform_type}"`);
+                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
             break;
         }
     }
