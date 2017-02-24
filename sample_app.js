@@ -25,8 +25,7 @@ app.use('/webhook', bot_express({
     line_channel_access_token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
     default_skill: 'apologize',
-    skill_path: './sample_skill/',
-    enable_ask_retry: true
+    skill_path: './sample_skill/'
 }));
 
 module.exports = app;

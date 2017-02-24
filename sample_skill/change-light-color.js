@@ -14,6 +14,9 @@ const COLOR_MAPPINGS = [{
     code: "FFFA6A"
 }];
 
+/*
+** Change the color of LED lighting of Hue.
+*/
 module.exports = class SkillChangeLightColor {
 
     constructor() {
