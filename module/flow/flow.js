@@ -145,6 +145,21 @@ module.exports = class Flow {
         console.log(`We have ${Object.keys(this.conversation.to_confirm).length} parameters to confirm.`);
     }
 
+    ask_retry(){
+        switch(this.message_platform_type){
+            case "line":
+                let messages = [{
+                    type: "text",
+                    text: "ごめんなさい、もうちょっと端的かつ正確にお願いできますか？"
+                }];
+                return this.message_platform.reply(this.bot_event.replyToken, messages);
+            break;
+            default:
+                throw(`Unsupported message platform type: "${this.message_platform_type}"`);
+            break;
+        }
+    }
+
     finish(){
         // If we still have parameters to confirm, we collect them.
         if (Object.keys(this.conversation.to_confirm).length > 0){

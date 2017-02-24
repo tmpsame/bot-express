@@ -65,6 +65,9 @@ module.exports = class ChangeParameterFlow extends Flow {
             }
         }
         if (!is_fit){
+            if (param_value.length <= 10){
+                return super.ask_retry();
+            }
             return Promise.reject("no_fit");
         }
 

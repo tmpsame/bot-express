@@ -223,7 +223,7 @@ module.exports = (options) => {
                                     return flow.run();
                                     // End of Change Intent Flow
                                 } else {
-                                    if (conversation.previous.confirmed.length > 0){
+                                    if (conversation.previous.confirmed.length > 0 && conversation.intent.action != "input.unknown"){
                                         /*
                                         ** Assume this is Change Parameter Flow.
                                         */
@@ -270,7 +270,7 @@ module.exports = (options) => {
                             }
                         );
                     } else {
-                        if (conversation.previous.confirmed.length > 0){
+                        if (conversation.previous.confirmed.length > 0 && conversation.intent.action != "input.unknown"){
                             /*
                             ** Assume this is Change Parameter Flow.
                             */
