@@ -10,6 +10,7 @@ module.exports = class Flow {
         this.conversation = conversation;
         this.skill_path = options.skill_path;
         this.default_skill = options.default_skill;
+        this.default_intent = options.default_intent;
         this.skill = this._instantiate_skill(this.conversation.intent.action);
 
         if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
@@ -29,7 +30,7 @@ module.exports = class Flow {
         }
 
         // If the intent is not identified, we use default_skill.
-        if (intent == "input.unknown"){
+        if (intent == this.default_intent){
             intent = this.default_skill;
         }
 

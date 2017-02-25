@@ -1,9 +1,13 @@
 'use strict';
 
-const REQUIRED_OPTIONS = ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"];
+const SUPPORTED_MESSAGE_PLATFORM_TYPE = ["line"];
+const REQUIRED_OPTIONS = {
+    line: ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"]
+}
 const DEFAULT_MESSAGE_PLATFORM_TYPE = "line";
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
+const DEFAULT_INTENT = "input.unknown";
 
 let express = require("express");
 let router = express.Router();
@@ -24,20 +28,12 @@ router.use(body_parser.json({
 }));
 
 module.exports = (options) => {
-
-    // Check if required options are set.
-    for (let req_opt of REQUIRED_OPTIONS){
-        if (typeof options[req_opt] == "undefined"){
-            throw(`Required option: "${req_opt}" not set`);
-        }
-    }
-    console.log("Required options all set.");
-
     // Set optional options.
     options.message_platform_type = options.message_platform_type || DEFAULT_MESSAGE_PLATFORM_TYPE;
     options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
+    options.default_intent = options.default_intent || DEFAULT_INTENT;
     if (!!options.skill_path){
-        options.skill_path = "../../" + options.skill_path;
+        options.skill_path = "../../../../" + options.skill_path;
     } else {
         options.skill_path = DEFAULT_SKILL_PATH;
     }
@@ -46,6 +42,18 @@ module.exports = (options) => {
     }
     options.message_to_ask_retry = options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
 
+    // Check if Message Platform Type is supported
+    if (SUPPORTED_MESSAGE_PLATFORM_TYPE.indexOf(options.message_platform_type) === -1){
+        throw(`Specified message_platform_type: "${options.message_platform_type}" is not supported.`);
+    }
+
+    // Check if required options are set.
+    for (let req_opt of REQUIRED_OPTIONS[options.message_platform_type]){
+        if (typeof options[req_opt] == "undefined"){
+            throw(`Required option: "${req_opt}" not set`);
+        }
+    }
+    console.log("Required options all set.");
 
     // Instantiate api.ai instance
     let apiai = new Apiai(options.apiai_client_access_token);
@@ -213,7 +221,7 @@ module.exports = (options) => {
                     if (possibly_change_intent_flow){
                         promise_flow_completed = apiai.identify_intent(session_id, text).then(
                             (response) => {
-                                if (response.result.action != "input.unknown"){
+                                if (response.result.action != options.default_intent){
                                     /*
                                     ** Change Intent Flow
                                     */
@@ -228,7 +236,7 @@ module.exports = (options) => {
                                     return flow.run();
                                     // End of Change Intent Flow
                                 } else {
-                                    if (conversation.previous.confirmed.length > 0 && conversation.intent.action != "input.unknown"){
+                                    if (conversation.previous.confirmed.length > 0 && conversation.intent.action != options.default_intent){
                                         /*
                                         ** Assume this is Change Parameter Flow.
                                         */
@@ -275,7 +283,7 @@ module.exports = (options) => {
                             }
                         );
                     } else {
-                        if (conversation.previous.confirmed.length > 0 && conversation.intent.action != "input.unknown"){
+                        if (conversation.previous.confirmed.length > 0 && conversation.intent.action != options.default_intent){
                             /*
                             ** Assume this is Change Parameter Flow.
                             */
