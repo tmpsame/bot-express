@@ -34,6 +34,9 @@ module.exports = (options) => {
     options.default_intent = options.default_intent || DEFAULT_INTENT;
     if (!!options.skill_path){
         options.skill_path = "../../../../" + options.skill_path;
+    } else if (process.env.BOT_EXPRESS_ENV == "development"){
+        // This is for Bot Express development environment only.
+        options.skill_path = "../../skill/";
     } else {
         options.skill_path = DEFAULT_SKILL_PATH;
     }
