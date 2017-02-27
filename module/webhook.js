@@ -29,8 +29,10 @@ module.exports = class webhook {
         console.log("Virtual Message Platform instantiated.");
 
         // Signature Validation.
-        vp.validate_signature(req.get('X-Line-Signature'), req.rawBody);
-        console.log("Signature Validation suceeded.");
+        if (process.env.BOT_EXPRESS_ENV != "development"){
+            vp.validate_signature(req.get('X-Line-Signature'), req.rawBody);
+            console.log("Signature Validation suceeded.");
+        }
 
         // Set Events.
         let bot_events = vp.extract_event(req.body);
@@ -62,7 +64,7 @@ module.exports = class webhook {
                 // Check if this event type is supported in this flow.
                 if (!vp.check_supported_event_type("start_conversation", bot_event)){
                     console.log(`This is unsupported event type in this flow so skip processing.`);
-                    return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
+                    return Promise.resolve(`skipped-unsupported-event-in-start-conversation-flow`);
                 }
 
                 // Set session id for api.ai and text to identify intent.
@@ -105,7 +107,7 @@ module.exports = class webhook {
                     // Check if this event type is supported in this flow.
                     if (!vp.check_supported_event_type("reply", bot_event)){
                         console.log(`This is unsupported event type in this flow so skip processing.`)
-                        return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
+                        return Promise.resolve(`skipped-unsupported-event-in-reply-flow`);
                     }
 
                     try {
@@ -244,7 +246,7 @@ module.exports = class webhook {
                     // Update memory.
                     memory.put(memory_id, flow.conversation, this.options.memory_retention);
 
-                    return response;
+                    return flow.conversation;
                 },
                 (response) => {
                     console.log("Abnormal End of Flow.");

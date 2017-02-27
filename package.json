@@ -9,7 +9,14 @@
     "url": "git+https://github.com/nkjm/bot-express.git"
   },
   "license": "MIT",
-  "keywords": ["bot", "line", "ai"],
+  "keywords": [
+    "bot",
+    "line",
+    "ai"
+  ],
+  "scripts": {
+      "text": "mocha"
+  },
   "author": "Kazuki Nakajima <nkjm.kzk@gmail.com>",
   "dependencies": {
     "apiai": "^4.0.0",
@@ -22,7 +29,8 @@
     "request": "^2.79.0"
   },
   "devDependencies": {
-      "chai": "*",
-      "mocha": "*"
+    "chai": "*",
+    "chai-as-promised": "*",
+    "mocha": "*"
   }
 }
