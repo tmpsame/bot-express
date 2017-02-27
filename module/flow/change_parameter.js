@@ -25,7 +25,7 @@ module.exports = class ChangeParameterFlow extends Flow {
         console.log("\n### ASSUME This is Change Parameter Flow. ###\n");
 
         // Check if the event is supported one in this flow.
-        if (!this.vp.check_supported_event_type("change_parameter", bot_event)){
+        if (!this.vp.check_supported_event_type("change_parameter", this.bot_event)){
             console.log(`This is unsupported event type in this flow so skip processing.`)
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
