@@ -2,7 +2,7 @@
 
 let crypto = require('crypto');
 let request = require('request');
-let Promise = require('bluebird');
+//let Promise = require('bluebird');
 
 module.exports = class Line {
 

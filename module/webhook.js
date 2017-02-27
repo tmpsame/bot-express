@@ -1,7 +1,7 @@
 'use strict';
 
 // Import NPM Packages
-let Promise = require("bluebird");
+//let Promise = require("bluebird");
 let memory = require("memory-cache");
 
 // Import Flows
