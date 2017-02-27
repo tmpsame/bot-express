@@ -59,9 +59,11 @@ module.exports = (options) => {
         webhook.run(req).then(
             (response) => {
                 console.log("Successful End of Webhook.");
+                console.log(response);
             },
             (response) => {
                 console.log("Abnormal End of Webhook.");
+                console.log(response);
             }
         );
     });

@@ -243,6 +243,8 @@ module.exports = class webhook {
 
                     // Update memory.
                     memory.put(memory_id, flow.conversation, this.options.memory_retention);
+
+                    return response;
                 },
                 (response) => {
                     console.log("Abnormal End of Flow.");
@@ -250,6 +252,8 @@ module.exports = class webhook {
 
                     // Clear memory.
                     memory.put(memory_id, null);
+
+                    return Promise.reject(response);
                 }
             ); // End of Completion of Flow
 
