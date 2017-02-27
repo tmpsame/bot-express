@@ -24,7 +24,7 @@ module.exports = class ReplyFlow extends Flow {
         console.log("\n### This is Reply Flow. ###\n");
 
         // Add Parameter from message text or postback data.
-        let param_value = this.vp.get_message_text(this.bot_event);
+        let param_value = this.vp.extract_message_text(this.bot_event);
 
         try {
             super.add_parameter(this.conversation.confirming, param_value);

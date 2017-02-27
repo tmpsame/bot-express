@@ -22,7 +22,6 @@ module.exports = class VirtualPlatform {
     }
 
     _line_validate_signature(signature, raw_body){
-        console.log(signature, raw_body);
         if (!this.service.validate_signature(signature, raw_body)){
             throw(`Signature Validation failed.`);
         }
