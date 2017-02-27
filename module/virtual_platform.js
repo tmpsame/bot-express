@@ -18,7 +18,7 @@ module.exports = class VirtualPlatform {
     }
 
     validate_signature(signature, raw_body){
-        return this[`_${this.type}_validate_signature`]();
+        return this[`_${this.type}_validate_signature`](signature, raw_body);
     }
 
     _line_validate_signature(signature, raw_body){
