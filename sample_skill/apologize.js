@@ -8,11 +8,8 @@ let Promise = require("bluebird");
 module.exports = class SkillApologize {
 
     finish(bot, bot_event, conversation){
-        let messages = [{
-            type: "text",
-            text: "ごめんなさい。よくわかりませんでした。"
-        }];
-        return bot.reply(bot_event.replyToken, messages);
+        let messages = [bot.create_message("ごめんなさい。よくわかりませんでした。", "text")];
+        return bot.reply(bot_event, messages);
     }
 
 };

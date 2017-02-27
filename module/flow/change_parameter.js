@@ -15,8 +15,8 @@ module.exports = class ChangeParameterFlow extends Flow {
     ** - Run final action.
     */
 
-    constructor(message_platform, bot_event, conversation, options) {
-        super(message_platform, bot_event, conversation, options);
+    constructor(vp, bot_event, conversation, options) {
+        super(vp, bot_event, conversation, options);
         this.enable_ask_retry = options.enable_ask_retry;
         this.message_to_ask_retry = options.message_to_ask_retry;
     }
@@ -25,34 +25,13 @@ module.exports = class ChangeParameterFlow extends Flow {
         console.log("\n### ASSUME This is Change Parameter Flow. ###\n");
 
         // Check if the event is supported one in this flow.
-        switch(this.message_platform.type){
-            case "line":
-                if ((this.bot_event.type != "message" || this.bot_event.message.type != "text") && this.bot_event.type != "postback" ){
-                    console.log("This is unsupported event type in this flow.");
-                    return new Promise((resolve, reject) => {
-                        resolve();
-                    });
-                }
-            break;
-            default:
-                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
-            break;
+        if (!this.vp.check_supported_event_type("change_parameter", bot_event)){
+            console.log(`This is unsupported event type in this flow so skip processing.`)
+            return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
 
         // Add Parameter from message text or postback data.
-        let param_value;
-        switch(this.message_platform.type){
-            case "line":
-                if (this.bot_event.type == "message"){
-                    param_value = this.bot_event.message.text;
-                } else if (this.bot_event.type == "postback"){
-                    param_value = this.bot_event.postback.data;
-                }
-            break;
-            default:
-                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
-            break;
-        }
+        let param_value = this.vp.get_message_text(this.bot_event);
 
         let is_fit = false;
         for (let previously_confirmed_param_key of this.conversation.previous.confirmed){

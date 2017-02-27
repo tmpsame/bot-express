@@ -14,8 +14,8 @@ module.exports = class StartConversationFlow extends Flow {
     ** - Run final action.
     */
 
-    constructor(message_platform, bot_event, conversation, options) {
-        super(message_platform, bot_event, conversation, options);
+    constructor(vp, bot_event, conversation, options) {
+        super(vp, bot_event, conversation, options);
     }
 
     run(){

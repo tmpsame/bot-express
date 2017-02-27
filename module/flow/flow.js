@@ -4,8 +4,8 @@ let Promise = require('bluebird');
 let apiai = require('apiai');
 
 module.exports = class Flow {
-    constructor(message_platform, bot_event, conversation, options){
-        this.message_platform = message_platform;
+    constructor(vp, bot_event, conversation, options){
+        this.vp = vp;
         this.bot_event = bot_event;
         this.conversation = conversation;
         this.skill_path = options.skill_path;
@@ -73,14 +73,7 @@ module.exports = class Flow {
         this.conversation.confirming = Object.keys(this.conversation.to_confirm)[0];
 
         // Send question to the user.
-        switch(this.message_platform.type){
-            case "line":
-                return this.message_platform.reply(this.bot_event.replyToken, messages);
-            break;
-            default:
-                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
-            break;
-        }
+        return this.vp.reply(this.bot_event, messages);
     }
 
     change_parameter(key, value){
@@ -146,18 +139,8 @@ module.exports = class Flow {
     }
 
     ask_retry(message_text){
-        switch(this.message_platform.type){
-            case "line":
-                let messages = [{
-                    type: "text",
-                    text: message_text
-                }];
-                return this.message_platform.reply(this.bot_event.replyToken, messages);
-            break;
-            default:
-                throw(`Unsupported message platform type: "${this.message_platform.type}"`);
-            break;
-        }
+        let messages = [this.vp.create_message(message_text)];
+        return this.vp.reply(this.bot_event, messages);
     }
 
     finish(){
@@ -166,6 +149,6 @@ module.exports = class Flow {
             return this._collect();
         }
         // If we have no parameters to confirm, we finish this conversationw with final reply.
-        return this.skill.finish(this.message_platform, this.bot_event, this.conversation);
+        return this.skill.finish(this.vp, this.bot_event, this.conversation);
     }
 };

@@ -20,5 +20,9 @@
     "memory-cache": "^0.1.6",
     "morgan": "^1.8.1",
     "request": "^2.79.0"
+  },
+  "devDependencies": {
+      "chai": "*",
+      "mocha": "*"
   }
 }

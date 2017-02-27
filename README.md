@@ -33,6 +33,7 @@ app.use('/webhook', bot_dock({
     line_channel_access_token: 'あなたのLINE Channel Access Token', // 必須
     apiai_client_access_token: 'あなたのAPIAI Client Access Token', // 必須
     default_skill: 'あなたのskill', // 必須。Intentが特定されなかった場合に使うSkill
+    default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline
     memory_retention: ミリ秒 // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
@@ -123,11 +124,8 @@ parse_color(value){
 finish(bot, bot_event, conversation){
     return Hue.change_color(conversation.confirmed.color).then(
         (response) => {
-            let messages = [{
-                type: "text",
-                text: "了解しましたー。"
-            }];
-            return bot.reply(bot_event.replyToken, messages);
+            let messages = [bot.create_message("了解しましたー。", "text")];
+            return bot.reply(bot_event, messages);
         },
         (response) => {
             return Promise.reject("Failed to change light color.");
@@ -138,7 +136,10 @@ finish(bot, bot_event, conversation){
 
 上記の例では別途定義されているライトの色を変更するサービスであるHue.change_color(color)を実行し、成功したら「了解しましたー。」というメッセージをユーザーに返信しています。
 
-finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。上記例ではbot.reply()メソッドを利用しています。現在のところこのインスタンスでサポートしているメソッドはreply()とsend()のみです。
+finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。利用しているメッセージプラットフォームを意識せずに処理を記述することができます。上記例ではreply()メソッドを利用しています。このインスタンスの機能は下記です。
+
+- create_message(message_type, message_object)
+- reply(bot_event, messages)
 
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたeventオブジェクトが収められています。
 

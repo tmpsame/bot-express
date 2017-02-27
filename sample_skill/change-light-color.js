@@ -56,11 +56,8 @@ module.exports = class SkillChangeLightColor {
     finish(bot, bot_event, conversation){
         return hue.change_color(conversation.confirmed.color).then(
             (response) => {
-                let messages = [{
-                    type: "text",
-                    text: "了解しましたー。"
-                }];
-                return bot.reply(bot_event.replyToken, messages);
+                let messages = [bot.create_message("了解しましたー。", "text")];
+                return bot.reply(bot_event, messages);
             },
             (response) => {
                 return Promise.reject("Failed to change light color.");
