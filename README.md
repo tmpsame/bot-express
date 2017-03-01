@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nkjm/bot-express.svg?branch=master)
+
 # 概要
 
 Node.jsで稼働するChat Botを開発するためのフレームワーク。文脈の理解、必要なパラメータの収集などの機能が搭載されており、開発者はSkillを追加するだけでBotの能力を拡張できます。現在対応しているメッセージアプリはLINEのみですが、近々にFacebook MessengerやSlack等への対応を見込んでいます。
