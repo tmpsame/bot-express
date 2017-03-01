@@ -29,6 +29,7 @@ app.use('/webhook/line', bot_express({
 }));
 // For Facebook
 app.use('/webhook/facebook', bot_express({
+    facebook_token: process.env.FACEBOOK_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
     default_skill: 'apologize'
 }));
