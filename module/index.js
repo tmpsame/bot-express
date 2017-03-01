@@ -74,6 +74,8 @@ module.exports = (options) => {
             res.status(200).send(req.query['hub.challenge']);
         } else {
             console.error("Failed validation. Make sure the validation tokens match.");
+            console.log(req.query['hub.verify_token']);
+            console.log(options.facebook_token);
             res.sendStatus(403);
         }
     });
