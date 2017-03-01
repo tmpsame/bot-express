@@ -53,7 +53,7 @@ module.exports = (options) => {
     console.log("Required options all set.");
 
     // Webhook Process
-    router.post('/', function(req, res, next){
+    router.post('/', (req, res, next) => {
         res.status(200).end();
 
         let webhook = new Webhook(options);
@@ -67,6 +67,15 @@ module.exports = (options) => {
                 console.log(response);
             }
         );
+    });
+    router.get("/", (req, res, next) => {
+        if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_token) {
+            console.log("Validating webhook");
+            res.status(200).send(req.query['hub.challenge']);
+        } else {
+            console.error("Failed validation. Make sure the validation tokens match.");
+            res.sendStatus(403);
+        }
     });
     return router;
 }
