@@ -1,6 +1,6 @@
 'use strict';
 
-const SUPPORTED_MESSAGE_PLATFORM_TYPE = ["line"];
+const SUPPORTED_MESSAGE_PLATFORM_TYPE = ["line","facebook"];
 const REQUIRED_OPTIONS = {
     line: ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"]
 }
