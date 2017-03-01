@@ -51,6 +51,7 @@ module.exports = (options) => {
         }
     }
     console.log("Required options all set.");
+    console.log(options);
 
     // Webhook Process
     router.post('/', (req, res, next) => {
@@ -68,16 +69,20 @@ module.exports = (options) => {
             }
         );
     });
-    router.get("/", (req, res, next) => {
-        if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_token) {
-            console.log("Validating webhook");
-            res.status(200).send(req.query['hub.challenge']);
-        } else {
-            console.error("Failed validation. Make sure the validation tokens match.");
-            console.log(req.query['hub.verify_token']);
-            console.log(options.facebook_token);
-            res.sendStatus(403);
-        }
-    });
+
+    // Verify Facebook Webhook
+    if (options.message_platform_type == "facebook"){
+        router.get("/", (req, res, next) => {
+            if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_token) {
+                console.log("Validating webhook");
+                res.status(200).send(req.query['hub.challenge']);
+            } else {
+                console.error("Failed validation. Make sure the validation tokens match.");
+                console.log(req.query['hub.verify_token']);
+                console.log(options.facebook_token);
+                res.sendStatus(403);
+            }
+        });
+    }
     return router;
 }
