@@ -23,8 +23,10 @@ module.exports = class SkillChangeLightColor {
         this.required_parameter = {
             color: {
                 message_to_confirm: {
-                    type: "text",
-                    text: "何色にしますか？"
+                    line: {
+                        type: "text",
+                        text: "何色にしますか？"
+                    }
                 },
                 parse: this.parse_color
             }

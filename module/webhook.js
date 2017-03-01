@@ -1,7 +1,7 @@
 'use strict';
 
 // Import NPM Packages
-//let Promise = require("bluebird");
+let Promise = require("bluebird");
 let memory = require("memory-cache");
 
 // Import Flows
@@ -16,7 +16,7 @@ let Line = require("./service/line");
 let Apiai = require("./service/apiai");
 
 // Import Virtual Platform abstraction.
-let Virtual_platform = require("./virtual_platform");
+let Virtual_platform = require("./virtual-platform");
 
 module.exports = class webhook {
     constructor(options){
@@ -42,16 +42,16 @@ module.exports = class webhook {
         console.log("api.ai instantiated.");
 
         for (let bot_event of bot_events){
-            console.log(`Processing following bot event.`);
-            console.log(bot_event);
+            //console.log(`Processing following bot event.`);
+            //console.log(bot_event);
 
             // Recall Memory
             let memory_id = vp.extract_memory_id(bot_event);
             console.log(`memory id is ${memory_id}.`);
 
             let conversation = memory.get(memory_id);
-            console.log(`Previous conversation is following.`);
-            console.log(conversation);
+            //console.log(`Previous conversation is following.`);
+            //console.log(conversation);
 
             let promise_flow_completed;
             let flow;
@@ -241,7 +241,6 @@ module.exports = class webhook {
             return promise_flow_completed.then(
                 (response) => {
                     console.log("Successful End of Flow.");
-                    console.log(flow.conversation);
 
                     // Update memory.
                     memory.put(memory_id, flow.conversation, this.options.memory_retention);
@@ -250,7 +249,6 @@ module.exports = class webhook {
                 },
                 (response) => {
                     console.log("Abnormal End of Flow.");
-                    console.log(flow.conversation);
 
                     // Clear memory.
                     memory.put(memory_id, null);
