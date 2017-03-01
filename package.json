@@ -15,7 +15,7 @@
     "ai"
   ],
   "scripts": {
-      "text": "mocha"
+      "test": "mocha"
   },
   "author": "Kazuki Nakajima <nkjm.kzk@gmail.com>",
   "dependencies": {

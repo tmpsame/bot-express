@@ -67,8 +67,10 @@ constructor() {
     this.required_parameter = {
         color: {
             message_to_confirm: {
-                type: "text",
-                text: "何色にしますか？"
+                line: {
+                    type: "text",
+                    text: "何色にしますか？"
+                }
             },
             parse: this.parse_color
         }
@@ -76,7 +78,7 @@ constructor() {
 }
 ```
 
-上記のサンプルコードではrequired_parameterプロパティにcolorが登録されているのがわかります。また、このパラメータを収集する際、ユーザーに確認するメッセージをmessage_to_confirmに設定します。message_to_confirmのフォーマットは各メッセージプラットフォームのAPIに依存します。上記はLINEの例です。
+上記のサンプルコードではrequired_parameterプロパティにcolorが登録されているのがわかります。また、このパラメータを収集する際、ユーザーに確認するメッセージをmessage_to_confirmに設定します。message_to_confirmに設定するメッセージは利用するメッセージプラットフォーム毎に設定します。これはメッセージのフォーマットがメッセージプラットフォームのAPIに依存するためです。上記サンプルではLINE用のメッセージを設定しています。
 
 また、parseでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
 

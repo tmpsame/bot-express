@@ -1,7 +1,7 @@
 'use strict';
 
 let Apiai = require("apiai");
-//let Promise = require("bluebird");
+let Promise = require("bluebird");
 
 module.exports = class Apiai_promised {
     constructor(client_access_token){
