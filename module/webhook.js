@@ -20,7 +20,6 @@ let Virtual_platform = require("./virtual-platform");
 
 module.exports = class webhook {
     constructor(options){
-        console.log(options);
         this.options = options;
     }
 
@@ -72,6 +71,9 @@ module.exports = class webhook {
                 // Set session id for api.ai and text to identify intent.
                 let session_id = vp.extract_session_id(bot_event);
                 let text = vp.extract_message_text(bot_event);
+
+                console.log(session_id);
+                console.log(text);
 
                 promise_flow_completed = apiai.identify_intent(session_id, text).then(
                     (response) => {
