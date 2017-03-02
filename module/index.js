@@ -10,18 +10,18 @@ const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
 const DEFAULT_INTENT = "input.unknown";
 
-let express = require("express");
-let router = express.Router();
-let body_parser = require("body-parser");
-let Webhook = require("./webhook");
-
-router.use(body_parser.json({
-    verify: (req, res, buf, encoding) => {
-        req.raw_body = buf;
-    }
-}));
-
 module.exports = (options) => {
+    let express = require("express");
+    let router = express.Router();
+    let body_parser = require("body-parser");
+    let Webhook = require("./webhook");
+
+    router.use(body_parser.json({
+        verify: (req, res, buf, encoding) => {
+            req.raw_body = buf;
+        }
+    }));
+
     this.options = options;
 
     // Set optional options.
