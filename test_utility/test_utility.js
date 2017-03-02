@@ -8,7 +8,7 @@ module.exports = class TestUtility {
             skill_path: "../../sample_skill/",
             enable_ask_retry: false,
             message_to_ask_retry: "ごめんなさい、もうちょっと正確にお願いできますか？",
-            line_channel_id: process.env.LINE_CHANNELID,
+            line_channel_id: process.env.LINE_CHANNEL_ID,
             line_channel_secret: process.env.LINE_CHANNEL_SECRET,
             line_channel_access_token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
             facebook_page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
