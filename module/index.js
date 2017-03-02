@@ -22,36 +22,37 @@ router.use(body_parser.json({
 }));
 
 module.exports = (options) => {
-    console.log(options);
+    this.options = options;
+
     // Set optional options.
-    options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
-    options.default_intent = options.default_intent || DEFAULT_INTENT;
-    if (!!options.skill_path){
-        options.skill_path = "../../../../" + options.skill_path;
+    this.options.memory_retention = this.options.memory_retention || DEFAULT_MEMORY_RETENTION;
+    this.options.default_intent = this.options.default_intent || DEFAULT_INTENT;
+    if (!!this.options.skill_path){
+        this.options.skill_path = "../../../../" + this.options.skill_path;
     } else if (process.env.BOT_EXPRESS_ENV == "development"){
         // This is for Bot Express development environment only.
-        options.skill_path = "../../sample_skill/";
+        this.options.skill_path = "../../sample_skill/";
     } else {
-        options.skill_path = DEFAULT_SKILL_PATH;
+        this.options.skill_path = DEFAULT_SKILL_PATH;
     }
-    if (options.enable_ask_retry === null){
-        options.enable_ask_retry = false;
+    if (this.options.enable_ask_retry === null){
+        this.options.enable_ask_retry = false;
     }
-    options.message_to_ask_retry = options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
+    this.options.message_to_ask_retry = this.options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
 
     // Check if Message Platform Type is provided
-    if (!options.message_platform_type){
+    if (!this.options.message_platform_type){
         throw(`Required option: "message_platform_type" not set`);
     }
 
     // Check if Message Platform Type is supported
-    if (SUPPORTED_MESSAGE_PLATFORM_TYPE.indexOf(options.message_platform_type) === -1){
-        throw(`Specified message_platform_type: "${options.message_platform_type}" is not supported.`);
+    if (SUPPORTED_MESSAGE_PLATFORM_TYPE.indexOf(this.options.message_platform_type) === -1){
+        throw(`Specified message_platform_type: "${this.options.message_platform_type}" is not supported.`);
     }
 
     // Check if required options are set.
-    for (let req_opt of REQUIRED_OPTIONS[options.message_platform_type]){
-        if (typeof options[req_opt] == "undefined"){
+    for (let req_opt of REQUIRED_OPTIONS[this.options.message_platform_type]){
+        if (typeof this.options[req_opt] == "undefined"){
             throw(`Required option: "${req_opt}" not set`);
         }
     }
@@ -61,7 +62,7 @@ module.exports = (options) => {
     router.post('/', (req, res, next) => {
         res.status(200).end();
 
-        let webhook = new Webhook(options);
+        let webhook = new Webhook(this.options);
         webhook.run(req).then(
             (response) => {
                 console.log("Successful End of Webhook.");
@@ -75,9 +76,9 @@ module.exports = (options) => {
     });
 
     // Verify Facebook Webhook
-    if (options.message_platform_type == "facebook"){
+    if (this.options.message_platform_type == "facebook"){
         router.get("/", (req, res, next) => {
-            if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_page_access_token) {
+            if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.options.facebook_page_access_token) {
                 console.log("Validating webhook");
                 res.status(200).send(req.query['hub.challenge']);
             } else {

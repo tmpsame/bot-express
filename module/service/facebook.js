@@ -21,8 +21,6 @@ module.exports = class ServiceFacebook {
                     message: message
                 }
                 let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + this._page_access_token;
-                console.log(body);
-                console.log(url);
                 request({
                     url: url,
                     method: 'POST',
