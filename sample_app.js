@@ -5,27 +5,27 @@
 */
 let express = require("express");
 let logger = require('morgan');
-let Bot_express = require("./module/index2");
+let bot_express = require("./index.js");
 
 /*
 ** Middleware Configuration
 */
 let app = express();
+let router = express.Router();
 app.use(logger('dev'));
 app.listen(process.env.PORT || 5000, () => {
     console.log(`server is running...`);
 });
 
 // For LINE
-let bot_express = new Bot_express({
+router.use('/webhook/line', bot_express({
     message_platform_type: "line",
     line_channel_id: process.env.LINE_CHANNEL_ID,
     line_channel_secret: process.env.LINE_CHANNEL_SECRET,
     line_channel_access_token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
     default_skill: 'apologize'
-});
-app.use('/webhook/line', bot_express.webhook);
+}));
 
 // For Facebook
 /*
