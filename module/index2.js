@@ -51,6 +51,7 @@ module.exports = class BotExpress {
             }
         }
         console.log("Required options all set.");
+        console.log(this.options);
     }
 
     webhook(req, res, next){
