@@ -1,9 +1,7 @@
 'use strict';
 
 const REQUIRED_OPTIONS = {
-    common: ["apiai_client_access_token", "default_skill"],
-    line: ["line_channel_id", "line_channel_secret", "line_channel_access_token"],
-    facebook: ["facebook_page_access_token"]
+    common: ["apiai_client_access_token", "default_skill"]
 }
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
@@ -51,25 +49,6 @@ module.exports = (options) => {
     // Webhook Process
     router.post('/', (req, res, next) => {
         res.status(200).end();
-
-        // Identify Message Platform.
-        if (req.get("X-Line-Signature") && req.body.events){
-            options.message_platform_type = "line";
-        } else if (req.get("X-Hub-Signature") && req.body.object == "page"){
-            options.message_platform_type = "facebook";
-        } else {
-            console.log("This event comes from unsupported message platform. Skip processing.");
-            return;
-        }
-        console.log(`Message Platform is ${options.message_platform_type}`);
-
-        // Check if required options for this message platform are set.
-        for (let req_opt of REQUIRED_OPTIONS[options.message_platform_type]){
-            if (typeof options[req_opt] == "undefined"){
-                throw(`Required option: "${req_opt}" not set`);
-            }
-        }
-        console.log("Message Platform specific required options all set.");
 
         let webhook = new Webhook(options);
         webhook.run(req).then(

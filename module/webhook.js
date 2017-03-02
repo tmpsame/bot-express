@@ -1,5 +1,10 @@
 'use strict';
 
+const REQUIRED_OPTIONS = {
+    line: ["line_channel_id", "line_channel_secret", "line_channel_access_token"],
+    facebook: ["facebook_page_access_token"]
+}
+
 // Import NPM Packages
 let Promise = require("bluebird");
 let memory = require("memory-cache");
@@ -24,6 +29,26 @@ module.exports = class webhook {
     }
 
     run(req){
+        console.log("\nWebhook runs.\n");
+
+        // Identify Message Platform.
+        if (req.get("X-Line-Signature") && req.body.events){
+            this.options.message_platform_type = "line";
+        } else if (req.get("X-Hub-Signature") && req.body.object == "page"){
+            this.options.message_platform_type = "facebook";
+        } else {
+            return Promise.resolve(`This event comes from unsupported message platform. Skip processing.`);
+        }
+        console.log(`Message Platform is ${this.options.message_platform_type}`);
+
+        // Check if required options for this message platform are set.
+        for (let req_opt of REQUIRED_OPTIONS[options.message_platform_type]){
+            if (typeof this.options[req_opt] == "undefined"){
+                return Promise.reject(`Required option: "${req_opt}" not set`);
+            }
+        }
+        console.log("Message Platform specific required options all set.");
+
         // Instantiate Message Platform.
         let vp = new Virtual_platform(this.options);
         console.log("Virtual Message Platform instantiated.");
@@ -33,7 +58,6 @@ module.exports = class webhook {
             vp.validate_signature(req);
             console.log("Signature Validation suceeded.");
         }
-        console.log(vp.type);
 
         // Set Events.
         let bot_events = vp.extract_events(req.body);

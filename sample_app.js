@@ -11,7 +11,6 @@ let bot_express = require("./index.js");
 ** Middleware Configuration
 */
 let app = express();
-let router = express.Router();
 app.use(logger('dev'));
 app.listen(process.env.PORT || 5000, () => {
     console.log(`server is running...`);
