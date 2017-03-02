@@ -33,6 +33,7 @@ module.exports = class webhook {
             vp.validate_signature(req);
             console.log("Signature Validation suceeded.");
         }
+        console.log(vp);
 
         // Set Events.
         let bot_events = vp.extract_events(req.body);
