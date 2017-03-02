@@ -20,7 +20,7 @@ let Virtual_platform = require("./virtual-platform");
 
 module.exports = class webhook {
     constructor(options){
-        this.options = JSON.parse(JSON.stringify(options));
+        this.options = options;
     }
 
     run(req){
