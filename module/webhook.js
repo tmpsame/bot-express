@@ -24,6 +24,9 @@ module.exports = class webhook {
     }
 
     run(req){
+        console.log("Got following data");
+        console.log(req.body);
+
         // Instantiate Message Platform.
         let vp = new Virtual_platform(this.options);
         console.log("Virtual Message Platform instantiated.");
@@ -36,6 +39,7 @@ module.exports = class webhook {
 
         // Set Events.
         let bot_events = vp.extract_events(req.body);
+        console.log(bot_events);
 
         // Instantiate api.ai instance
         let apiai = new Apiai(this.options.apiai_client_access_token);
