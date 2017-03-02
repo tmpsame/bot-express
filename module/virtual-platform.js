@@ -150,11 +150,11 @@ module.exports = class VirtualPlatform {
     }
 
     _line_extract_session_id(bot_event){
-        return "line_" + bot_event.source.userId;
+        return bot_event.source.userId;
     }
 
     _facebook_extract_session_id(bot_event){
-        return "facebook_" + bot_event.sender.id;
+        return bot_event.sender.id;
     }
 
     extract_message_text(bot_event){
