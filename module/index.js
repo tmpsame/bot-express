@@ -23,6 +23,7 @@ router.use(body_parser.json({
 
 module.exports = (options) => {
     this.options = options;
+
     // Set optional options.
     this.options.memory_retention = this.options.memory_retention || DEFAULT_MEMORY_RETENTION;
     this.options.default_intent = this.options.default_intent || DEFAULT_INTENT;
@@ -57,11 +58,11 @@ module.exports = (options) => {
     }
     console.log("Required options all set.");
 
+    let webhook = new Webhook(this.options);
+
     // Webhook Process
     router.post('/', (req, res, next) => {
         res.status(200).end();
-
-        let webhook = new Webhook(this.options);
         webhook.run(req).then(
             (response) => {
                 console.log("Successful End of Webhook.");
