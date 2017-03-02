@@ -150,9 +150,11 @@ module.exports = class Flow {
     finish(){
         // If we still have parameters to confirm, we collect them.
         if (Object.keys(this.conversation.to_confirm).length > 0){
+            console.log("Going to collect parameter.");
             return this._collect();
         }
         // If we have no parameters to confirm, we finish this conversationw with final reply.
+        console.log("Going to perform final action.");
         return this.skill.finish(this.vp, this.bot_event, this.conversation);
     }
 };

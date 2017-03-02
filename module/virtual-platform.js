@@ -5,7 +5,6 @@ let Facebook = require("./service/facebook");
 
 module.exports = class VirtualPlatform {
     constructor(options){
-        console.log(options);
         this.type = options.message_platform_type;
         this.options = options;
         this.service = this.instantiate_service();
@@ -23,18 +22,18 @@ module.exports = class VirtualPlatform {
         return new Facebook(this.options.facebook_page_access_token);
     }
 
-    validate_signature(signature, raw_body){
-        return this[`_${this.type}_validate_signature`](signature, raw_body);
+    validate_signature(req){
+        return this[`_${this.type}_validate_signature`](req);
     }
 
-    _line_validate_signature(signature, raw_body){
-        if (!this.service.validate_signature(signature, raw_body)){
+    _line_validate_signature(req){
+        if (!this.service.validate_signature(req.get('X-Line-Signature'), req.raw_body)){
             throw(`Signature Validation failed.`);
         }
     }
 
     // Under development
-    _facebook_validate_signature(signature, raw_body){
+    _facebook_validate_signature(req){
         return true;
     }
 
@@ -223,6 +222,8 @@ module.exports = class VirtualPlatform {
     }
 
     _facebook_reply(bot_event, messages){
+        console.log(bot_event);
+        console.log(messages);
         return this.service.send(bot_event.sender.id, messages);
     }
 }

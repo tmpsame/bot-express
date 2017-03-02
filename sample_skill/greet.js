@@ -9,6 +9,7 @@ module.exports = class SkillGreet {
 
     finish(bot, bot_event, conversation){
         let messages = [bot.create_message(conversation.intent.fulfillment.speech, "text")];
+        console.log(messages);
         return bot.reply(bot_event, messages);
     }
 

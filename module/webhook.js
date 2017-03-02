@@ -24,23 +24,18 @@ module.exports = class webhook {
     }
 
     run(req){
-        console.log("Got following data");
-        console.log(req.body);
-
         // Instantiate Message Platform.
         let vp = new Virtual_platform(this.options);
         console.log("Virtual Message Platform instantiated.");
-        console.log(vp);
 
         // Signature Validation.
         if (process.env.BOT_EXPRESS_ENV != "development"){
-            vp.validate_signature(req.get('X-Line-Signature'), req.raw_body);
+            vp.validate_signature(req);
             console.log("Signature Validation suceeded.");
         }
 
         // Set Events.
         let bot_events = vp.extract_events(req.body);
-        console.log(bot_events);
 
         // Instantiate api.ai instance
         let apiai = new Apiai(this.options.apiai_client_access_token);
@@ -75,9 +70,6 @@ module.exports = class webhook {
                 // Set session id for api.ai and text to identify intent.
                 let session_id = vp.extract_session_id(bot_event);
                 let text = vp.extract_message_text(bot_event);
-
-                console.log(session_id);
-                console.log(text);
 
                 promise_flow_completed = apiai.identify_intent(session_id, text).then(
                     (response) => {
