@@ -224,6 +224,6 @@ module.exports = class VirtualPlatform {
     _facebook_reply(bot_event, messages){
         console.log(bot_event);
         console.log(messages);
-        return this.service.send(bot_event.sender.id, messages);
+        return this.service.send({id: bot_event.sender.id}, messages);
     }
 }
