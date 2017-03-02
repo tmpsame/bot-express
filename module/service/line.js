@@ -4,7 +4,7 @@ let crypto = require('crypto');
 let request = require('request');
 let Promise = require('bluebird');
 
-module.exports = class Line {
+module.exports = class ServiceLine {
 
     constructor(channel_id, channel_secret, channel_access_token){
         this._channel_id = channel_id;

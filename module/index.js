@@ -3,7 +3,7 @@
 const SUPPORTED_MESSAGE_PLATFORM_TYPE = ["line","facebook"];
 const REQUIRED_OPTIONS = {
     line: ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"],
-    facebook: ["facebook_token"]
+    facebook: ["facebook_page_access_token"]
 }
 const DEFAULT_MESSAGE_PLATFORM_TYPE = "line";
 const DEFAULT_MEMORY_RETENTION = 60000;
@@ -51,7 +51,6 @@ module.exports = (options) => {
         }
     }
     console.log("Required options all set.");
-    console.log(options);
 
     // Webhook Process
     router.post('/', (req, res, next) => {
@@ -73,13 +72,11 @@ module.exports = (options) => {
     // Verify Facebook Webhook
     if (options.message_platform_type == "facebook"){
         router.get("/", (req, res, next) => {
-            if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_token) {
+            if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_page_access_token) {
                 console.log("Validating webhook");
                 res.status(200).send(req.query['hub.challenge']);
             } else {
                 console.error("Failed validation. Make sure the validation tokens match.");
-                console.log(req.query['hub.verify_token']);
-                console.log(options.facebook_token);
                 res.sendStatus(403);
             }
         });

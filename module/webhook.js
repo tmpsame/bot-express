@@ -35,7 +35,7 @@ module.exports = class webhook {
         }
 
         // Set Events.
-        let bot_events = vp.extract_event(req.body);
+        let bot_events = vp.extract_events(req.body);
 
         // Instantiate api.ai instance
         let apiai = new Apiai(this.options.apiai_client_access_token);

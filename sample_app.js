@@ -31,7 +31,7 @@ app.use('/webhook/line', bot_express({
 // For Facebook
 app.use('/webhook/facebook', bot_express({
     message_platform_type: "facebook",
-    facebook_token: process.env.FACEBOOK_TOKEN,
+    facebook_page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
     default_skill: 'apologize'
 }));
