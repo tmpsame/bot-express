@@ -76,6 +76,9 @@ module.exports = class webhook {
                 let session_id = vp.extract_session_id(bot_event);
                 let text = vp.extract_message_text(bot_event);
 
+                console.log(session_id);
+                console.log(text);
+
                 promise_flow_completed = apiai.identify_intent(session_id, text).then(
                     (response) => {
                         console.log(`Intent is ${response.result.action}`);
