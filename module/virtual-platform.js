@@ -177,13 +177,10 @@ module.exports = class VirtualPlatform {
 
     _facebook_extract_message_text(bot_event){
         let message_text;
-        switch(bot_event.type){
-            case "message":
-                message_text = bot_event.message.text;
-            break;
-            case "postback":
-                message_text = bot_event.postback.payload;
-            break;
+        if (bot_event.message && bot_event.message.text){
+            message_text = bot_evnet.message.text;
+        } else if (bot_event.postback){
+            message_text = bot_event.postback.payload;
         }
         return message_text;
     }
