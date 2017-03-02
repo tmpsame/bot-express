@@ -58,9 +58,9 @@ module.exports = class ServiceLine {
         });
     }
 
-    validate_signature(signature, rawBody){
+    validate_signature(signature, raw_body){
         // Signature Validation
-        let hash = crypto.createHmac('sha256', this._channel_secret).update(rawBody).digest('base64');
+        let hash = crypto.createHmac('sha256', this._channel_secret).update(raw_body).digest('base64');
         if (hash != signature) {
             return false;
         }

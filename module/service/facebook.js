@@ -47,7 +47,7 @@ module.exports = class ServiceFacebook {
     validate_signature(signature, raw_body){
         // Signature Validation
         console.log(`Provided signature is "${signature}".`);
-        let hash = "sha1=" + crypto.createHmac('sha1', this._app_secret).update(raw_body);
+        let hash = "sha1=" + crypto.createHmac("sha1", this._app_secret).update(raw_body).digest("hex");
         console.log(`Computed hash is "${hash}".`);
         if (hash != signature) {
             return false;
