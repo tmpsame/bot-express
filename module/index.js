@@ -5,7 +5,7 @@ const REQUIRED_OPTIONS = {
     line: ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"],
     facebook: ["facebook_page_access_token"]
 }
-const DEFAULT_MESSAGE_PLATFORM_TYPE = "line";
+//const DEFAULT_MESSAGE_PLATFORM_TYPE = "line";
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
 const DEFAULT_INTENT = "input.unknown";
@@ -17,13 +17,13 @@ let Webhook = require("./webhook");
 
 router.use(body_parser.json({
     verify: (req, res, buf, encoding) => {
-        req.rawBody = buf;
+        req.raw_body = buf;
     }
 }));
 
 module.exports = (options) => {
+    console.log(options);
     // Set optional options.
-    options.message_platform_type = options.message_platform_type || DEFAULT_MESSAGE_PLATFORM_TYPE;
     options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
     options.default_intent = options.default_intent || DEFAULT_INTENT;
     if (!!options.skill_path){
@@ -38,6 +38,11 @@ module.exports = (options) => {
         options.enable_ask_retry = false;
     }
     options.message_to_ask_retry = options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
+
+    // Check if Message Platform Type is provided
+    if (!options.message_platform_type){
+        throw(`Required option: "message_platform_type" not set`);
+    }
 
     // Check if Message Platform Type is supported
     if (SUPPORTED_MESSAGE_PLATFORM_TYPE.indexOf(options.message_platform_type) === -1){
