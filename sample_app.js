@@ -18,7 +18,7 @@ app.listen(process.env.PORT || 5000, () => {
 });
 
 // For LINE
-router.use('/webhook/line', bot_express({
+app.use('/webhook/line', bot_express({
     message_platform_type: "line",
     line_channel_id: process.env.LINE_CHANNEL_ID,
     line_channel_secret: process.env.LINE_CHANNEL_SECRET,

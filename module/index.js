@@ -10,8 +10,6 @@ const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
 const DEFAULT_INTENT = "input.unknown";
 
-
-
 module.exports = (options) => {
     let express = require("express");
     let router = express.Router();
