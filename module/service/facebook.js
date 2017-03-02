@@ -41,4 +41,16 @@ module.exports = class ServiceFacebook {
             }
         )
     }
+
+    validate_signature(signature, raw_body){
+        // Signature Validation
+        /*
+        let hash = crypto.createHmac('sha256', this._channel_secret).update(raw_body).digest('base64');
+        if (hash != signature) {
+            return false;
+        }
+        return true;
+        */
+        return true;
+    }
 };

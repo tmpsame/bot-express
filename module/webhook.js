@@ -29,7 +29,7 @@ module.exports = class webhook {
         console.log("Virtual Message Platform instantiated.");
 
         // Signature Validation.
-        if (process.env.BOT_EXPRESS_ENV != "development"){
+        if (process.env.BOT_EXPRESS_ENV != "test"){
             vp.validate_signature(req);
             console.log("Signature Validation suceeded.");
         }

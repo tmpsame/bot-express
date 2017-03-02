@@ -30,11 +30,13 @@ let bot_express = require('bot-express');
 
 ```
 app.use('/webhook', bot_dock({
-    line_channel_id: 'あなたのLINE Channel ID', // 必須
-    line_channel_secret: 'あなたのLINE Channel Secret', // 必須
-    line_channel_access_token: 'あなたのLINE Channel Access Token', // 必須
     apiai_client_access_token: 'あなたのAPIAI Client Access Token', // 必須
     default_skill: 'あなたのskill', // 必須。Intentが特定されなかった場合に使うSkill
+    line_channel_id: 'あなたのLINE Channel ID', // LINE対応の場合必須
+    line_channel_secret: 'あなたのLINE Channel Secret', // LINE対応の場合必須
+    line_channel_access_token: 'あなたのLINE Channel Access Token', // LINE対応の場合必須
+    facebook_page_access_token: 'あなたのFacebook Page Access Token', // Facebook対応の場合必須
+    facebook_verify_token: 'あなたのFacebook Verify Token', // オプション。FacebookのWebhook認証用トークン。デフォルトはfacebook_page_access_tokenに指定した値
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline

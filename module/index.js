@@ -1,11 +1,10 @@
 'use strict';
 
-const SUPPORTED_MESSAGE_PLATFORM_TYPE = ["line","facebook"];
 const REQUIRED_OPTIONS = {
-    line: ["line_channel_id", "line_channel_secret", "line_channel_access_token", "apiai_client_access_token", "default_skill"],
+    common: ["apiai_client_access_token", "default_skill"],
+    line: ["line_channel_id", "line_channel_secret", "line_channel_access_token"],
     facebook: ["facebook_page_access_token"]
 }
-//const DEFAULT_MESSAGE_PLATFORM_TYPE = "line";
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
 const DEFAULT_INTENT = "input.unknown";
@@ -23,47 +22,56 @@ router.use(body_parser.json({
 
 module.exports = (options) => {
     console.log("\nBot Express\n");
-    this.options = options;
 
     // Set optional options.
-    this.options.memory_retention = this.options.memory_retention || DEFAULT_MEMORY_RETENTION;
-    this.options.default_intent = this.options.default_intent || DEFAULT_INTENT;
-    if (!!this.options.skill_path){
-        this.options.skill_path = "../../../../" + this.options.skill_path;
-    } else if (process.env.BOT_EXPRESS_ENV == "development"){
+    options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
+    options.default_intent = options.default_intent || DEFAULT_INTENT;
+    if (!!options.skill_path){
+        options.skill_path = "../../../../" + options.skill_path;
+    } else if (process.env.BOT_EXPRESS_ENV == "development" || process.env.BOT_EXPRESS_ENV == "test"){
         // This is for Bot Express development environment only.
-        this.options.skill_path = "../../sample_skill/";
+        options.skill_path = "../../sample_skill/";
     } else {
-        this.options.skill_path = DEFAULT_SKILL_PATH;
+        options.skill_path = DEFAULT_SKILL_PATH;
     }
-    if (this.options.enable_ask_retry === null){
-        this.options.enable_ask_retry = false;
+    if (options.enable_ask_retry === null){
+        options.enable_ask_retry = false;
     }
-    this.options.message_to_ask_retry = this.options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
+    options.message_to_ask_retry = options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
+    options.facebook_verify_token = options.facebook_verify_token || options.facebook_page_access_token;
 
-    // Check if Message Platform Type is provided
-    if (!this.options.message_platform_type){
-        throw(`Required option: "message_platform_type" not set`);
-    }
-
-    // Check if Message Platform Type is supported
-    if (SUPPORTED_MESSAGE_PLATFORM_TYPE.indexOf(this.options.message_platform_type) === -1){
-        throw(`Specified message_platform_type: "${this.options.message_platform_type}" is not supported.`);
-    }
-
-    // Check if required options are set.
-    for (let req_opt of REQUIRED_OPTIONS[this.options.message_platform_type]){
-        if (typeof this.options[req_opt] == "undefined"){
+    // Check if common required options are set.
+    for (let req_opt of REQUIRED_OPTIONS["common"]){
+        if (typeof options[req_opt] == "undefined"){
             throw(`Required option: "${req_opt}" not set`);
         }
     }
-    console.log("Required options all set.");
-
-    let webhook = new Webhook(this.options);
+    console.log("Common required options all set.");
 
     // Webhook Process
     router.post('/', (req, res, next) => {
         res.status(200).end();
+
+        // Identify Message Platform.
+        if (req.get("X-Line-Signature") && req.body.events){
+            options.message_platform_type = "line";
+        } else if (req.get("X-Hub-Signature") && req.body.object == "page"){
+            options.message_platform_type = "facebook";
+        } else {
+            console.log("This event comes from unsupported message platform. Skip processing.");
+            return;
+        }
+        console.log(`Message Platform is ${options.message_platform_type}`);
+
+        // Check if required options for this message platform are set.
+        for (let req_opt of REQUIRED_OPTIONS[options.message_platform_type]){
+            if (typeof options[req_opt] == "undefined"){
+                throw(`Required option: "${req_opt}" not set`);
+            }
+        }
+        console.log("Message Platform specific required options all set.");
+
+        let webhook = new Webhook(options);
         webhook.run(req).then(
             (response) => {
                 console.log("Successful End of Webhook.");
@@ -77,16 +85,19 @@ module.exports = (options) => {
     });
 
     // Verify Facebook Webhook
-    if (this.options.message_platform_type == "facebook"){
-        router.get("/", (req, res, next) => {
-            if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === this.options.facebook_page_access_token) {
-                console.log("Validating webhook");
-                res.status(200).send(req.query['hub.challenge']);
-            } else {
-                console.error("Failed validation. Make sure the validation tokens match.");
-                res.sendStatus(403);
-            }
-        });
-    }
+    router.get("/", (req, res, next) => {
+        if (!options.facebook_verify_token){
+            console.error("Failed validation. facebook_verify_token not set.");
+            res.sendStatus(403);
+        }
+        if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_verify_token) {
+            console.log("Validating webhook");
+            res.status(200).send(req.query['hub.challenge']);
+        } else {
+            console.error("Failed validation. Make sure the validation tokens match.");
+            res.sendStatus(403);
+        }
+    });
+
     return router;
 }

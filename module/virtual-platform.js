@@ -32,9 +32,10 @@ module.exports = class VirtualPlatform {
         }
     }
 
-    // Under development
     _facebook_validate_signature(req){
-        return true;
+        if (!this.service.validate_signature(req.get('X-Hub-Signature'), req.raw_body)){
+            throw(`Signature Validation failed.`);
+        }
     }
 
     extract_events(body){
