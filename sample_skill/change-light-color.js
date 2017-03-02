@@ -26,6 +26,9 @@ module.exports = class SkillChangeLightColor {
                     line: {
                         type: "text",
                         text: "何色にしますか？"
+                    },
+                    facebook: {
+                        text: "何色にしますか？"
                     }
                 },
                 parse: this.parse_color
