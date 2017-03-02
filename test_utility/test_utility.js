@@ -30,6 +30,12 @@ module.exports = class TestUtility {
                       "userId": user_id
                     }
                 }]
+            },
+            get: function(param){
+                let header = {
+                    "X-Line-Signature": "dummy"
+                };
+                return header[param];
             }
         }
         switch(type){
