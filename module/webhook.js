@@ -20,6 +20,7 @@ let Virtual_platform = require("./virtual-platform");
 
 module.exports = class webhook {
     constructor(options){
+        console.log(options);
         this.options = options;
     }
 
@@ -33,7 +34,7 @@ module.exports = class webhook {
             vp.validate_signature(req);
             console.log("Signature Validation suceeded.");
         }
-        console.log(vp);
+        console.log(vp.type);
 
         // Set Events.
         let bot_events = vp.extract_events(req.body);

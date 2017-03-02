@@ -22,9 +22,6 @@ router.use(body_parser.json({
 }));
 
 module.exports = (options) => {
-
-    this.options = JSON.parse(JSON.stringify(options));
-
     // Set optional options.
     this.options.memory_retention = this.options.memory_retention || DEFAULT_MEMORY_RETENTION;
     this.options.default_intent = this.options.default_intent || DEFAULT_INTENT;
