@@ -1,5 +1,6 @@
 'use strict';
 
+let crypto = require('crypto');
 let request = require('request');
 let Promise = require('bluebird');
 
