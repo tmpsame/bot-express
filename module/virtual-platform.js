@@ -178,7 +178,7 @@ module.exports = class VirtualPlatform {
     _facebook_extract_message_text(bot_event){
         let message_text;
         if (bot_event.message && bot_event.message.text){
-            message_text = bot_evnet.message.text;
+            message_text = bot_event.message.text;
         } else if (bot_event.postback){
             message_text = bot_event.postback.payload;
         }
