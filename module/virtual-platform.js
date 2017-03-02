@@ -5,6 +5,7 @@ let Facebook = require("./service/facebook");
 
 module.exports = class VirtualPlatform {
     constructor(options){
+        console.log(options);
         this.type = options.message_platform_type;
         this.options = options;
         this.service = this.instantiate_service();
