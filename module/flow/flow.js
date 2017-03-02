@@ -71,7 +71,7 @@ module.exports = class Flow {
             console.log("While we need to send a message to confirm parameter, the message not found.");
             return Promise.reject();
         }
-        let messages = [this.conversation.to_confirm[Object.keys(this.conversation.to_confirm)[0]].message_to_confirm[this.vp.type];
+        let messages = [this.conversation.to_confirm[Object.keys(this.conversation.to_confirm)[0]].message_to_confirm[this.vp.type]];
 
         // Set confirming.
         this.conversation.confirming = Object.keys(this.conversation.to_confirm)[0];
