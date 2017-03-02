@@ -27,15 +27,11 @@ module.exports = class VirtualPlatform {
     }
 
     _line_validate_signature(req){
-        if (!this.service.validate_signature(req.get('X-Line-Signature'), req.raw_body)){
-            throw(`Signature Validation failed.`);
-        }
+        return this.service.validate_signature(req.get('X-Line-Signature'), req.raw_body);
     }
 
     _facebook_validate_signature(req){
-        if (!this.service.validate_signature(req.get('X-Hub-Signature'), req.raw_body)){
-            throw(`Signature Validation failed.`);
-        }
+        return this.service.validate_signature(req.get('X-Hub-Signature'), req.raw_body);
     }
 
     extract_events(body){

@@ -55,7 +55,9 @@ module.exports = class webhook {
 
         // Signature Validation.
         if (process.env.BOT_EXPRESS_ENV != "test"){
-            vp.validate_signature(req);
+            if (!vp.validate_signature(req)){
+                return Promise.reject("Signature Validation failed.");
+            }
             console.log("Signature Validation suceeded.");
         }
 
