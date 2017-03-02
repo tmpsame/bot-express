@@ -19,7 +19,7 @@ module.exports = class VirtualPlatform {
     }
 
     _facebook_instantiate_service(){
-        return new Facebook(this.options.facebook_page_access_token);
+        return new Facebook(this.options.facebook_app_secret, this.options.facebook_page_access_token);
     }
 
     validate_signature(req){

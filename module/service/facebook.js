@@ -5,7 +5,8 @@ let Promise = require('bluebird');
 
 module.exports = class ServiceFacebook {
 
-    constructor(page_access_token){
+    constructor(app_secret, page_access_token){
+        this._app_secret = app_secret;
         this._page_access_token = page_access_token;
     }
 
@@ -44,13 +45,12 @@ module.exports = class ServiceFacebook {
 
     validate_signature(signature, raw_body){
         // Signature Validation
-        /*
-        let hash = crypto.createHmac('sha256', this._channel_secret).update(raw_body).digest('base64');
+        console.log(`Provided signature is "${signature}".`);
+        let hash = "sha1=" + crypto.createHmac('sha1', this._app_secret).update(raw_body);
+        console.log(`Computed hash is "${hash}".`);
         if (hash != signature) {
             return false;
         }
-        return true;
-        */
         return true;
     }
 };
