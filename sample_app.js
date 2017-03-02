@@ -20,6 +20,7 @@ app.listen(process.env.PORT || 5000, () => {
 ** Router Configuration
 */
 // For LINE
+/*
 app.use('/webhook/line', bot_express({
     message_platform_type: "line",
     line_channel_id: process.env.LINE_CHANNEL_ID,
@@ -28,6 +29,7 @@ app.use('/webhook/line', bot_express({
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
     default_skill: 'apologize'
 }));
+*/
 // For Facebook
 app.use('/webhook/facebook', bot_express({
     message_platform_type: "facebook",
