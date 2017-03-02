@@ -42,7 +42,7 @@ module.exports = class webhook {
         console.log(`Message Platform is ${this.options.message_platform_type}`);
 
         // Check if required options for this message platform are set.
-        for (let req_opt of REQUIRED_OPTIONS[options.message_platform_type]){
+        for (let req_opt of REQUIRED_OPTIONS[this.options.message_platform_type]){
             if (typeof this.options[req_opt] == "undefined"){
                 return Promise.reject(`Required option: "${req_opt}" not set`);
             }
