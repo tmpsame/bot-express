@@ -30,6 +30,7 @@ module.exports = class webhook {
         // Instantiate Message Platform.
         let vp = new Virtual_platform(this.options);
         console.log("Virtual Message Platform instantiated.");
+        console.log(vp);
 
         // Signature Validation.
         if (process.env.BOT_EXPRESS_ENV != "development"){
