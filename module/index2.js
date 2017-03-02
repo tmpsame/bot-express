@@ -54,7 +54,7 @@ module.exports = class BotExpress {
         console.log(this.options);
     }
 
-    webhook(req, res, next){
+    webhook(){
 
         let w = new Webhook(this.options);
 
@@ -85,5 +85,6 @@ module.exports = class BotExpress {
                 }
             });
         }
+        return router;
     }
 }
