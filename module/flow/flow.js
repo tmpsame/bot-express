@@ -1,31 +1,32 @@
 'use strict';
 
 let Promise = require('bluebird');
+let debug = require("debug")("flow");
 let apiai = require('apiai');
 
 module.exports = class Flow {
-    constructor(vp, bot_event, conversation, options){
+    constructor(vp, bot_event, context, options){
         this.vp = vp;
         this.bot_event = bot_event;
-        this.conversation = conversation;
+        this.context = context;
         this.skill_path = options.skill_path;
         this.default_skill = options.default_skill;
         this.default_intent = options.default_intent;
-        this.skill = this._instantiate_skill(this.conversation.intent.action);
+        this.skill = this._instantiate_skill(this.context.intent.action);
 
         if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
-            console.log(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
+            debug(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
         } else {
-            console.log(`This skill requires 0 parameters.`);
+            debug(`This skill requires 0 parameters.`);
         }
-        this.conversation.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.conversation.confirmed);
+        this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
 
-        console.log(`We have ${Object.keys(this.conversation.to_confirm).length} parameters to confirm.`);
+        debug(`We have ${Object.keys(this.context.to_confirm).length} parameters to confirm.`);
     }
 
     _instantiate_skill(intent){
         if (!intent){
-            console.log("Intent should have been set but not.");
+            debug("Intent should have been set but not.");
             return;
         }
 
@@ -38,8 +39,8 @@ module.exports = class Flow {
         try {
             Skill = require(`${this.skill_path}${intent}`);
         } catch (err){
-            console.log(`Cannnot import ${this.skill_path}${intent}`);
-            console.log(err);
+            debug(`Cannnot import ${this.skill_path}${intent}`);
+            debug(err);
             throw(err);
         }
         return new Skill();
@@ -63,18 +64,18 @@ module.exports = class Flow {
     }
 
     _collect(){
-        if (Object.keys(this.conversation.to_confirm).length == 0){
-            console.log("While collect() is called, there is no parameter to confirm.");
+        if (Object.keys(this.context.to_confirm).length == 0){
+            debug("While collect() is called, there is no parameter to confirm.");
             return Promise.reject();
         }
-        if (!this.conversation.to_confirm[Object.keys(this.conversation.to_confirm)[0]].message_to_confirm[this.vp.type]){
-            console.log("While we need to send a message to confirm parameter, the message not found.");
+        if (!this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm[this.vp.type]){
+            debug("While we need to send a message to confirm parameter, the message not found.");
             return Promise.reject();
         }
-        let messages = [this.conversation.to_confirm[Object.keys(this.conversation.to_confirm)[0]].message_to_confirm[this.vp.type]];
+        let messages = [this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm[this.vp.type]];
 
         // Set confirming.
-        this.conversation.confirming = Object.keys(this.conversation.to_confirm)[0];
+        this.context.confirming = Object.keys(this.context.to_confirm)[0];
 
         // Send question to the user.
         return this.vp.reply(this.bot_event, messages);
@@ -85,7 +86,7 @@ module.exports = class Flow {
     }
 
     add_parameter(key, value, is_change = false){
-        console.log(`Parsing parameter {${key}: "${value}"}`);
+        debug(`Parsing parameter {${key}: "${value}"}`);
 
         let parsed_value;
 
@@ -108,7 +109,7 @@ module.exports = class Flow {
             }
         } else {
             // This is not the parameter we care about. So skip it.
-            console.log("This is not the parameter we care about.");
+            debug("This is not the parameter we care about.");
             throw("This is not the parameter we care about.");
         }
 
@@ -117,29 +118,29 @@ module.exports = class Flow {
             throw(`The value does not fit to this parameter.`);
         }
 
-        console.log(`Adding parameter {${key}: "${parsed_value}"}`);
+        debug(`Adding parameter {${key}: "${parsed_value}"}`);
 
         // Add the parameter to "confirmed".
         let param = {};
         param[key] = parsed_value;
-        Object.assign(this.conversation.confirmed, param);
+        Object.assign(this.context.confirmed, param);
 
         // At the same time, add the parameter key to previously confirmed list. The order of this list is newest first.
         if (!is_change){
-            this.conversation.previous.confirmed.unshift(key);
+            this.context.previous.confirmed.unshift(key);
         }
 
         // Remove item from to_confirm.
-        if (this.conversation.to_confirm[key]){
-            delete this.conversation.to_confirm[key];
+        if (this.context.to_confirm[key]){
+            delete this.context.to_confirm[key];
         }
 
         // Clear confirming.
-        if (this.conversation.confirming == key){
-            this.conversation.confirming = null;
+        if (this.context.confirming == key){
+            this.context.confirming = null;
         }
 
-        console.log(`We have ${Object.keys(this.conversation.to_confirm).length} parameters to confirm.`);
+        debug(`We have ${Object.keys(this.context.to_confirm).length} parameters to confirm.`);
     }
 
     ask_retry(message_text){
@@ -149,12 +150,12 @@ module.exports = class Flow {
 
     finish(){
         // If we still have parameters to confirm, we collect them.
-        if (Object.keys(this.conversation.to_confirm).length > 0){
-            console.log("Going to collect parameter.");
+        if (Object.keys(this.context.to_confirm).length > 0){
+            debug("Going to collect parameter.");
             return this._collect();
         }
-        // If we have no parameters to confirm, we finish this conversationw with final reply.
-        console.log("Going to perform final action.");
-        return this.skill.finish(this.vp, this.bot_event, this.conversation);
+        // If we have no parameters to confirm, we finish this context with final reply.
+        debug("Going to perform final action.");
+        return this.skill.finish(this.vp, this.bot_event, this.context);
     }
 };

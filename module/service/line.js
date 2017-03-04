@@ -3,6 +3,7 @@
 let crypto = require('crypto');
 let request = require('request');
 let Promise = require('bluebird');
+let debug = require("debug")("service");
 
 module.exports = class ServiceLine {
 

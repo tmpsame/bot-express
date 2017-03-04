@@ -110,31 +110,31 @@ module.exports = class VirtualPlatform {
                 if (bot_event.message && bot_event.message.text){
                     return true;
                 }
-                return true;
+                return false;
             break;
             case "reply":
                 if ((bot_event.message && bot_event.message.text) || bot_event.postback){
                     return true;
                 }
-                return true;
+                return false;
             break;
             case "change_intent":
                 if (bot_event.message && bot_event.message.text){
                     return true;
                 }
-                return true;
+                return false;
             break;
             case "change_parameter":
                 if ((bot_event.message && bot_event.message.text) || bot_event.postback){
                     return true;
                 }
-                return true;
+                return false;
             break;
             case "no_way":
                 if (bot_event.message && bot_event.message.text){
                     return true;
                 }
-                return true;
+                return false;
             break;
             default:
                 return false;

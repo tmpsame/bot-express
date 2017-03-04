@@ -8,6 +8,7 @@ const REQUIRED_OPTIONS = {
 // Import NPM Packages
 let Promise = require("bluebird");
 let memory = require("memory-cache");
+let debug = require("debug")("webhook");
 
 // Import Flows
 let start_conversation_flow = require('./flow/start_conversation');
@@ -20,7 +21,7 @@ let no_way_flow = require('./flow/no_way');
 let Line = require("./service/line");
 let Apiai = require("./service/apiai");
 
-// Import Virtual Platform abstraction.
+// Import Platform Abstraction.
 let Virtual_platform = require("./virtual-platform");
 
 module.exports = class webhook {
@@ -29,7 +30,16 @@ module.exports = class webhook {
     }
 
     run(req){
-        console.log("\nWebhook runs.\n");
+        debug("\nWebhook runs.\n");
+
+        // FOR TEST PURPOSE ONLY: Clear Memory.
+        if (process.env.BOT_EXPRESS_ENV == "test" && req.clear_memory){
+            memory.put(req.clear_memory, null);
+            return Promise.resolve({
+                message: "memory cleared",
+                memory_id: req.clear_memory
+            });
+        }
 
         // Identify Message Platform.
         if (req.get("X-Line-Signature") && req.body.events){
@@ -39,26 +49,29 @@ module.exports = class webhook {
         } else {
             return Promise.resolve(`This event comes from unsupported message platform. Skip processing.`);
         }
-        console.log(`Message Platform is ${this.options.message_platform_type}`);
+        debug(`Message Platform is ${this.options.message_platform_type}`);
 
         // Check if required options for this message platform are set.
         for (let req_opt of REQUIRED_OPTIONS[this.options.message_platform_type]){
             if (typeof this.options[req_opt] == "undefined"){
-                return Promise.reject(`Required option: "${req_opt}" not set`);
+                return Promise.reject({
+                    reason: "required option missing",
+                    missing_option: req_opt
+                });
             }
         }
-        console.log("Message Platform specific required options all set.");
+        debug("Message Platform specific required options all set.");
 
         // Instantiate Message Platform.
         let vp = new Virtual_platform(this.options);
-        console.log("Virtual Message Platform instantiated.");
+        debug("Virtual Message Platform instantiated.");
 
         // Signature Validation.
         if (process.env.BOT_EXPRESS_ENV != "test"){
             if (!vp.validate_signature(req)){
                 return Promise.reject("Signature Validation failed.");
             }
-            console.log("Signature Validation suceeded.");
+            debug("Signature Validation suceeded.");
         }
 
         // Set Events.
@@ -66,32 +79,26 @@ module.exports = class webhook {
 
         // Instantiate api.ai instance
         let apiai = new Apiai(this.options.apiai_client_access_token);
-        console.log("api.ai instantiated.");
+        debug("api.ai instantiated.");
 
         for (let bot_event of bot_events){
-            //console.log(`Processing following bot event.`);
-            //console.log(bot_event);
-
             // Recall Memory
             let memory_id = vp.extract_memory_id(bot_event);
-            console.log(`memory id is ${memory_id}.`);
+            debug(`memory id is ${memory_id}.`);
 
-            let conversation = memory.get(memory_id);
-            //console.log(`Previous conversation is following.`);
-            //console.log(conversation);
+            let context = memory.get(memory_id);
 
             let promise_flow_completed;
             let flow;
 
-            if (!conversation){
+            if (!context){
                 /*
                 ** Start Conversation Flow.
                 */
 
                 // Check if this event type is supported in this flow.
                 if (!vp.check_supported_event_type("start_conversation", bot_event)){
-                    console.log(`This is unsupported event type in this flow so skip processing.`);
-                    return Promise.resolve(`skipped-unsupported-event-in-start-conversation-flow`);
+                    return Promise.resolve(`unsupported event for start conversation flow`);
                 }
 
                 // Set session id for api.ai and text to identify intent.
@@ -100,10 +107,10 @@ module.exports = class webhook {
 
                 promise_flow_completed = apiai.identify_intent(session_id, text).then(
                     (response) => {
-                        console.log(`Intent is ${response.result.action}`);
+                        debug(`Intent is ${response.result.action}`);
 
                         // Instantiate the conversation object. This will be saved as Bot Memory.
-                        conversation = {
+                        context = {
                             intent: response.result,
                             confirmed: {},
                             to_confirm: {},
@@ -113,107 +120,69 @@ module.exports = class webhook {
                             }
                         };
                         try {
-                            flow = new start_conversation_flow(vp, bot_event, conversation, this.options);
+                            flow = new start_conversation_flow(vp, bot_event, context, this.options);
                         } catch(err) {
                             return Promise.reject(err);
                         }
                         return flow.run();
                     },
                     (response) => {
-                        console.log("Failed to identify intent.");
+                        debug("Failed to identify intent.");
                         return Promise.reject(response);
                     }
                 );
-            // End of Start Conversation Flow.
+                // End of Start Conversation Flow.
             } else {
-                if (!!conversation.confirming){
+                if (!!context.confirming){
                     /*
                     ** Reply Flow
                     */
 
                     // Check if this event type is supported in this flow.
                     if (!vp.check_supported_event_type("reply", bot_event)){
-                        console.log(`This is unsupported event type in this flow so skip processing.`)
-                        return Promise.resolve(`skipped-unsupported-event-in-reply-flow`);
+                        debug(`This is unsupported event type in this flow so skip processing.`)
+                        return Promise.resolve(`unsupported event for reply flow`);
                     }
 
                     try {
-                        flow = new reply_flow(vp, bot_event, conversation, this.options);
+                        flow = new reply_flow(vp, bot_event, context, this.options);
                     } catch(err){
                         return Promise.reject(err);
                     }
                     promise_flow_completed = flow.run();
                     // End of Reply Flow
                 } else {
+                    // Check if this is Change Intent Flow.
+                    let promise_is_change_intent_flow;
 
-                    // Check the possiblity if this is change intent flow.
-                    let possibly_change_intent_flow = true;
                     if (!vp.check_supported_event_type("change_intent", bot_event)){
                         let possibly_change_intent_flow = false;
-                    }
-
-                    // Check if this is Change Intent Flow.
-                    if (possibly_change_intent_flow){
-
+                        promise_is_change_intent_flow = new Promise((resolve, reject) => {
+                            resolve({
+                                result: false,
+                                intent: null,
+                                reason: "unsupported event for change intent flow"
+                            });
+                        });
+                    } else {
                         // Set session id for api.ai and text to identify intent.
                         let session_id = vp.extract_session_id(bot_event);
                         let text = vp.extract_message_text(bot_event);
 
-                        promise_flow_completed = apiai.identify_intent(session_id, text).then(
+                        promise_is_change_intent_flow = apiai.identify_intent(session_id, text).then(
                             (response) => {
                                 if (response.result.action != this.options.default_intent){
-                                    /*
-                                    ** Change Intent Flow
-                                    */
-
-                                    // Set new intent while keeping other data.
-                                    conversation.intent = response.result;
-                                    try {
-                                        flow = new change_intent_flow(vp, bot_event, conversation, this.options);
-                                    } catch(err){
-                                        return Promise.reject(err);
+                                    // This is change intent flow.
+                                    debug("This is change intent flow since we could identify intent.");
+                                    return {
+                                        result: true,
+                                        intent: response.result
                                     }
-                                    return flow.run();
-                                    // End of Change Intent Flow
                                 } else {
-                                    if (conversation.previous.confirmed.length > 0 && conversation.intent.action != this.options.default_intent){
-                                        /*
-                                        ** Assume this is Change Parameter Flow.
-                                        */
-                                        try {
-                                            flow = new change_parameter_flow(vp, bot_event, conversation, this.options);
-                                        } catch(err){
-                                            return Promise.reject(err);
-                                        }
-                                        return flow.run().then(
-                                            (response) => {
-                                                // Now it is confirmed this is Change Parameter Flow.
-                                                return response;
-                                            },
-                                            (response) => {
-                                                if (response == "no_fit"){
-                                                    /*
-                                                    ** Now it turned to be No Way Flow.
-                                                    */
-                                                    try {
-                                                        flow = new no_way_flow(vp, bot_event, conversation, this.options);
-                                                    } catch(err){
-                                                        return Promise.reject(err);
-                                                    }
-                                                    return flow.run();
-                                                }
-                                            }
-                                        ); // End of Assume this is Change Parameter Flow.
-                                    } else {
-                                        /*
-                                        ** No Way Flow.
-                                        */
-                                        try {
-                                            flow = new no_way_flow(vp, bot_event, conversation, this.options);
-                                        } catch(err){
-                                            return Promise.reject(err);
-                                        }
-                                        return flow.run();
+                                    debug("This is not change intent flow since we could not identify intent.");
+                                    return {
+                                        result: false,
+                                        intent: response.result
                                     }
                                 }
                             },
@@ -222,60 +191,94 @@ module.exports = class webhook {
                                 return Promise.reject(response);
                             }
                         );
-                    } else {
-                        if (conversation.previous.confirmed.length > 0 && conversation.intent.action != this.options.default_intent){
-                            /*
-                            ** Assume this is Change Parameter Flow.
-                            */
-                            try {
-                                flow = new change_parameter_flow(vp, bot_event, conversation, this.options);
-                            } catch(err){
-                                return Promise.reject(err);
-                            }
-                            return flow.run().then(
-                                (response) => {
-                                    // It is confirmd this is Change Parameter Flow.
-                                    return response;
-                                },
-                                (response) => {
-                                    if (response == "no_fit"){
-                                        // It turned out to be No Way Flow.
+                    }
+
+                    promise_flow_completed = promise_is_change_intent_flow.then(
+                        (response) => {
+                            if (response.result){
+                                /*
+                                ** Change Intent Flow
+                                */
+
+                                // Set new intent while keeping other data.
+                                context.intent = response.intent;
+                                try {
+                                    flow = new change_intent_flow(vp, bot_event, context, this.options);
+                                } catch(err){
+                                    return Promise.reject(err);
+                                }
+                                return flow.run();
+                                // End of Change Intent Flow
+                            } else {
+                                // Check if this is Change Parameter Flow.
+                                let promise_is_change_parameter_flow;
+
+                                if (!context.previous.confirmed || context.previous.confirmed.length == 0 || context.intent.action == this.options.default_intent){
+                                    // This is not Change Parameter Flow.
+                                    debug("This is not change parameter flow since we cannot find previously confirmed parameter. Or previous intent was default intent.")
+                                    promise_is_change_parameter_flow = new Promise((resolve, reject) => {
+                                        resolve({
+                                            result: false
+                                        });
+                                    });
+                                } else {
+                                    // Assume this is Change Parameter Flow.
+                                    try {
+                                        flow = new change_parameter_flow(vp, bot_event, context, this.options);
+                                    } catch(err){
+                                        return Promise.reject(err);
+                                    }
+                                    promise_is_change_parameter_flow = flow.run();
+                                }
+
+                                return promise_is_change_parameter_flow.then(
+                                    (response) => {
+                                        if (response.result){
+                                            /*
+                                            ** This was Change Parameter Flow
+                                            */
+                                            debug("This was change parameter flow since we could change parameter.");
+                                            return response.response;
+                                        }
+
+                                        /*
+                                        ** This is No Way Flow
+                                        */
+                                        debug("This is no way flow.");
                                         try {
-                                            flow = new no_way_flow(vp, bot_event, conversation, this.options);
+                                            flow = new no_way_flow(vp, bot_event, context, this.options);
                                         } catch(err){
                                             return Promise.reject(err);
                                         }
                                         return flow.run();
+                                    },
+                                    (response) => {
+                                        // This is exception. Stop processing webhook and reject.
+                                        return Promise.reject(response);
                                     }
-                                }
-                            ); // End of Assume this is Change Parameter Flow.
-                        } else {
-                            /*
-                            ** No Way Flow
-                            */
-                            try {
-                                flow = new no_way_flow(vp, bot_event, conversation, this.options);
-                            } catch(err){
-                                return Promise.reject(err);
+                                );
                             }
-                            return flow.run();
+                        },
+                        (response) => {
+                            // This is exception. Stop processing webhook and reject.
+                            return Promise.reject(response);
                         }
-                    }
+                    );
                 }
             }
 
             // Completion of Flow
             return promise_flow_completed.then(
                 (response) => {
-                    console.log("Successful End of Flow.");
+                    debug("Successful End of Flow.");
 
                     // Update memory.
-                    memory.put(memory_id, flow.conversation, this.options.memory_retention);
+                    memory.put(memory_id, flow.context, this.options.memory_retention);
 
-                    return flow.conversation;
+                    return flow.context;
                 },
                 (response) => {
-                    console.log("Abnormal End of Flow.");
+                    debug("Abnormal End of Flow.");
 
                     // Clear memory.
                     memory.put(memory_id, null);

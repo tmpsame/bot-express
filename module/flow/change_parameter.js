@@ -4,6 +4,7 @@
 ** Import Packages
 */
 let Promise = require('bluebird');
+let debug = require("debug")("flow");
 let Flow = require("./flow");
 
 
@@ -15,44 +16,55 @@ module.exports = class ChangeParameterFlow extends Flow {
     ** - Run final action.
     */
 
-    constructor(vp, bot_event, conversation, options) {
-        super(vp, bot_event, conversation, options);
+    constructor(vp, bot_event, context, options) {
+        super(vp, bot_event, context, options);
         this.enable_ask_retry = options.enable_ask_retry;
         this.message_to_ask_retry = options.message_to_ask_retry;
     }
 
     run(){
-        console.log("\n### ASSUME This is Change Parameter Flow. ###\n");
+        debug("\n### ASSUME This is Change Parameter Flow. ###\n");
 
         // Check if the event is supported one in this flow.
         if (!this.vp.check_supported_event_type("change_parameter", this.bot_event)){
-            console.log(`This is unsupported event type in this flow so skip processing.`)
-            return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
+            return Promise.resolve({
+                result: false,
+                reason: "unsupported event for change parameter flow"
+            });
         }
 
         // Add Parameter from message text or postback data.
         let param_value = this.vp.extract_message_text(this.bot_event);
 
         let is_fit = false;
-        for (let previously_confirmed_param_key of this.conversation.previous.confirmed){
+        for (let previously_confirmed_param_key of this.context.previous.confirmed){
             try {
-                console.log(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
+                debug(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
                 super.change_parameter(previously_confirmed_param_key, param_value);
-                console.log(`Great fit!`);
+                debug(`Great fit!`);
                 is_fit = true;
                 break;
             } catch(err){
-                console.log(`It does not fit.`);
+                debug(`It does not fit.`);
             }
         }
         if (!is_fit){
             if (this.enable_ask_retry && param_value.length <= 10){
-                return super.ask_retry(this.message_to_ask_retry);
+                return Promise.resolve({
+                    result: true,
+                    response: super.ask_retry(this.message_to_ask_retry)
+                });
             }
-            return Promise.reject("no_fit");
+            return Promise.resolve({
+                result: false,
+                reason: "not fit"
+            });
         }
 
         // Run final action.
-        return super.finish();
+        return Promise.resolve({
+            result: true,
+            response: super.finish()
+        });
     } // End of run()
 };

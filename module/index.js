@@ -10,6 +10,7 @@ const DEFAULT_INTENT = "input.unknown";
 let express = require("express");
 let router = express.Router();
 let body_parser = require("body-parser");
+let debug = require("debug")("index");
 let Webhook = require("./webhook");
 
 router.use(body_parser.json({
@@ -19,7 +20,7 @@ router.use(body_parser.json({
 }));
 
 module.exports = (options) => {
-    console.log("\nBot Express\n");
+    debug("\nBot Express\n");
 
     // Set optional options.
     options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
@@ -44,7 +45,7 @@ module.exports = (options) => {
             throw(`Required option: "${req_opt}" not set`);
         }
     }
-    console.log("Common required options all set.");
+    debug("Common required options all set.");
 
     // Webhook Process
     router.post('/', (req, res, next) => {
@@ -53,12 +54,12 @@ module.exports = (options) => {
         let webhook = new Webhook(options);
         webhook.run(req).then(
             (response) => {
-                console.log("Successful End of Webhook.");
-                console.log(response);
+                debug("Successful End of Webhook.");
+                debug(response);
             },
             (response) => {
-                console.log("Abnormal End of Webhook.");
-                console.log(response);
+                debug("Abnormal End of Webhook.");
+                debug(response);
             }
         );
     });
@@ -66,14 +67,14 @@ module.exports = (options) => {
     // Verify Facebook Webhook
     router.get("/", (req, res, next) => {
         if (!options.facebook_verify_token){
-            console.error("Failed validation. facebook_verify_token not set.");
+            debug("Failed validation. facebook_verify_token not set.");
             res.sendStatus(403);
         }
         if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_verify_token) {
-            console.log("Validating webhook");
+            debug("Validating webhook");
             res.status(200).send(req.query['hub.challenge']);
         } else {
-            console.error("Failed validation. Make sure the validation tokens match.");
+            debug("Failed validation. Make sure the validation tokens match.");
             res.sendStatus(403);
         }
     });

@@ -7,7 +7,7 @@ let Promise = require("bluebird");
 */
 module.exports = class SkillApologize {
 
-    finish(bot, bot_event, conversation){
+    finish(bot, bot_event, context){
         let messages = [bot.create_message("ごめんなさい。よくわかりませんでした。", "text")];
         return bot.reply(bot_event, messages);
     }
