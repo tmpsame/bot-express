@@ -18,6 +18,7 @@ module.exports = class ChangeParameterFlow extends Flow {
 
     constructor(vp, bot_event, context, options) {
         super(vp, bot_event, context, options);
+        this.context._flow = "change_parameter";
         this.enable_ask_retry = options.enable_ask_retry;
         this.message_to_ask_retry = options.message_to_ask_retry;
     }

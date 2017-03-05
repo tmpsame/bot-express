@@ -18,7 +18,11 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_from_" + message_platform]("change-light-color", "message", "ライトの色変えて")).then(
+                return webhook.run(Util["create_req_to_clear_memory"]("change-light-color")).then(
+                    function(response){
+                        return webhook.run(Util["create_req_from_" + message_platform]("change-light-color", "message", "ライトの色変えて"));
+                    }
+                ).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "color");

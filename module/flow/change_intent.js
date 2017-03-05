@@ -20,12 +20,13 @@ module.exports = class ChangeIntentFlow extends Flow {
         context.to_confirm = {};
         context.confirming = null;
         super(vp, bot_event, context, options);
+        this.context._flow = "change_intent";
     }
 
     run(){
         debug("\n### This is Change Intent Flow. ###\n");
 
-        // If we find some parameters from message, add them to the conversation.
+        // If we find some parameters from message, add them to the context.
         if (this.context.intent.parameters && Object.keys(this.context.intent.parameters).length > 0){
             for (let param_key of Object.keys(this.context.intent.parameters)){
                 // Parse and Add parameters using skill specific logic.

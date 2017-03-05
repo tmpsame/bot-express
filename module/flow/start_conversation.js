@@ -17,6 +17,7 @@ module.exports = class StartConversationFlow extends Flow {
 
     constructor(vp, bot_event, context, options) {
         super(vp, bot_event, context, options);
+        this.context._flow = "start_conversation";
     }
 
     run(){

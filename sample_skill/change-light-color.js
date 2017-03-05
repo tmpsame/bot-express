@@ -46,7 +46,7 @@ module.exports = class SkillChangeLightColor {
 
         let found_color = false;
         for (let color_mapping of COLOR_MAPPINGS){
-            if (value == color_mapping.label){
+            if (value.replace("色", "") == color_mapping.label){
                 parsed_value = color_mapping.code;
                 found_color = true;
             }

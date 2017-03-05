@@ -20,6 +20,7 @@ module.exports = class NoWayFlow extends Flow {
         context.to_confirm = {};
         context.confirming = null;
         super(vp, bot_event, context, options);
+        this.context._flow = "no_way";
     }
 
     run(){

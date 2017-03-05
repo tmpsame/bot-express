@@ -16,7 +16,11 @@ for (let message_platform of message_platform_list){
             it("responds apologies and left 0 to_confirm.", function(){
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_from_" + message_platform]("apologize", "message", "ほげほげ")).then(
+                return webhook.run(Util["create_req_to_clear_memory"]("apologize")).then(
+                    function(response){
+                        return webhook.run(Util["create_req_from_" + message_platform]("apologize", "message", "ほげほげ"));
+                    }
+                ).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", null);

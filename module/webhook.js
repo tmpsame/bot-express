@@ -34,7 +34,8 @@ module.exports = class webhook {
 
         // FOR TEST PURPOSE ONLY: Clear Memory.
         if (process.env.BOT_EXPRESS_ENV == "test" && req.clear_memory){
-            memory.put(req.clear_memory, null);
+            debug(`Deleting memory of ${req.clear_memory}`);
+            memory.del(req.clear_memory);
             return Promise.resolve({
                 message: "memory cleared",
                 memory_id: req.clear_memory
@@ -281,7 +282,7 @@ module.exports = class webhook {
                     debug("Abnormal End of Flow.");
 
                     // Clear memory.
-                    memory.put(memory_id, null);
+                    memory.del(memory_id);
 
                     return Promise.reject(response);
                 }

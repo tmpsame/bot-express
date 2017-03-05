@@ -19,6 +19,7 @@ module.exports = class ReplyFlow extends Flow {
 
     constructor(vp, bot_event, context, options) {
         super(vp, bot_event, context, options);
+        this.context._flow = "reply";
     }
 
     run(){
