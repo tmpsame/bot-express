@@ -49,7 +49,7 @@ module.exports = class ServiceFacebook {
             },
             (response) => {
                 debug("send failed");
-                Promise.reject(response);
+                return Promise.reject(response);
             }
         )
     }
