@@ -34,7 +34,7 @@ module.exports = class SkillChangeLightColor {
                     facebook: {
                         text: "何色にしますか？",
                         quick_replies: [
-                            {content_type:"hoge",title:"青",payload:"青"},
+                            {content_type:"text",title:"青",payload:"青"},
                             {content_type:"text",title:"赤",payload:"赤"},
                             {content_type:"text",title:"黄",payload:"黄"}
                         ]

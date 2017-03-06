@@ -32,9 +32,11 @@ module.exports = class ServiceLine {
                 json: true
             }, (error, response, body) => {
                 if (error){
+                    debug(error);
                     return reject(error);
                 }
                 if (response.statusCode != 200){
+                    debug(body.message);
                     return reject(body.message || "Failed to send.");
                 }
                 debug("send succeeded");
@@ -62,9 +64,11 @@ module.exports = class ServiceLine {
                 json: true
             }, (error, response, body) => {
                 if (error){
+                    debug(error);
                     return reject(error);
                 }
                 if (response.statusCode != 200){
+                    debug(body.message);
                     return reject(body.message || "Failed to reply.");
                 }
                 debug("reply succeeded");
