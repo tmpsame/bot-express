@@ -63,6 +63,7 @@ module.exports = class ServiceLine {
                     return reject(error);
                 }
                 if (response.statusCode != 200){
+                    debug(body.message);
                     return reject(body.message || "Failed to reply.");
                 }
                 resolve();
