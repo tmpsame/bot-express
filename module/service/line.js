@@ -37,6 +37,8 @@ module.exports = class ServiceLine {
                 if (response.statusCode != 200){
                     return reject(body.message || "Failed to send.");
                 }
+                debug("send succeeded");
+                resolve();
             });
         });
     }
@@ -65,6 +67,7 @@ module.exports = class ServiceLine {
                 if (response.statusCode != 200){
                     return reject(body.message || "Failed to reply.");
                 }
+                debug("reply succeeded");
                 resolve();
             });
         });
