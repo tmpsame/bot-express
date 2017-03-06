@@ -20,7 +20,7 @@ module.exports = class SkillChangeLightColor {
                 message_to_confirm: {
                     line: {
                         type: "template",
-                        altTest: "何色にしますか？（青か赤か黄）",
+                        altText: "何色にしますか？（青か赤か黄）",
                         template: {
                             type: "buttons",
                             text: "何色にしますか？",
