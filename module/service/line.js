@@ -61,6 +61,7 @@ module.exports = class ServiceLine {
                 json: true
             }, (error, response, body) => {
                 debug(error);
+                debug(response);
                 debug(body);
                 (error) ? reject(error) : resolve(body);
             });
