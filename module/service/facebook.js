@@ -44,10 +44,12 @@ module.exports = class ServiceFacebook {
         }
         return Promise.all(all_sent).then(
             (response) => {
+                debug("send succeeded");
                 return;
             },
             (response) => {
-                Promise.reject();
+                debug("send failed");
+                Promise.reject(response);
             }
         )
     }
