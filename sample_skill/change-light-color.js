@@ -3,16 +3,11 @@
 let Promise = require('bluebird');
 let hue = require('../sample_service/hue');
 
-const COLOR_MAPPINGS = [{
-    label: "青",
-    code: "5068FF"
-},{
-    label: "赤",
-    code: "FF7B7B"
-},{
-    label: "黄",
-    code: "FFFA6A"
-}];
+const COLOR_MAPPINGS = [
+    {label: "青",code: "5068FF"},
+    {label: "赤",code: "FF7B7B"},
+    {label: "黄",code: "FFFA6A"}
+];
 
 /*
 ** Change the color of LED lighting of Hue.
@@ -24,11 +19,25 @@ module.exports = class SkillChangeLightColor {
             color: {
                 message_to_confirm: {
                     line: {
-                        type: "text",
-                        text: "何色にしますか？"
+                        type: "template",
+                        altTest: "何色にしますか？（青か赤か黄）",
+                        template: {
+                            type: "buttons",
+                            text: "何色にしますか？",
+                            actions: [
+                                {type:"text",label:"青",data:"青"},
+                                {type:"text",label:"赤",data:"赤"},
+                                {type:"text",label:"黄",data:"黄"}
+                            ]
+                        }
                     },
                     facebook: {
-                        text: "何色にしますか？"
+                        text: "何色にしますか？",
+                        quick_replies: [
+                            {content_type:"text",title:"青",payload:"青"},
+                            {content_type:"text",title:"赤",payload:"赤"},
+                            {content_type:"text",title:"黄",payload:"黄"}
+                        ]
                     }
                 },
                 parse: this.parse_color
