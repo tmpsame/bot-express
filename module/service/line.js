@@ -31,7 +31,12 @@ module.exports = class ServiceLine {
                 body: body,
                 json: true
             }, (error, response, body) => {
-                (error) ? reject(error) : resolve();
+                if (error){
+                    return reject(error);
+                }
+                if (response.statusCode != 200){
+                    return reject(body.message || "Failed to send.");
+                }
             });
         });
     }
@@ -47,12 +52,6 @@ module.exports = class ServiceLine {
                 messages: messages
             }
             let url = 'https://api.line.me/v2/bot/message/reply';
-            debug(`headers is follwing`);
-            debug(headers);
-            debug(`body is following`);
-            debug(body);
-            debug(`url is following`);
-            debug(url);
             request({
                 url: url,
                 method: 'POST',
@@ -60,9 +59,6 @@ module.exports = class ServiceLine {
                 body: body,
                 json: true
             }, (error, response, body) => {
-                debug(error);
-                debug(response);
-                debug(body);
                 if (error){
                     return reject(error);
                 }
