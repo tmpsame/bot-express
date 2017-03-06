@@ -211,6 +211,11 @@ module.exports = class VirtualPlatform {
     }
 
     reply(bot_event, messages){
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            return new Promise((resolve, reject) => {
+                return resolve();
+            });
+        }
         return this[`_${this.type}_reply`](bot_event, messages);
     }
 
