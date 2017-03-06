@@ -8,6 +8,10 @@ bot-expressは複数のメッセージプラットフォームに対応してお
 
 # アーキテクチャー
 
+![architecture of bot-express.png](https://qiita-image-store.s3.amazonaws.com/0/26079/e6363d2d-f1f4-4dac-2d6e-9948754c8ed6.png "architecture of bot-express.png")
+
+bot-expressはNodeベースのアプリケーションにnpmでインストールできるフレームワークです。LINEやFacebookといったメッセージプラットフォーム、自然言語処理を担うapi.aiといった外部サービスとの連携が組み込まれており、スキルを作成し、プラグインする形でBotを拡張できます。
+
 # bot-expressを使うとどう幸せになれるのか？
 
 開発者はBotに記憶を持たせ、人間のように文章・文脈を理解するといった共通して必要となる機能をフレームワークに任せ、そのBotに固有のスキル開発に専念することができます。
@@ -126,9 +130,24 @@ app.use('/webhook', bot_express({
 
 bot-expressは現在のところユーザーが発したメッセージから意図を判定するための自然言語処理にapi.aiを利用します。従ってまずapi.aiのアカウントを開設し、このアプリに対応するエージェントを作成する必要があります。
 
-api.aiでエージェントを作成したら次にIntentを作成します。ユーザーが「何をしたいのか」をあらわすもので、ここでIntentを作成するということはその意図をBotが理解できるようにするということであり、同時にその意図に対応するBotのスキルを作成することになります。このapi.ai上でおこなう設定としては、Intentごとにユーザーが発する可能性のある例文を複数登録し、Intentの判定精度を高めていきます。同時に、各Intentには必ずactionを設定してください。actionに設定された文字列は、ユーザーの求めるIntentをBotが判断する際のキーになります。
+api.aiでエージェントを作成したら次にIntentを作成します。
+![create_intent.png](https://qiita-image-store.s3.amazonaws.com/0/26079/f861735e-4476-72e3-3ecf-310818890508.png "create_intent.png")
 
-また、BotがこのIntentに対応するためにいくつかのパラメーターが必要になる場合、そのパラメーターをapi.aiで抽出できるように設定することができます。Entityで認識したいパラメーターを設定しておくと、Intentで例文を追加する際に自動的にそのパラメーターを認識してくれるようになります。この際の留意点として、Entityの名前が認識したいパラメーター名と同じになるように設定してください。このパラメーター名は後述するskillファイルのconstructor()で指定したrequired_parameterのプロパティ名のことを指します。
+ユーザーが「何をしたいのか」をあらわすもので、ここでIntentを作成するということはその意図をBotが理解できるようにするということであり、同時にその意図に対応するBotのスキルを作成することになります。このapi.ai上でおこなう設定としては、Intentごとにユーザーが発する可能性のある例文を複数登録し、Intentの判定精度を高めていきます。
+![register_user_says.png](https://qiita-image-store.s3.amazonaws.com/0/26079/30ea1a40-67b5-e75f-1c96-88e30913231c.png "register_user_says.png")
+
+
+
+同時に、各Intentには必ずactionを設定してください。actionに設定された文字列は、ユーザーの求めるIntentをBotが判断する際のキーになります。
+![action.png](https://qiita-image-store.s3.amazonaws.com/0/26079/cba7ecce-a43d-861a-526a-325cf8d8fa8d.png "action.png")
+
+
+また、BotがこのIntentに対応するためにいくつかのパラメーターが必要になる場合、そのパラメーターをapi.aiで抽出できるように設定することができます。Entityで認識したいパラメーターを設定しておくと、Intentで例文を追加する際に自動的にそのパラメーターを認識してくれるようになります。
+![create_entity.png](https://qiita-image-store.s3.amazonaws.com/0/26079/3bbb1f56-b4e8-00ab-ca55-dec656c7281c.png "create_entity.png")
+![annotated.png](https://qiita-image-store.s3.amazonaws.com/0/26079/88e961c7-6b06-60a6-2464-20ba15100e8b.png "annotated.png")
+
+
+この際の留意点として、Entityの名前が認識したいパラメーター名と同じになるように設定してください。このパラメーター名は後述するskillファイルのconstructor()で指定したrequired_parameterのプロパティ名のことを指します。
 
 ## スキルの追加
 
@@ -142,7 +161,7 @@ skillファイルは大きく3つのパートで構成されます。下記に�
 **constructor()**
 
 このスキルが完結するのに必要なパラメータ、およびそのパラメータを確認するためのメッセージを設定します。
-例えば「ライトの色を変更する」というスキルの場合、「色」の指定が不可欠となるので、これをrequired_parameterプロパティに登録します。
+例えば「ライトの色を変更する」というスキルの場合、「色」の指定が不可欠となるので、これをrequired_parameterプロパティにcolorとして登録します。
 
 ```
 constructor() {
@@ -150,11 +169,25 @@ constructor() {
         color: {
             message_to_confirm: {
                 line: {
-                    type: "text",
-                    text: "何色にしますか？"
+                    type: "template",
+                    altText: "何色にしますか？（青か赤か黄）",
+                    template: {
+                        type: "buttons",
+                        text: "何色にしますか？",
+                        actions: [
+                            {type:"postback",label:"青",data:"青"},
+                            {type:"postback",label:"赤",data:"赤"},
+                            {type:"postback",label:"黄",data:"黄"}
+                        ]
+                    }
                 },
                 facebook: {
-                    text: "何色にしますか？"
+                    text: "何色にしますか？",
+                    quick_replies: [
+                        {content_type:"text",title:"青",payload:"青"},
+                        {content_type:"text",title:"赤",payload:"赤"},
+                        {content_type:"text",title:"黄",payload:"黄"}
+                    ]
                 }
             },
             parse: this.parse_color
@@ -163,11 +196,11 @@ constructor() {
 }
 ```
 
-上記のサンプルコードではrequired_parameterプロパティにcolorが登録されているのがわかります。また、このパラメータを収集する際、ユーザーに確認するメッセージをmessage_to_confirmに設定します。message_to_confirmに設定するメッセージは利用するメッセージプラットフォーム毎に設定します。これはメッセージのフォーマットがメッセージプラットフォームのAPIに依存するためです。
+パラメータを収集する際、ユーザーに確認するメッセージをそのプロパティ配下のmessage_to_confirmプロパティに設定します。message_to_confirmに設定するメッセージは利用するメッセージプラットフォーム毎に設定します。これはメッセージのフォーマットがメッセージプラットフォームのAPIに依存するためです。
 
-また、parseでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
+また、parseプロパティでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
 
-パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは全て埋まらない限りユーザーに確認が送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
+パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。どちらかだけ設定することもできますし、両方同時に設定することもできます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは埋まらない限りユーザーに確認メッセージが送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
 
 いずれのパラメータも特定されればcontext.confirmedに登録され、後述のfinish()の中で参照することができます。
 
@@ -225,8 +258,8 @@ finish(bot, bot_event, context){
 
 finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。利用しているメッセージプラットフォームを意識せずに処理を記述することができます。このインスタンスの機能は下記になります。
 
-- create_message(message_object, message_type) : reply()メソッドに渡すメッセージオブジェクトを生成するためのメソッドです。イベント発生元のメッセージプラットフォームに合わせたフォーマットのメッセージオブジェクトが作成されます。ただしこのメソッドがサポートしているメッセージタイプは極めて限定的で、現時点ではtextメッセージしかサポートしていません。サポートされていないメッセージタイプを生成したい場合は、[LINE](https://devdocs.line.me/ja/#send-message-object)または[Facebook](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)のAPI Referenceを参照し、手動でそのオブジェクトを生成してください。
-- reply(bot_event, messages) : メッセージの返信をおこなうメソッドです。messagesにはcreate_message()を使って生成したメッセージオブジェクトをセットするか、あるいは各メッセージプラットフォームで定義されているメッセージフォーマットに従い、オブジェクトをマニュアルで作成してセットします。
+- **create_message(message_object, message_type)** : reply()メソッドに渡すメッセージオブジェクトを生成するためのメソッドです。イベント発生元のメッセージプラットフォームに合わせたフォーマットのメッセージオブジェクトが作成されます。ただしこのメソッドがサポートしているメッセージタイプは極めて限定的で、現時点ではtextメッセージしかサポートしていません。サポートされていないメッセージタイプを生成したい場合は、[LINE](https://devdocs.line.me/ja/#send-message-object)または[Facebook](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)のAPI Referenceを参照し、手動でそのオブジェクトを生成してください。
+- **reply(bot_event, messages)** : メッセージの返信をおこなうメソッドです。messagesにはcreate_message()を使って生成したメッセージオブジェクトをセットするか、あるいは各メッセージプラットフォームで定義されているメッセージフォーマットに従い、オブジェクトをマニュアルで作成してセットします。
 
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
 
@@ -250,15 +283,15 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 
 # 制約
 
-Webhookで現在サポートしているイベント or メッセージタイプは下記の通りです。
+Webhookで現在サポートしているイベントは下記の通りです。
 
 **LINE**
 - message
 - postback
 
 **Facebook**
-- message
-- postback
+- messages
+- messaging-postbacks
 
 --
 
