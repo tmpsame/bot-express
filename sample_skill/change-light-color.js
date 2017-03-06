@@ -26,8 +26,8 @@ module.exports = class SkillChangeLightColor {
                             text: "何色にしますか？",
                             actions: [
                                 {type:"text",label:"青",data:"青"},
-                                {type:"text",label:"赤",data:"赤"},
-                                {type:"text",label:"黄",data:"黄"}
+                                {type:"postback",label:"赤",data:"赤"},
+                                {type:"postback",label:"黄",data:"黄"}
                             ]
                         }
                     },
