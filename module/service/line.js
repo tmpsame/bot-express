@@ -47,9 +47,12 @@ module.exports = class ServiceLine {
                 messages: messages
             }
             let url = 'https://api.line.me/v2/bot/message/reply';
-            debug(`headers is ${headers}`);
-            debug(`body is ${body}`);
-            debug(`url is ${url}`);
+            debug(`headers is follwing`);
+            debug(headers);
+            debug(`body is following`);
+            debug(body);
+            debug(`url is following`);
+            debug(url);
             request({
                 url: url,
                 method: 'POST',
@@ -57,6 +60,8 @@ module.exports = class ServiceLine {
                 body: body,
                 json: true
             }, (error, response, body) => {
+                debug(error);
+                debug(body);
                 (error) ? reject(error) : resolve(body);
             });
         });
