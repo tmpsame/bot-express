@@ -35,7 +35,7 @@ module.exports = class ServiceFacebook {
                         return reject(error);
                     }
                     if (response.statusCode != 200){
-                        debug(body);
+                        debug(body.error.message);
                         return reject(body);
                     }
                     resolve();
