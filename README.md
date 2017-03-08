@@ -10,7 +10,7 @@ bot-expressは複数のメッセージプラットフォームに対応してお
 
 ![architecture of bot-express.png](https://qiita-image-store.s3.amazonaws.com/0/26079/e6363d2d-f1f4-4dac-2d6e-9948754c8ed6.png "architecture of bot-express.png")
 
-bot-expressはNodeベースのアプリケーションにnpmでインストールできるフレームワークです。LINEやFacebookといったメッセージプラットフォーム、自然言語処理を担うapi.aiといった外部サービスとの連携が組み込まれており、スキルを作成し、プラグインする形でBotを拡張できます。
+bot-expressはNodeベースのアプリケーションにnpmでインストールできるフレームワークです。LINEやFacebookといったメッセージプラットフォーム、自然言語処理を担うapi.aiといった外部サービスとの連携が組み込まれており、スキルを作成しプラグインする形でBotを拡張できます。
 
 # bot-expressを使うとどう幸せになれるのか？
 
