@@ -56,7 +56,7 @@ module.exports = class Flow {
 
         // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
         for (let req_param_key of Object.keys(required_parameter)){
-            if (!confirmed[req_param_key]){
+            if (typeof confirmed[req_param_key] == "undefined"){
                 to_confirm[req_param_key] = required_parameter[req_param_key];
             }
         }
