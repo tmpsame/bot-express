@@ -83,6 +83,9 @@ module.exports = class webhook {
         debug("api.ai instantiated.");
 
         for (let bot_event of bot_events){
+            debug(`Processing following event.`);
+            debug(bot_event);
+
             // Recall Memory
             let memory_id = vp.extract_memory_id(bot_event);
             debug(`memory id is ${memory_id}.`);
