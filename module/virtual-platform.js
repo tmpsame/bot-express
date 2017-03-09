@@ -235,6 +235,23 @@ module.exports = class VirtualPlatform {
         return this.service.send({id: bot_event.sender.id}, messages);
     }
 
+    send(recipient_id, messages){
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            return new Promise((resolve, reject) => {
+                return resolve();
+            });
+        }
+        return this[`_${this.type}_send`](recipient_id, messages);
+    }
+
+    _line_send(recipient_id, messages){
+        return this.service.send(recipient_id, messages);
+    }
+
+    _facebook_send(recipient_id, messages){
+        return this.service.send({id: bot_event.sender.id}, messages);
+    }
+
     // While collect method exists in flow, this method is for developers to explicitly collect some parameters.
     collect(bot_event, parameter){
         if (Object.keys(parameter).length != 1){

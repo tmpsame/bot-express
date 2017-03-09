@@ -260,6 +260,7 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 
 - **create_message(message_object, message_type)** : reply()メソッドに渡すメッセージオブジェクトを生成するためのメソッドです。イベント発生元のメッセージプラットフォームに合わせたフォーマットのメッセージオブジェクトが作成されます。ただしこのメソッドがサポートしているメッセージタイプは極めて限定的で、現時点ではtextメッセージしかサポートしていません。サポートされていないメッセージタイプを生成したい場合は、[LINE](https://devdocs.line.me/ja/#send-message-object)または[Facebook](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)のAPI Referenceを参照し、手動でそのオブジェクトを生成してください。
 - **reply(bot_event, messages)** : メッセージの返信をおこなうメソッドです。messagesにはcreate_message()を使って生成したメッセージオブジェクトをセットするか、あるいは各メッセージプラットフォームで定義されているメッセージフォーマットに従い、オブジェクトをマニュアルで作成してセットします。
+- **collect(bot_event, parameter)** : 明示的にパラメーターを収集するメソッドです。parameterはconstructor()で指定するrequired_parameterやoptional_parameterと同じフォーマットで指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。
 
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
 
