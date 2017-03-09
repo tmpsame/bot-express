@@ -249,7 +249,7 @@ module.exports = class VirtualPlatform {
     }
 
     _facebook_send(recipient_id, messages){
-        return this.service.send({id: bot_event.sender.id}, messages);
+        return this.service.send({id: recipient_id}, messages);
     }
 
     // While collect method exists in flow, this method is for developers to explicitly collect some parameters.
