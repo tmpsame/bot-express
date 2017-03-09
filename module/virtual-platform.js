@@ -8,6 +8,7 @@ module.exports = class VirtualPlatform {
         this.type = options.message_platform_type;
         this.options = options;
         this.service = this.instantiate_service();
+        this.context = null; // Will be set later in webhook;
     }
 
     instantiate_service(){
@@ -232,5 +233,23 @@ module.exports = class VirtualPlatform {
 
     _facebook_reply(bot_event, messages){
         return this.service.send({id: bot_event.sender.id}, messages);
+    }
+
+    // While collect method exists in flow, this method is for developers to explicitly collect some parameters.
+    collect(bot_event, parameter){
+        if (Object.keys(parameter).length != 1){
+            return Promise.reject("Malformed parameter.");
+        }
+        let param_key = Object.keys(parameter)[0];
+        this.context.confirming = param_key;
+        Object.assign(this.context.to_confirm, parameter);
+
+        if (!parameter[param_key].message_to_confirm[this.type]){
+            return Promise.reject("While we need to send a message to confirm parameter, the message not found.");
+        }
+
+        // Send question to the user.
+        let messages = [parameter[param_key].message_to_confirm[this.type]];
+        return this.reply(bot_event, messages);
     }
 }

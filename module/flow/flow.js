@@ -155,25 +155,13 @@ module.exports = class Flow {
             return this._collect();
         }
 
-        let before_finish_done;
         if (this.skill["before_finish"]){
             debug("Going to process before finish.");
-            before_finish_done = this.skill["before_finish"](this.vp, this.bot_event, this.context);
-        } else {
-            before_finish_done = new Promise((resolve, reject) => {
-                resolve();
-            });
+            return this.skill["before_finish"](this.vp, this.bot_event, this.context);
         }
 
-        // If we have no parameters to confirm, we finish this context with final reply.
-        return before_finish_done.then(
-            (response) => {
-                debug("Going to perform final action.");
-                return this.skill.finish(this.vp, this.bot_event, this.context);
-            },
-            (response) => {
-                return Promise.reject(response);
-            }
-        );
+        // If we have no parameters to confirm, we finish this conversation with finish method of skill.
+        debug("Going to perform final action.");
+        return this.skill.finish(this.vp, this.bot_event, this.context);
     }
 };

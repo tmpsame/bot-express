@@ -91,6 +91,7 @@ module.exports = class webhook {
             debug(`memory id is ${memory_id}.`);
 
             let context = memory.get(memory_id);
+            vp.context = context;
 
             let promise_flow_completed;
             let flow;
@@ -123,6 +124,7 @@ module.exports = class webhook {
                                 confirmed: []
                             }
                         };
+                        vp.context = context;
                         try {
                             flow = new start_conversation_flow(vp, bot_event, context, this.options);
                         } catch(err) {
