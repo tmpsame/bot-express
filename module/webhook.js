@@ -101,6 +101,12 @@ module.exports = class webhook {
                 /*
                 ** Beacon Flow
                 */
+
+                // Check if this event type is supported in this flow.
+                if (!vp.check_supported_event_type("beacon", bot_event)){
+                    return Promise.resolve(`unsupported event for beacon flow`);
+                }
+
                 // Instantiate the conversation object. This will be saved as Bot Memory.
                 context = {
                     intent: {action: this.options.beacon_skill},
@@ -117,7 +123,7 @@ module.exports = class webhook {
                 } catch(err) {
                     return Promise.reject(err);
                 }
-                return flow.run();
+                promise_flow_completed = flow.run();
             } else if (!context){
                 /*
                 ** Start Conversation Flow.
