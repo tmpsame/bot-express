@@ -25,6 +25,7 @@
     "crypto": "0.0.3",
     "debug": "^2.6.1",
     "express": "~4.13.1",
+    "isemail": "^2.2.1",
     "memory-cache": "^0.1.6",
     "moji": "^0.5.1",
     "morgan": "^1.8.1",
