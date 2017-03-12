@@ -103,7 +103,7 @@ module.exports = class webhook {
                 */
                 // Instantiate the conversation object. This will be saved as Bot Memory.
                 context = {
-                    intent: this.options.beacon_skill,
+                    intent: {action: this.options.beacon_skill},
                     confirmed: {},
                     to_confirm: {},
                     confirming: null,
