@@ -94,6 +94,12 @@ module.exports = class VirtualPlatform {
 
     _line_check_supported_event_type(flow, bot_event){
         switch(flow){
+            case "beacon":
+                if (bot_event.type == "beacon" && bot_event.beacon.type == "enter"){
+                    return true;
+                }
+                return false;
+            break;
             case "start_conversation":
                 if (bot_event.type == "message" && bot_event.message.type == "text"){
                     return true;
@@ -133,9 +139,6 @@ module.exports = class VirtualPlatform {
     _facebook_check_supported_event_type(flow, bot_event){
         switch(flow){
             case "beacon":
-                if (bot_event.type == "beacon" && bot_event.beacon.type == "enter"){
-                    return true;
-                }
                 return false;
             break;
             case "start_conversation":
