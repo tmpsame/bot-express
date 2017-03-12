@@ -23,7 +23,8 @@ app.use('/webhook', bot_express({
     facebook_app_secret: process.env.FACEBOOK_APP_SECRET,
     facebook_page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
     apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
-    default_skill: 'apologize'
+    default_skill: 'apologize',
+    beacon_skill: 'survey'
 }));
 
 module.exports = app;

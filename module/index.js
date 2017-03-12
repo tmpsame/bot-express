@@ -25,6 +25,7 @@ module.exports = (options) => {
     // Set optional options.
     options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
     options.default_intent = options.default_intent || DEFAULT_INTENT;
+    options.beacon_skill = options.beacon_skill || options.default_skill;
     if (!!options.skill_path){
         options.skill_path = "../../../../" + options.skill_path;
     } else if (process.env.BOT_EXPRESS_ENV == "development" || process.env.BOT_EXPRESS_ENV == "test"){

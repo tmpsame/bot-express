@@ -11,6 +11,7 @@ let memory = require("memory-cache");
 let debug = require("debug")("webhook");
 
 // Import Flows
+let beacon_flow = require('./flow/beacon');
 let start_conversation_flow = require('./flow/start_conversation');
 let reply_flow = require('./flow/reply');
 let change_intent_flow = require('./flow/change_intent');
@@ -96,7 +97,28 @@ module.exports = class webhook {
             let promise_flow_completed;
             let flow;
 
-            if (!context){
+            if (vp.extract_event_type(bot_event) == "beacon"){
+                /*
+                ** Beacon Flow
+                */
+                // Instantiate the conversation object. This will be saved as Bot Memory.
+                context = {
+                    intent: options.beacon_skill,
+                    confirmed: {},
+                    to_confirm: {},
+                    confirming: null,
+                    previous: {
+                        confirmed: []
+                    }
+                };
+                vp.context = context;
+                try {
+                    flow = new beacon_flow(vp, bot_event, context, this.options);
+                } catch(err) {
+                    return Promise.reject(err);
+                }
+                return flow.run();
+            } else if (!context){
                 /*
                 ** Start Conversation Flow.
                 */

@@ -51,6 +51,31 @@ module.exports = class VirtualPlatform {
         return events;
     }
 
+    extract_event_type(bot_event){
+        return this[`_${this.type}_extract_event_type`](bot_event);
+    }
+
+    _line_extract_event_type(bot_event){
+        return bot_event.type;
+    }
+
+    _facebook_extract_event_type(bot_event){
+        let event_type;
+        if (bot_event.message){
+            if (bot_event.message.quick_reply){
+                // This is Quick Reply
+                event_type = "quick_reply";
+            } else if (bot_event.message.text){
+                // This is Text Message
+                event_type = "text_message";
+            }
+        } else if (bot_event.postback){
+            // This is Postback
+            event_type = "postback;"
+        }
+        return event_type;
+    }
+
     extract_memory_id(bot_event){
         return this[`_${this.type}_extract_memory_id`](bot_event);
     }
@@ -252,7 +277,7 @@ module.exports = class VirtualPlatform {
         return this.service.send({id: recipient_id}, messages);
     }
 
-    // While collect method exists in flow, this method is for developers to explicitly collect some parameters.
+    // While collect method exists in flow, this method is for developers to explicitly collect a parameter.
     collect(bot_event, parameter){
         if (Object.keys(parameter).length != 1){
             return Promise.reject("Malformed parameter.");

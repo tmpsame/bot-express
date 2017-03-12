@@ -110,7 +110,7 @@ let bot_express = require('bot-express');
 ```
 app.use('/webhook', bot_express({
     apiai_client_access_token: 'あなたのAPIAI Client Access Token', // 必須
-    default_skill: 'あなたのskill', // 必須。Intentが特定されなかった場合に使うSkill
+    default_skill: 'あなたのskill', // 必須。Intentが特定されなかった場合に使うスキル
     line_channel_id: 'あなたのLINE Channel ID', // LINE対応の場合必須
     line_channel_secret: 'あなたのLINE Channel Secret', // LINE対応の場合必須
     line_channel_access_token: 'あなたのLINE Channel Access Token', // LINE対応の場合必須
@@ -118,6 +118,7 @@ app.use('/webhook', bot_express({
     facebook_page_access_token: 'あなたのFacebook Page Access Token', // Facebook対応の場合必須
     facebook_verify_token: 'あなたのFacebook Verify Token', // オプション。FacebookのWebhook認証用トークン。デフォルトはfacebook_page_access_tokenに指定した値
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
+    beacon_skill: 'あなたのskill', // オプション。beaconイベントで利用されるスキル。デフォルトはdefault_skill
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline
     memory_retention: ミリ秒 // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
