@@ -76,6 +76,25 @@ module.exports = class VirtualPlatform {
         return event_type;
     }
 
+    extract_beacon_event_type(bot_event){
+        return this[`_${this.type}_extract_beacon_event_type`](bot_event);
+    }
+
+    _line_extract_beacon_event_type(bot_event){
+        let beacon_event_Type = false;
+        if (bot_event.beacon.type == "enter"){
+            beacon_event_type = "enter;"
+        } else if (bot_event.beacon.type == "leave"){
+            beacon_event_type = "leave";
+        }
+        return beacon_event_type;
+    }
+
+    _facebook_extract_beacon_event_type(bot_event){
+        let beacon_event_Type = false;
+        return beacon_event_type;
+    }
+
     extract_memory_id(bot_event){
         return this[`_${this.type}_extract_memory_id`](bot_event);
     }
@@ -95,7 +114,7 @@ module.exports = class VirtualPlatform {
     _line_check_supported_event_type(flow, bot_event){
         switch(flow){
             case "beacon":
-                if (bot_event.type == "beacon" && bot_event.beacon.type == "enter"){
+                if (bot_event.type == "beacon"){
                     return true;
                 }
                 return false;

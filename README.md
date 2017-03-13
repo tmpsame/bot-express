@@ -118,7 +118,7 @@ app.use('/webhook', bot_express({
     facebook_page_access_token: 'あなたのFacebook Page Access Token', // Facebook対応の場合必須
     facebook_verify_token: 'あなたのFacebook Verify Token', // オプション。FacebookのWebhook認証用トークン。デフォルトはfacebook_page_access_tokenに指定した値
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
-    beacon_skill: 'あなたのskill', // オプション。beaconイベントで利用されるスキル。デフォルトはdefault_skill
+    beacon_skill: {'beaconイベントタイプ':'利用されるスキル'}, // オプション。beaconイベントとそのイベントで利用されるスキル。現在サポートされるbecaonイベントタイプはenterとleave。デフォルトはすべてのイベントでdefault_skill
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline
     memory_retention: ミリ秒 // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
@@ -239,7 +239,7 @@ parse_color(value){
 
 **finish(bot, bot_event, context)**
 
-パラメータが全て揃ったら実行する最終処理を記述します。
+パラメータが全て揃ったら実行する最終処理を記述します。このmethodはPromiseを返す必要があります。
 
 ```
 finish(bot, bot_event, context){
@@ -294,6 +294,8 @@ Webhookで現在サポートしているイベントは下記の通りです。
 **Facebook**
 - messages
 - messaging-postbacks
+
+現在キャッシュにmemory-cacheを利用しているため、サポートされちえるBotの実行環境はシングルインスタンスとなります。
 
 --
 

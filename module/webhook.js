@@ -101,15 +101,20 @@ module.exports = class webhook {
                 /*
                 ** Beacon Flow
                 */
+                let beacon_event_type = vp.extract_beacon_event_type(bot_event);
 
-                // Check if this event type is supported in this flow.
-                if (!vp.check_supported_event_type("beacon", bot_event)){
-                    return Promise.resolve(`unsupported event for beacon flow`);
+                if (!beacon_event_type){
+                    return Promise.resolve("Unsupported beacon event.");
                 }
+                if (!this.options.beacon_skill || !this.options.beacon_skill[beacon_event_type]){
+                    debug("This is beacon flow and we use default skill since beacon_skill not found.")
+                    this.options.beacon_skill[beacon_event_type] = this.options.default_skill;
+                }
+                debug(`This is beacon flow and we use ${this.options.beacon_skill[beacon_event_type]} as skill`);
 
                 // Instantiate the conversation object. This will be saved as Bot Memory.
                 context = {
-                    intent: {action: this.options.beacon_skill},
+                    intent: {action: this.options.beacon_skill[beacon_event_type]},
                     confirmed: {},
                     to_confirm: {},
                     confirming: null,
