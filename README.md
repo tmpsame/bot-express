@@ -237,9 +237,11 @@ parse_color(value){
 
 適切な値が判定できなかった場合にはfalseを返してください。
 
+> このメソッドは将来的にPromiseを返さなければならない仕様に変更される可能性があります。
+
 **finish(bot, bot_event, context)**
 
-パラメータが全て揃ったら実行する最終処理を記述します。このmethodはPromiseを返す必要があります。
+パラメータが全て揃ったら実行する最終処理を記述します。このメソッドはPromiseを返す必要があります。
 
 ```
 finish(bot, bot_event, context){
@@ -290,12 +292,13 @@ Webhookで現在サポートしているイベントは下記の通りです。
 **LINE**
 - message
 - postback
+- beacon
 
 **Facebook**
 - messages
 - messaging-postbacks
 
-現在キャッシュにmemory-cacheを利用しているため、サポートされちえるBotの実行環境はシングルインスタンスとなります。
+現在キャッシュにmemory-cacheを利用しているため、サポートされているBotの実行環境はシングルインスタンスとなります。
 
 --
 
