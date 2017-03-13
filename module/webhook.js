@@ -107,7 +107,7 @@ module.exports = class webhook {
                     return Promise.resolve("Unsupported beacon event.");
                 }
                 if (!this.options.beacon_skill || !this.options.beacon_skill[beacon_event_type]){
-                    debug("This is beacon flow and we use default skill since beacon_skill not found.")
+                    debug(`This is beacon flow and we use default skill since beacon_skill["${beacon_event_type}"] not found.`);
                     this.options.beacon_skill[beacon_event_type] = this.options.default_skill;
                 }
                 debug(`This is beacon flow and we use ${this.options.beacon_skill[beacon_event_type]} as skill`);
