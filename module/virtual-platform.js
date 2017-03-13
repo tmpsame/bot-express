@@ -81,7 +81,7 @@ module.exports = class VirtualPlatform {
     }
 
     _line_extract_beacon_event_type(bot_event){
-        let beacon_event_Type = false;
+        let beacon_event_type = false;
         if (bot_event.beacon.type == "enter"){
             beacon_event_type = "enter;"
         } else if (bot_event.beacon.type == "leave"){
@@ -91,7 +91,7 @@ module.exports = class VirtualPlatform {
     }
 
     _facebook_extract_beacon_event_type(bot_event){
-        let beacon_event_Type = false;
+        let beacon_event_type = false;
         return beacon_event_type;
     }
 
