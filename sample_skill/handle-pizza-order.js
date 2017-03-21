@@ -48,7 +48,7 @@ module.exports = class HandlePizzaOrder {
                         quick_replies: [
                             {content_type:"text",title:"S",payload:"S"},
                             {content_type:"text",title:"M",payload:"M"},
-                            {content_type:"text",title:"M",payload:"L"}
+                            {content_type:"text",title:"L",payload:"L"}
                         ]
                     }
                 }
@@ -80,7 +80,7 @@ module.exports = class HandlePizzaOrder {
 
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
-        let messages = [bot.create_message(`${context.confirmed.name}様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までにお届けに上がります。`)];
+        let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までにお届けに上がります。`)];
         return bot.reply(bot_event, messages);
     }
 };
