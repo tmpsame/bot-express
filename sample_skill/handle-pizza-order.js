@@ -9,7 +9,7 @@ module.exports = class HandlePizzaOrder {
                 message_to_confirm: {
                     line: {
                         type: "template",
-                        altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。"
+                        altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。",
                         template: {
                             type: "buttons",
                             text: "ご注文のピザはお決まりでしょうか？"
