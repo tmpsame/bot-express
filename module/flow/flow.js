@@ -97,7 +97,8 @@ module.exports = class Flow {
             } else if (!!this.skill["parse_" + key]){
                 parsed_value = this.skill["parse_" + key](value);
             } else {
-                throw("Parse method not found.");
+                // If parse method is not implemented, we use the value as-is.
+                parsed_value = value;
             }
         } else if (this.skill.optional_parameter[key]){
             if (!!this.skill.optional_parameter[key].parse){
@@ -105,7 +106,8 @@ module.exports = class Flow {
             } else if (!!this.skill["parse_" + key]){
                 parsed_value = this.skill["parse_" + key](value);
             } else {
-                throw("Parse method not found.");
+                // If parse method is not implemented, we use the value as-is.
+                prased_value = value;
             }
         } else {
             // This is not the parameter we care about. So skip it.
