@@ -12,7 +12,7 @@ module.exports = class HandlePizzaOrder {
                         altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。",
                         template: {
                             type: "buttons",
-                            text: "ご注文のピザはお決まりでしょうか？"
+                            text: "ご注文のピザはお決まりでしょうか？",
                             actions: [
                                 {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
                                 {type:"postback",label:"マリナーラ",data:"マリナーラ"}
