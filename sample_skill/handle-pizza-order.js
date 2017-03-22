@@ -80,6 +80,32 @@ module.exports = class HandlePizzaOrder {
         this.clear_context_on_finish = true;
     }
 
+    parse_pizza(value){
+        let parsed_value;
+        if (value.match(/[.+]マルゲリータ[.+]/)){
+            parsed_value = "マルゲリータ";
+        } else if (value.match(/[.+]マリナーラ[.+]/)){
+            parsed_value = "マリナーラ";
+        } else {
+            parsed_value = false;
+        }
+        return parsed_value;
+    }
+
+    parse_size(value){
+        let parsed_value;
+        if (value.match(/[.+][sS][.+]/)){
+            parsed_value = "S";
+        } else if (value.match(/[.+][mM][.+]/)){
+            parsed_value = "M";
+        } else if (value.match(/[.+][lL][.+]/)){
+            parsed_value = "L";
+        } else {
+            parsed_value = false;
+        }
+        return parsed_value;
+    }
+
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
         let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までお届けに上がります。`)];
