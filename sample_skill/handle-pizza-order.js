@@ -106,9 +106,15 @@ module.exports = class HandlePizzaOrder {
         return parsed_value;
     }
 
+    parse_address(value){
+        let parsed_value;
+        parsed_value = value.replace("です", "").replace("でーす", "").replace("ですー", "").replace("。", "");
+        return parsed_value;
+    }
+
     parse_name(value){
         let parsed_value;
-        parsed_value = value.replace("です", "").replace("と申します", "").replace("。", "");
+        parsed_value = value.replace("です", "").replace("でーす", "").replace("ですー", "").replace("と申します", "").replace("。", "");
         return parsed_value;
     }
 
