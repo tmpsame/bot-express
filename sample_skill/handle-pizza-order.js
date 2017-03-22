@@ -82,9 +82,9 @@ module.exports = class HandlePizzaOrder {
 
     parse_pizza(value){
         let parsed_value;
-        if (value.match(/[.+]マルゲリータ[.+]/)){
+        if (value.match(/マルゲリータ/)){
             parsed_value = "マルゲリータ";
-        } else if (value.match(/[.+]マリナーラ[.+]/)){
+        } else if (value.match(/マリナーラ/)){
             parsed_value = "マリナーラ";
         } else {
             parsed_value = false;
@@ -94,11 +94,11 @@ module.exports = class HandlePizzaOrder {
 
     parse_size(value){
         let parsed_value;
-        if (value.match(/[.+][sS][.+]/)){
+        if (value.match(/[sS]/) || value.match(/小/)){
             parsed_value = "S";
-        } else if (value.match(/[.+][mM][.+]/)){
+        } else if (value.match(/[mM]/) || value.match(/中/) || value.match(/普通/)){
             parsed_value = "M";
-        } else if (value.match(/[.+][lL][.+]/)){
+        } else if (value.match(/[lL]/) || value.match(/大/)){
             parsed_value = "L";
         } else {
             parsed_value = false;
