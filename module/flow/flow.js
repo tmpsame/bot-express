@@ -170,8 +170,19 @@ module.exports = class Flow {
             return this.skill["before_finish"](this.vp, this.bot_event, this.context);
         }
 
-        // If we have no parameters to confirm, we finish this conversation with finish method of skill.
+        // If we have no parameters to confirm, we finish this conversation using finish method of skill.
         debug("Going to perform final action.");
-        return this.skill.finish(this.vp, this.bot_event, this.context);
+        return this.skill.finish(this.vp, this.bot_event, this.context).then(
+            (response) => {
+                if (this.skill.clear_confirmed_on_finish){
+                    debug(`Clearing confirmed parameter.`);
+                    this.context.confirmed = {};
+                }
+                return response;
+            },
+            (response) => {
+                return Promise.reject(response);
+            }
+        );
     }
 };

@@ -76,11 +76,13 @@ module.exports = class HandlePizzaOrder {
                 }
             }
         };
+
+        this.clear_confirmed_on_finish = true;
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
-        let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までにお届けに上がります。`)];
+        let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までお届けに上がります。`)];
         return bot.reply(bot_event, messages);
     }
 };
