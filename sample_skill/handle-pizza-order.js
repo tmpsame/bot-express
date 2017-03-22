@@ -77,7 +77,7 @@ module.exports = class HandlePizzaOrder {
             }
         };
 
-        this.clear_confirmed_on_finish = true;
+        this.clear_context_on_finish = true;
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。
