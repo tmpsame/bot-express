@@ -106,6 +106,12 @@ module.exports = class HandlePizzaOrder {
         return parsed_value;
     }
 
+    parse_name(value){
+        let parsed_value;
+        parsed_value = value.replace("です", "").replace("と申します", "").replace("。", "");
+        return parsed_value;
+    }
+
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
         let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までお届けに上がります。`)];
