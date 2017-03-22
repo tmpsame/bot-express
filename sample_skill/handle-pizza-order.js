@@ -2,7 +2,7 @@
 
 module.exports = class HandlePizzaOrder {
 
-	// コンストラクター。このスキルで必要とする、または指定することができるパラメータを設定します。
+    // コンストラクター。このスキルで必要とする、または指定することができるパラメータを設定します。
     constructor() {
         this.required_parameter = {
             pizza: {
