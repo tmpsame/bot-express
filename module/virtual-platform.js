@@ -126,7 +126,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "reply":
-                if ((bot_event.type == "message" && bot_event.message.type == "text") || bot_event.type == "postback"){
+                if ((bot_event.type == "message" && (bot_event.message.type == "text" || bot_event.message.type == "location")) || bot_event.type == "postback") {
                     return true;
                 }
                 return false;
@@ -138,7 +138,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "change_parameter":
-                if ((bot_event.type == "message" && bot_event.message.type == "text") || bot_event.type == "postback"){
+                if ((bot_event.type == "message" && (bot_event.message.type == "text" || bot_event.message.type == "location")) || bot_event.type == "postback"){
                     return true;
                 }
                 return false;
@@ -206,6 +206,44 @@ module.exports = class VirtualPlatform {
 
     _facebook_extract_session_id(bot_event){
         return bot_event.sender.id;
+    }
+
+    extract_param_value(bot_event){
+        return this[`_${this.type}_extract_param_value`](bot_event);
+    }
+
+    _line_extract_param_value(bot_event){
+        let param_value;
+        switch(bot_event.type){
+            case "message":
+                if (bot_event.message.type == "text"){
+                    param_value = bot_event.message.text;
+                } else if (bot_event.message.type == "location"){
+                    param_value = bot_event.message.address;
+                }
+            break;
+            case "postback":
+                param_value = bot_event.postback.data;
+            break;
+        }
+        return param_value;
+    }
+
+    _facebook_extract_param_value(bot_event){
+        let param_value;
+        if (bot_event.message){
+            if (bot_event.message.quick_reply){
+                // This is Quick Reply
+                param_value = bot_event.message.quick_reply.payload;
+            } else if (bot_event.message.text){
+                // This is Text Message
+                param_value = bot_event.message.text;
+            }
+        } else if (bot_event.postback){
+            // This is Postback
+            param_value = bot_event.postback.payload;
+        }
+        return param_value;
     }
 
     extract_message_text(bot_event){

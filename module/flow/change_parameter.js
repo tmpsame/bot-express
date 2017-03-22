@@ -35,7 +35,7 @@ module.exports = class ChangeParameterFlow extends Flow {
         }
 
         // Add Parameter from message text or postback data.
-        let param_value = this.vp.extract_message_text(this.bot_event);
+        let param_value = this.vp.extract_param_value(this.bot_event);
 
         let is_fit = false;
         for (let previously_confirmed_param_key of this.context.previous.confirmed){
