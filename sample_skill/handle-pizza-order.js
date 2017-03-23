@@ -107,6 +107,7 @@ module.exports = class HandlePizzaOrder {
     }
 
     parse_address(value){
+        debug(value);
         let parsed_value;
         if (typeof value == "string"){
             parsed_value = {
@@ -124,7 +125,6 @@ module.exports = class HandlePizzaOrder {
                 }
             } else if (value.attachments){
                 for (let attachment of attachments){
-                    debug(attachment);
                     if (attachment.type == "location"){
                         parsed_value = {
                             address: null, // Need to fill out some day...
