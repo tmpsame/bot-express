@@ -108,7 +108,37 @@ module.exports = class HandlePizzaOrder {
 
     parse_address(value){
         let parsed_value;
-        parsed_value = value.replace("です", "").replace("でーす", "").replace("ですー", "").replace("。", "");
+        if (typeof value == "string"){
+            parsed_value = {
+                address: value.replace("です", "").replace("でーす", "").replace("ですー", "").replace("。", ""),
+                latitude: null,
+                longitude: null
+            }
+        } else if (typeof value == "object"){
+            if (value.address){
+                // This is LINE location message.
+                parsed_value = {
+                    address: value.address,
+                    latitude: value.latitude,
+                    longitude: value.longitude
+                }
+            } else if (value.attachments){
+                for (let attachment of attachments){
+                    if (attachment.type == "location"){
+                        parsed_value = {
+                            address: null, // Need to fill out some day...
+                            latitude: attachment.payload.coordinates.lat,
+                            longitude: attachment.payload.coordinates.long
+                        }
+                    }
+                }
+            } else {
+                parsed_value = false;
+            }
+        } else {
+            parsed_value = false;
+        }
+
         return parsed_value;
     }
 
@@ -120,7 +150,7 @@ module.exports = class HandlePizzaOrder {
 
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
-        let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address}までお届けに上がります。`)];
+        let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address.address}までお届けに上がります。`)];
         return bot.reply(bot_event, messages);
     }
 };

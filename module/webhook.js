@@ -194,7 +194,6 @@ module.exports = class webhook {
                     let promise_is_change_intent_flow;
 
                     if (!vp.check_supported_event_type("change_intent", bot_event)){
-                        let possibly_change_intent_flow = false;
                         promise_is_change_intent_flow = new Promise((resolve, reject) => {
                             resolve({
                                 result: false,

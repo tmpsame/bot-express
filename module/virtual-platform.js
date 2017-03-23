@@ -126,7 +126,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "reply":
-                if ((bot_event.type == "message" && (bot_event.message.type == "text" || bot_event.message.type == "location")) || bot_event.type == "postback") {
+                if (bot_event.type == "message" || bot_event.type == "postback") {
                     return true;
                 }
                 return false;
@@ -138,7 +138,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "change_parameter":
-                if ((bot_event.type == "message" && (bot_event.message.type == "text" || bot_event.message.type == "location")) || bot_event.type == "postback"){
+                if (bot_event.type == "message" || bot_event.type == "postback"){
                     return true;
                 }
                 return false;
@@ -167,7 +167,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "reply":
-                if ((bot_event.message && bot_event.message.text) || bot_event.postback){
+                if (bot_event.message || bot_event.postback){
                     return true;
                 }
                 return false;
@@ -179,7 +179,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "change_parameter":
-                if ((bot_event.message && bot_event.message.text) || bot_event.postback){
+                if (bot_event.message || bot_event.postback){
                     return true;
                 }
                 return false;
@@ -218,8 +218,8 @@ module.exports = class VirtualPlatform {
             case "message":
                 if (bot_event.message.type == "text"){
                     param_value = bot_event.message.text;
-                } else if (bot_event.message.type == "location"){
-                    param_value = bot_event.message.address;
+                } else {
+                    param_value = bot_event.message;
                 }
             break;
             case "postback":
@@ -235,6 +235,9 @@ module.exports = class VirtualPlatform {
             if (bot_event.message.quick_reply){
                 // This is Quick Reply
                 param_value = bot_event.message.quick_reply.payload;
+            } else if (bot_event.message.attachments){
+                // This is Attachment
+                param_value = bot_event.message.attachments;
             } else if (bot_event.message.text){
                 // This is Text Message
                 param_value = bot_event.message.text;
