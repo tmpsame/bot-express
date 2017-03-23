@@ -1,5 +1,7 @@
 'use strict';
 
+let debug = require("debug")("skill");
+
 module.exports = class HandlePizzaOrder {
 
     // コンストラクター。このスキルで必要とする、または指定することができるパラメータを設定します。
