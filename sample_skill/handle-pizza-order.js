@@ -124,6 +124,7 @@ module.exports = class HandlePizzaOrder {
                 }
             } else if (value.attachments){
                 for (let attachment of attachments){
+                    debug(attachment);
                     if (attachment.type == "location"){
                         parsed_value = {
                             address: null, // Need to fill out some day...
