@@ -7,7 +7,7 @@ let debug = require("debug")("service");
 module.exports = class Apiai_promised {
     constructor(client_access_token, language = "ja"){
         this._client_access_token = client_access_token;
-        this._langage = language;
+        this._language = language;
     }
 
     identify_intent(session_id, text){
