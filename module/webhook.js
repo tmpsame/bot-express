@@ -80,7 +80,7 @@ module.exports = class webhook {
         let bot_events = vp.extract_events(req.body);
 
         // Instantiate api.ai instance
-        let apiai = new Apiai(this.options.apiai_client_access_token);
+        let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
         debug("api.ai instantiated.");
 
         for (let bot_event of bot_events){

@@ -120,8 +120,8 @@ app.use('/webhook', bot_express({
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
     beacon_skill: {'beaconイベントタイプ':'利用されるスキル'}, // オプション。beaconイベントとそのイベントで利用されるスキル。現在サポートされるbecaonイベントタイプはenterとleave。デフォルトはすべてのイベントでdefault_skill
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
-    message_platform_type: 'プラットフォーム識別子', // オプション。現在サポートされているのはlineのみ。デフォルトはline
-    memory_retention: ミリ秒 // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
+    memory_retention: ミリ秒, // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
+    language: '言語識別子' // オプション。会話の言語を指定。デフォルトは"ja" 
 }));
 ```
 
