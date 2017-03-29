@@ -11,8 +11,7 @@ let Flow = require("./flow");
 module.exports = class NoWayFlow extends Flow {
     /*
     ** ### No Way Flow ###
-    ** - Check if the event is supported one in this flow.
-    ** - Run final action.
+    ** This flow is selected when context exists, cannot identify intent and cannot extract parameter.
     */
 
     constructor(vp, bot_event, context, options) {

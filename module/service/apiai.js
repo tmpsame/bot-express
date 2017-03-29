@@ -10,7 +10,7 @@ module.exports = class Apiai_promised {
     }
 
     identify_intent(session_id, text){
-        let ai_instance = Apiai(this._client_access_token);
+        let ai_instance = Apiai(this._client_access_token, {language: "ja"});
         let ai_request = ai_instance.textRequest(text, {sessionId: session_id});
         let promise_got_intent = new Promise((resolve, reject) => {
             ai_request.on('response', (response) => {

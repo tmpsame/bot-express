@@ -50,7 +50,7 @@ module.exports = class ChangeParameterFlow extends Flow {
             }
         }
         if (!is_fit){
-            if (this.enable_ask_retry && param_value.length <= 10){
+            if (this.enable_ask_retry && typeof param_value == "string" && param_value.length <= 10){
                 return Promise.resolve({
                     result: true,
                     response: super.ask_retry(this.message_to_ask_retry)
