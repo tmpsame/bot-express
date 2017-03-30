@@ -51,7 +51,7 @@ module.exports = class TestUtility {
             break;
             case "postback":
                 req.body.events[0].postback = {
-                    data: message_text
+                    data: message
                 }
             break;
             case "unsupported":
@@ -95,7 +95,7 @@ module.exports = class TestUtility {
             break;
             case "postback":
                 req.body.entry[0].messaging[0].postback = {
-                    payload: message_text
+                    payload: message
                 };
             break;
             case "unsupported":
