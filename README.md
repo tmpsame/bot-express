@@ -8,7 +8,7 @@ bot-expressは複数のメッセージプラットフォームに対応してお
 
 # アーキテクチャー
 
-![architecture of bot-express.png](https://qiita-image-store.s3.amazonaws.com/0/26079/e6363d2d-f1f4-4dac-2d6e-9948754c8ed6.png "architecture of bot-express.png")
+![architecture of bot-express.png](https://qiita-image-store.s3.amazonaws.com/0/26079/6df2dc12-ad48-1f4c-86f4-10f6fda93465.png)
 
 bot-expressはNodeベースのアプリケーションにnpmでインストールできるフレームワークです。LINEやFacebookといったメッセージプラットフォーム、自然言語処理を担うapi.aiといった外部サービスとの連携が組み込まれており、スキルを作成しプラグインする形でBotを拡張できます。
 
@@ -118,7 +118,7 @@ app.use('/webhook', bot_express({
     facebook_verify_token: 'あなたのFacebook Verify Token', // オプション。FacebookのWebhook認証用トークン。デフォルトはfacebook_page_access_tokenに指定した値
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
     default_skill: 'あなたのskill', // オプション。Intentが特定されなかった場合に使うスキル。デフォルトは組み込まれているdefaultスキル（api.aiからのText Reponseをそのまま返信するスキル）
-    beacon_skill: {'beaconイベントタイプ':'利用されるスキル'}, // オプション。beaconイベントとそのイベントで利用されるスキル。現在サポートされるbecaonイベントタイプはenterとleave。デフォルトはすべてのイベントでdefault_skill
+    beacon_skill: {'beaconイベントタイプ':'利用されるスキル'}, // オプション。beaconイベントとそのイベントで利用されるスキル。現在サポートされるbecaonイベントタイプはenterとleave。
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     memory_retention: ミリ秒, // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
     language: '言語識別子' // オプション。会話の言語を指定。デフォルトは"ja"
