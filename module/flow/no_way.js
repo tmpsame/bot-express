@@ -15,9 +15,11 @@ module.exports = class NoWayFlow extends Flow {
     */
 
     constructor(vp, bot_event, context, options) {
-        context.intent = {action:"input.unknown"};
+        context.intent.action = "input.unknown";
+        /*
         context.to_confirm = {};
         context.confirming = null;
+        */
         super(vp, bot_event, context, options);
         this.context._flow = "no_way";
     }

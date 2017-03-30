@@ -247,9 +247,10 @@ module.exports = class webhook {
                                 return flow.run();
                                 // End of Change Intent Flow
                             } else {
+                                context.intent.fulfillment = response.intent.fulfillment;
+
                                 // Check if this is Change Parameter Flow.
                                 let promise_is_change_parameter_flow;
-
                                 if (!context.previous.confirmed || context.previous.confirmed.length == 0 || context.intent.action == this.options.default_intent){
                                     // This is not Change Parameter Flow.
                                     debug("This is not change parameter flow since we cannot find previously confirmed parameter. Or previous intent was default intent.")

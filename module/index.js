@@ -1,7 +1,7 @@
 'use strict';
 
 const REQUIRED_OPTIONS = {
-    common: ["apiai_client_access_token", "default_skill"]
+    common: ["apiai_client_access_token"]
 }
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";

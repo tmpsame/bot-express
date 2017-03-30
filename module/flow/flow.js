@@ -30,20 +30,29 @@ module.exports = class Flow {
             return;
         }
 
+        let skill;
         // If the intent is not identified, we use default_skill.
         if (intent == this.default_intent){
-            intent = this.default_skill;
+            skill = this.default_skill || "builtin_default";
+        } else {
+            skill = intent;
         }
 
-        let Skill;
+        let skill_instance;
         try {
-            Skill = require(`${this.skill_path}${intent}`);
+            if (skill == "builtin_default"){
+                debug("Use built-in default skill.");
+                skill_instance = new require("../skill/default")();
+            } else {
+                debug(`Use ${intent} skill.`);
+                skill_instance = new require(`${this.skill_path}${intent}`)();
+            }
         } catch (err){
             debug(`Cannnot import ${this.skill_path}${intent}`);
             debug(err);
             throw(err);
         }
-        return new Skill();
+        return skill_instance;
     }
 
     _identify_to_confirm_parameter(required_parameter, confirmed){
