@@ -42,11 +42,11 @@ module.exports = class Flow {
         try {
             if (skill == "builtin_default"){
                 debug("Use built-in default skill.");
-                skill_class = require("../skill/default");
+                let skill_class = require("../skill/default");
                 skill_instance = new skill_class();
             } else {
                 debug(`Use ${skill} skill.`);
-                skill_class = require(`${this.skill_path}${skill}`);
+                let skill_class = require(`${this.skill_path}${skill}`);
                 skill_instance = new skill_class();
             }
         } catch (err){
