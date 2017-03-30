@@ -197,7 +197,7 @@ module.exports = class webhook {
                         promise_is_change_intent_flow = new Promise((resolve, reject) => {
                             resolve({
                                 result: false,
-                                intent: null,
+                                intent: {fulfillment: {speech: ""}},
                                 reason: "unsupported event for change intent flow"
                             });
                         });

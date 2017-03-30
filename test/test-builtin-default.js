@@ -11,14 +11,14 @@ chai.use(chaiAsPromised);
 chai.should();
 
 for (let message_platform of message_platform_list){
-    describe("apologize skill test - from " + message_platform, function(){
+    describe("built-in default skill test - from " + message_platform, function(){
         describe("#ほげほげ", function(){
-            it("responds apologies and left 0 to_confirm.", function(){
+            it("responds fulfillment speech and left 0 to_confirm.", function(){
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("apologize")).then(
+                return webhook.run(Util["create_req_to_clear_memory"]("builtin-default")).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("apologize", "message", "ほげほげ"));
+                        return webhook.run(Util["create_req_from_" + message_platform]("builtin-default", "message", "ほげほげ"));
                     }
                 ).then(
                     function(response){

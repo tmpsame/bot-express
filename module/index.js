@@ -5,7 +5,6 @@ const REQUIRED_OPTIONS = {
 }
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
-const DEFAULT_INTENT = "input.unknown";
 
 let express = require("express");
 let router = express.Router();
@@ -24,10 +23,9 @@ module.exports = (options) => {
 
     // Set optional options.
     options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
-    options.default_intent = options.default_intent || DEFAULT_INTENT;
     if (!!options.skill_path){
         options.skill_path = "../../../../" + options.skill_path;
-    } else if (process.env.BOT_EXPRESS_ENV == "development" || process.env.BOT_EXPRESS_ENV == "test"){
+    } else if (process.env.BOT_EXPRESS_ENV == "development"){
         // This is for Bot Express development environment only.
         options.skill_path = "../../sample_skill/";
     } else {

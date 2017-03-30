@@ -3,8 +3,7 @@
 module.exports = class TestUtility {
     static create_options(){
         let options = {
-            memory_retention: 60000,
-            default_intent: "input.unknown",
+            memory_retention: 60000, // This is optional but required for this testing since test does not go through index.js which sets default parameter.
             skill_path: "../../sample_skill/",
             enable_ask_retry: false,
             message_to_ask_retry: "ごめんなさい、もうちょっと正確にお願いできますか？",
@@ -14,12 +13,12 @@ module.exports = class TestUtility {
             facebook_app_secret: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
             facebook_page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
             apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
-            default_skill: "apologize"
+            default_intent: "input.unknown" // This is optional but required for this testing since test does not go through index.js which sets default parameter.
         }
         return options;
     }
 
-    static create_req_from_line(user_id, event_type, message_text = null){
+    static create_req_from_line(user_id, event_type, message = null){
         let req = {
             body: {
                 events: [{
@@ -41,9 +40,13 @@ module.exports = class TestUtility {
         }
         switch(event_type){
             case "message":
-                req.body.events[0].message = {
-                    type: "text",
-                    text: message_text
+                if (typeof message == "string"){
+                    req.body.events[0].message = {
+                        type: "text",
+                        text: message
+                    }
+                } else if (typeof message == "object"){
+                    req.body.events[0].message = message;
                 }
             break;
             case "postback":
@@ -58,7 +61,7 @@ module.exports = class TestUtility {
         return req;
     }
 
-    static create_req_from_facebook(user_id, event_type, message_text = null){
+    static create_req_from_facebook(user_id, event_type, message = null){
         let req = {
             body: {
                 object: "page",
@@ -82,9 +85,13 @@ module.exports = class TestUtility {
         }
         switch(event_type){
             case "message":
-                req.body.entry[0].messaging[0].message = {
-                    text: message_text
-                };
+                if (typeof message == "string"){
+                    req.body.entry[0].messaging[0].message = {
+                        text: message
+                    };
+                } else if (typeof message == "object"){
+                    req.body.entry[0].messaging[0].message = message;
+                }
             break;
             case "postback":
                 req.body.entry[0].messaging[0].postback = {

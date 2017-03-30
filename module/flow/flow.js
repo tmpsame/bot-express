@@ -1,5 +1,9 @@
 'use strict';
 
+const DEFAULT_INTENT = "input.unknown";
+const DEFAULT_SKILL = "builtin_default";
+const DEFAULT_SKILL_PATH = "../../../../skill/";
+
 let Promise = require('bluebird');
 let debug = require("debug")("flow");
 let apiai = require('apiai');
@@ -9,9 +13,9 @@ module.exports = class Flow {
         this.vp = vp;
         this.bot_event = bot_event;
         this.context = context;
+        this.default_intent = options.default_intent || DEFAULT_INTENT;
+        this.default_skill = options.default_skill || DEFAULT_SKILL;
         this.skill_path = options.skill_path;
-        this.default_skill = options.default_skill;
-        this.default_intent = options.default_intent;
         this.skill = this._instantiate_skill(this.context.intent.action);
 
         if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
@@ -33,7 +37,7 @@ module.exports = class Flow {
         let skill;
         // If the intent is not identified, we use default_skill.
         if (intent == this.default_intent){
-            skill = this.default_skill || "builtin_default";
+            skill = this.default_skill;
         } else {
             skill = intent;
         }

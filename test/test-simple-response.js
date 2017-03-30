@@ -11,14 +11,14 @@ chai.use(chaiAsPromised);
 chai.should();
 
 for (let message_platform of message_platform_list){
-    describe("greet skill test - from " + message_platform, function(){
+    describe("simple response skill test - from " + message_platform, function(){
         describe("#こんにちは", function(){
             it("responds fulfillment speech and left 0 to_confirm.", function(){
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("greet")).then(
+                return webhook.run(Util["create_req_to_clear_memory"]("simple-response")).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("greet", "message", "こんにちは。"));
+                        return webhook.run(Util["create_req_from_" + message_platform]("simple-response", "message", "こんにちは。"));
                     }
                 ).then(
                     function(response){
@@ -26,6 +26,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal({});
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
+                        response.should.have.property("intent").and.have.property("fulfillment").and.have.property("speech").and.equal("どうも。");
                     }
                 );
             });
