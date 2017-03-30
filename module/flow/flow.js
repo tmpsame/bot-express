@@ -42,13 +42,15 @@ module.exports = class Flow {
         try {
             if (skill == "builtin_default"){
                 debug("Use built-in default skill.");
-                skill_instance = new require("../skill/default")();
+                skill_class = require("../skill/default");
+                skill_instance = new skill_class();
             } else {
-                debug(`Use ${intent} skill.`);
-                skill_instance = new require(`${this.skill_path}${intent}`)();
+                debug(`Use ${skill} skill.`);
+                skill_class = require(`${this.skill_path}${skill}`);
+                skill_instance = new skill_class();
             }
         } catch (err){
-            debug(`Cannnot import ${this.skill_path}${intent}`);
+            debug(`Cannnot import ${this.skill_path}${skill}`);
             debug(err);
             throw(err);
         }
