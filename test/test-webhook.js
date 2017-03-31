@@ -11,12 +11,15 @@ chai.use(chaiAsPromised);
 chai.should();
 
 describe("webhook test - from unsupported message platform", function(){
+    let user_id = "webhook";
+    let event_type = "message";
+
     it("should be skipped", function(){
         let options = Util.create_options();
         let webhook = new Webhook(options);
-        return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+        return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
             function(response){
-                return webhook.run(Util["create_req_from_unsupported_message_platform"]("webhook", "message", "ほげほげ"));
+                return webhook.run(Util.create_req("unsupported", event_type, user_id, null, null));
             }
         ).then(
             function(response){
@@ -28,6 +31,9 @@ describe("webhook test - from unsupported message platform", function(){
 
 for (let message_platform of message_platform_list){
     describe("webhook test - from " + message_platform, function(){
+        let user_id = "webhook";
+        let event_type = "message";
+
         describe("required options are missing", function(){
             it("should be rejected", function(){
                 this.timeout(8000);
@@ -39,9 +45,9 @@ for (let message_platform of message_platform_list){
                     options.facebook_page_access_token = undefined;
                 }
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "ほげほげ"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ほげほげ"));
                     }
                 ).then(
                     function(response){
@@ -59,9 +65,9 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "unsupported"));
+                        return webhook.run(Util.create_req(message_platform, "unsupported", user_id, null, null));
                     }
                 ).then(
                     function(response){
@@ -76,13 +82,13 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "ライトの色を変えて"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ライトの色を変えて"));
                     }
                 ).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "unsupported"));
+                        return webhook.run(Util.create_req(message_platform, "unsupported", user_id, null, null));
                     }
                 ).then(
                     function(response){
@@ -97,15 +103,15 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "ライトの色を赤に変えて"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ライトの色を赤に変えて"));
                     }
                 ).then(
                     function(response){
                         response.should.have.property("_flow").and.equal("start_conversation");
                         response.should.have.property("confirmed").and.deep.equal({ color: "FF7B7B"});
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "こんにちは"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "こんにちは"));
                     }
                 ).then(
                     function(response){
@@ -122,15 +128,15 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "ライトの色を赤に変えて"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ライトの色を赤に変えて"));
                     }
                 ).then(
                     function(response){
                         response.should.have.property("_flow").and.equal("start_conversation");
                         response.should.have.property("confirmed").and.deep.equal({ color: "FF7B7B"});
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "青色"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "青色"));
                     }
                 ).then(
                     function(response){
@@ -147,15 +153,15 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("webhook")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "ライトの色を赤に変えて"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ライトの色を赤に変えて"));
                     }
                 ).then(
                     function(response){
                         response.should.have.property("_flow").and.equal("start_conversation");
                         response.should.have.property("confirmed").and.deep.equal({ color: "FF7B7B"});
-                        return webhook.run(Util["create_req_from_" + message_platform]("webhook", "message", "ほげほげ"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ほげほげ"));
                     }
                 ).then(
                     function(response){

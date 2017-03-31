@@ -8,17 +8,19 @@ let Webhook = require('../module/webhook');
 let Util = require("../test_utility/test_utility");
 
 chai.use(chaiAsPromised);
-chai.should();
+let should = chai.should();
 
 for (let message_platform of message_platform_list){
     describe("built-in default skill test - from " + message_platform, function(){
+        let user_id = "builtin-default";
+        let event_type = "message";
         describe("#ほげほげ", function(){
             it("responds fulfillment speech and left 0 to_confirm.", function(){
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("builtin-default")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("builtin-default", "message", "ほげほげ"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ほげほげ"));
                     }
                 ).then(
                     function(response){

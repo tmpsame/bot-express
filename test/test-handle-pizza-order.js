@@ -8,19 +8,21 @@ let Webhook = require('../module/webhook');
 let Util = require("../test_utility/test_utility");
 
 chai.use(chaiAsPromised);
-var should = chai.should();
+let should = chai.should();
 
 for (let message_platform of message_platform_list){
     describe("handle-pizza-order skill test - from " + message_platform, function(){
+        let user_id = "handle-pizza-order";
+        let event_type = "message";
         describe("ピザを注文したいのですが", function(){
             it("goes start conversation flow and confirm the pizza type.", function(){
                 this.timeout(8000);
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("handle-pizza-order")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", "ピザを注文したいのですが"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ピザを注文したいのですが"));
                     }
                 ).then(
                     function(response){
@@ -41,7 +43,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", "マルゲリータで。")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "マルゲリータで。")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({pizza:"マルゲリータ"});
                         response.should.have.property("confirming", "size");
@@ -59,7 +61,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", "Mサイズで。")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "Mサイズで。")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({pizza:"マルゲリータ", size:"M"});
                         response.should.have.property("confirming", "address");
@@ -76,7 +78,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", "港区北青山1-1-1")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "港区北青山1-1-1")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({
                             pizza:"マルゲリータ",
@@ -100,7 +102,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", "中嶋一樹")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "中嶋一樹")).then(
                     function(response){
                         should.not.exist(response);
                     }
@@ -113,9 +115,9 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util["create_req_to_clear_memory"]("handle-pizza-order")).then(
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", "マリナーラのLサイズをお願いしたいのですが"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "マリナーラのLサイズをお願いしたいのですが"));
                     }
                 ).then(
                     function(response){
@@ -137,9 +139,9 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                let message;
+                let payload;
                 if (message_platform == "line"){
-                    message = {
+                    payload = {
                         "id": "325708",
                         "type": "location",
                         "title": "my location",
@@ -148,7 +150,7 @@ for (let message_platform of message_platform_list){
                         "longitude": 139.70372892916203
                     }
                 } else if (message_platform == "facebook"){
-                    message = {
+                    payload = {
                         "mid":"mid.1458696618141:b4ef9d19ec21086067",
                         "seq":51,
                         "attachments":[{
@@ -162,7 +164,7 @@ for (let message_platform of message_platform_list){
                         }]
                     }
                 }
-                return webhook.run(Util["create_req_from_" + message_platform]("handle-pizza-order", "message", message)).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "location", payload)).then(
                     function(response){
                         response.should.have.property("confirmed").and.have.property("pizza").and.equal("マリナーラ");
                         response.should.have.property("confirmed").and.have.property("size").and.equal("L");

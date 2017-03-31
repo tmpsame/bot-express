@@ -75,6 +75,8 @@ module.exports = class SkillSurvey {
                 }
             } // End of mail
         } // End of required_parameter
+
+        this.clear_context_on_finish = true;
     }
 
     parse_satisfaction(value){
