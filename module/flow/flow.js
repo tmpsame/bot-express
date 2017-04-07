@@ -91,7 +91,7 @@ module.exports = class Flow {
         } else if (!!this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm){
             // Found common message object. We compile this message object to get message platform specific message object.
             debug("Found common message object.");
-            messages = [this.vp.compile_message(this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm["common"])];
+            messages = [this.vp.compile_message(this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm)];
         } else {
             debug("While we need to send a message to confirm parameter, the message not found.");
             return Promise.reject();
