@@ -2,6 +2,7 @@
 
 let Line = require("./service/line");
 let Facebook = require("./service/facebook");
+let debug = require("debug")("vp");
 
 module.exports = class VirtualPlatform {
     constructor(options){
