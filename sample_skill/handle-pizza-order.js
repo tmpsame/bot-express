@@ -10,79 +10,63 @@ module.exports = class SkillHandlePizzaOrder {
             pizza: {
                 message_to_confirm: {
                     /*
-                    line: {
-                        type: "template",
-                        altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。",
-                        template: {
-                            type: "buttons",
-                            text: "ご注文のピザはお決まりでしょうか？",
-                            actions: [
-                                {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
-                                {type:"postback",label:"マリナーラ",data:"マリナーラ"}
-                            ]
-                        }
-                    },
-                    */
-                    common: {
+                    type: "template",
+                    altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。",
+                    template: {
+                        type: "buttons",
                         text: "ご注文のピザはお決まりでしょうか？",
-                        quick_replies: [
-                            {content_type:"text",title:"マルゲリータ",payload:"マルゲリータ"},
-                            {content_type:"text",title:"マリナーラ",payload:"マリナーラ"}
+                        actions: [
+                            {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
+                            {type:"postback",label:"マリナーラ",data:"マリナーラ"}
                         ]
                     }
+                    */
+                    text: "ご注文のピザはお決まりでしょうか？",
+                    quick_replies: [
+                        {content_type:"text",title:"マルゲリータ",payload:"マルゲリータ"},
+                        {content_type:"text",title:"マリナーラ",payload:"マリナーラ"}
+                    ]
                 }
             },
             size: {
                 message_to_confirm: {
-                    /*
-                    line: {
-                        type: "template",
-                        altText: "サイズはいかがいたしましょうか？ S、M、Lからお選びください。",
-                        template: {
-                            type: "buttons",
-                            text: "サイズはいかがいたしましょうか？",
-                            actions: [
-                                {type:"postback",label:"S",data:"S"},
-                                {type:"postback",label:"M",data:"M"},
-                                {type:"postback",label:"L",data:"L"}
-                            ]
-                        }
-                    },
-                    */
-                    common: {
+                    type: "template",
+                    altText: "サイズはいかがいたしましょうか？ S、M、Lからお選びください。",
+                    template: {
+                        type: "buttons",
                         text: "サイズはいかがいたしましょうか？",
-                        quick_replies: [
-                            {content_type:"text",title:"S",payload:"S"},
-                            {content_type:"text",title:"M",payload:"M"},
-                            {content_type:"text",title:"L",payload:"L"}
+                        actions: [
+                            {type:"postback",label:"S",data:"S"},
+                            {type:"postback",label:"M",data:"M"},
+                            {type:"postback",label:"L",data:"L"}
                         ]
                     }
+                    /*
+                    text: "サイズはいかがいたしましょうか？",
+                    quick_replies: [
+                        {content_type:"text",title:"S",payload:"S"},
+                        {content_type:"text",title:"M",payload:"M"},
+                        {content_type:"text",title:"L",payload:"L"}
+                    ]
+                    */
                 }
             },
             address: {
                 message_to_confirm: {
                     /*
-                    line: {
-                        type: "text",
-                        text: "お届け先の住所を教えていただけますか？"
-                    },
+                    type: "text",
+                    text: "お届け先の住所を教えていただけますか？"
                     */
-                    common: {
-                        text: "お届け先の住所を教えていただけますか？"
-                    }
+                    text: "お届け先の住所を教えていただけますか？"
                 }
             },
             name: {
                 message_to_confirm: {
+                    type: "text",
+                    text: "最後に、お客様のお名前を教えていただけますか？"
                     /*
-                    line: {
-                        type: "text",
-                        text: "最後に、お客様のお名前を教えていただけますか？"
-                    },
+                    text: "最後に、お客様のお名前を教えていただけますか？"
                     */
-                    common: {
-                        text: "最後に、お客様のお名前を教えていただけますか？"
-                    }
                 }
             }
         };
