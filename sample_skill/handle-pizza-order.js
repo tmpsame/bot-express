@@ -2,7 +2,7 @@
 
 let debug = require("debug")("skill");
 
-module.exports = class HandlePizzaOrder {
+module.exports = class SkillHandlePizzaOrder {
 
     // コンストラクター。このスキルで必要とする、または指定することができるパラメータを設定します。
     constructor() {
