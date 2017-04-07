@@ -9,7 +9,8 @@ module.exports = class SkillHandlePizzaOrder {
         this.required_parameter = {
             pizza: {
                 message_to_confirm: {
-                    common: {
+                    /*
+                    line: {
                         type: "template",
                         altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。",
                         template: {
@@ -20,20 +21,21 @@ module.exports = class SkillHandlePizzaOrder {
                                 {type:"postback",label:"マリナーラ",data:"マリナーラ"}
                             ]
                         }
-                    }/*,
-                    facebook: {
+                    },
+                    */
+                    common: {
                         text: "ご注文のピザはお決まりでしょうか？",
                         quick_replies: [
                             {content_type:"text",title:"マルゲリータ",payload:"マルゲリータ"},
                             {content_type:"text",title:"マリナーラ",payload:"マリナーラ"}
                         ]
                     }
-                    */
                 }
             },
             size: {
                 message_to_confirm: {
-                    common: {
+                    /*
+                    line: {
                         type: "template",
                         altText: "サイズはいかがいたしましょうか？ S、M、Lからお選びください。",
                         template: {
@@ -45,8 +47,9 @@ module.exports = class SkillHandlePizzaOrder {
                                 {type:"postback",label:"L",data:"L"}
                             ]
                         }
-                    }/*,
-                    facebook: {
+                    },
+                    */
+                    common: {
                         text: "サイズはいかがいたしましょうか？",
                         quick_replies: [
                             {content_type:"text",title:"S",payload:"S"},
@@ -54,31 +57,32 @@ module.exports = class SkillHandlePizzaOrder {
                             {content_type:"text",title:"L",payload:"L"}
                         ]
                     }
-                    */
                 }
             },
             address: {
                 message_to_confirm: {
-                    common: {
+                    /*
+                    line: {
                         type: "text",
                         text: "お届け先の住所を教えていただけますか？"
-                    }/*,
-                    facebook: {
+                    },
+                    */
+                    common: {
                         text: "お届け先の住所を教えていただけますか？"
                     }
-                    */
                 }
             },
             name: {
                 message_to_confirm: {
-                    common: {
+                    /*
+                    line: {
                         type: "text",
                         text: "最後に、お客様のお名前を教えていただけますか？"
-                    }/*,
-                    facebook: {
+                    },
+                    */
+                    common: {
                         text: "最後に、お客様のお名前を教えていただけますか？"
                     }
-                    */
                 }
             }
         };
