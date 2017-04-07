@@ -8,7 +8,7 @@ let debug = require("debug")("skill");
 module.exports = class SkillBye {
     finish(bot, bot_event, context){
         debug(`Going to reply "Bye".`);
-        let messages = [bot.create_message("Bye")];
+        let messages = [bot.create_text_message("Bye")];
         return bot.reply(bot_event, messages);
     }
 };
