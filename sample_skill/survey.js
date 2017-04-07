@@ -129,7 +129,7 @@ module.exports = class SkillSurvey {
     }
 
     finish(bot, bot_event, context){
-        let messages = [bot.create_message(`完璧です！ありがとうございました！！`)];
+        let messages = [bot.create_text_message(`完璧です！ありがとうございました！！`)];
         return bot.reply(bot_event, messages);
     }
 };

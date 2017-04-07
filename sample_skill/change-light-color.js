@@ -70,7 +70,7 @@ module.exports = class SkillChangeLightColor {
     finish(bot, bot_event, context){
         return hue.change_color(context.confirmed.color).then(
             (response) => {
-                let messages = [bot.create_message("了解しましたー。", "text")];
+                let messages = [bot.create_text_message("了解しましたー。")];
                 return bot.reply(bot_event, messages);
             },
             (response) => {

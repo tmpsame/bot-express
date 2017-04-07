@@ -284,33 +284,13 @@ module.exports = class VirtualPlatform {
         return message_text;
     }
 
-    create_message(message_object, message_type){
-        return this[`_${this.type}_create_message`](message_object, message_type);
-    }
-
-    _line_create_message(message_object, message_type = "text"){
-        let message;
-        switch(message_type){
-            case "text":
-                message = {
-                    type: "text",
-                    text: message_object
-                }
-            break;
+    create_text_message(text_message){
+        let message_to_compile = {
+            type: "text",
+            text: text_message
         }
-        return message;
-    }
-
-    _facebook_create_message(message_object, message_type = "text"){
-        let message;
-        switch(message_type){
-            case "text":
-                message = {
-                    text: message_object
-                }
-            break;
-        }
-        return message;
+        let compiled_message = this.compile_message(message_to_compile);
+        return compiled_message;
     }
 
     reply(bot_event, messages){

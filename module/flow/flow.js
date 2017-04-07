@@ -178,7 +178,7 @@ module.exports = class Flow {
     }
 
     ask_retry(message_text){
-        let messages = [this.vp.create_message(message_text)];
+        let messages = [this.vp.create_text_message(message_text)];
         return this.vp.reply(this.bot_event, messages);
     }
 

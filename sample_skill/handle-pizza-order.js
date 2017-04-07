@@ -9,7 +9,6 @@ module.exports = class SkillHandlePizzaOrder {
         this.required_parameter = {
             pizza: {
                 message_to_confirm: {
-                    /*
                     type: "template",
                     altText: "ご注文のピザはお決まりでしょうか？ マルゲリータ、マリナーラからお選びください。",
                     template: {
@@ -20,12 +19,6 @@ module.exports = class SkillHandlePizzaOrder {
                             {type:"postback",label:"マリナーラ",data:"マリナーラ"}
                         ]
                     }
-                    */
-                    text: "ご注文のピザはお決まりでしょうか？",
-                    quick_replies: [
-                        {content_type:"text",title:"マルゲリータ",payload:"マルゲリータ"},
-                        {content_type:"text",title:"マリナーラ",payload:"マリナーラ"}
-                    ]
                 }
             },
             size: {
@@ -41,22 +34,11 @@ module.exports = class SkillHandlePizzaOrder {
                             {type:"postback",label:"L",data:"L"}
                         ]
                     }
-                    /*
-                    text: "サイズはいかがいたしましょうか？",
-                    quick_replies: [
-                        {content_type:"text",title:"S",payload:"S"},
-                        {content_type:"text",title:"M",payload:"M"},
-                        {content_type:"text",title:"L",payload:"L"}
-                    ]
-                    */
                 }
             },
             address: {
                 message_to_confirm: {
-                    /*
                     type: "text",
-                    text: "お届け先の住所を教えていただけますか？"
-                    */
                     text: "お届け先の住所を教えていただけますか？"
                 }
             },
@@ -64,9 +46,6 @@ module.exports = class SkillHandlePizzaOrder {
                 message_to_confirm: {
                     type: "text",
                     text: "最後に、お客様のお名前を教えていただけますか？"
-                    /*
-                    text: "最後に、お客様のお名前を教えていただけますか？"
-                    */
                 }
             }
         };
@@ -144,7 +123,7 @@ module.exports = class SkillHandlePizzaOrder {
 
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
-        let messages = [bot.create_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address.address}までお届けに上がります。`)];
+        let messages = [bot.create_text_message(`${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address.address}までお届けに上がります。`)];
         return bot.reply(bot_event, messages);
     }
 };
