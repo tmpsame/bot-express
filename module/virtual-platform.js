@@ -346,7 +346,7 @@ module.exports = class VirtualPlatform {
     }
 
     compile_message(message){
-        // Identify the format provider and message type.
+        // Identify the message format and type.
         let format = {
             provider: null, // line | facebook
             type: null // text | image | video | audio | location | sticker | imagemap | template | file | quick_reply
@@ -375,7 +375,11 @@ module.exports = class VirtualPlatform {
             // We could not identify the format of this message object.
             throw(`We can not identify the format for this message object.`);
         }
-        return this[`_${this.type}_compile_message`](format, message);
+        debug(`Identified message format is ${format.provider}, message type is ${format.type}.`);
+        let compiled_message = this[`_${this.type}_compile_message`](format, message);
+        debug(`Compiled message is following.`);
+        debug(compiled_message);
+        return compiled_message;
     }
 
     _line_compile_message(format, message){
