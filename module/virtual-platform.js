@@ -497,7 +497,7 @@ module.exports = class VirtualPlatform {
                     } else if (message.attachment.payload.template_type == "generic"){
                         compiled_message = {
                             type: "template",
-                            altText: message.attachment.payload.text,
+                            altText: "Carousel Template", // This is a dummy text since facebook does not have corresponiding property.
                             template: {
                                 type: "carousel",
                                 columns: []
