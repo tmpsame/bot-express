@@ -50,7 +50,7 @@ module.exports = class SkillCompileMessage {
                         actions: [
                             {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
                             {type:"postback",label:"マリナーラ",data:"マリナーラ"},
-                            {type:"uri", label: "すべてのメニュー", uri:"http://www.dominos.jp/order/pizza/search/99999/10002"}
+                            {type:"uri", label: "すべてのメニュー", uri:"http://www.dominos.jp/order/pizza/search/"}
                         ]
                     }
                 }
@@ -66,8 +66,65 @@ module.exports = class SkillCompileMessage {
                             {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
                             {type:"postback",label:"マリナーラ",data:"マリナーラ"},
                             {type:"postback",label:"カプリチョーザ",data:"カプリチョーザ"},
-                            {type:"uri", label: "すべてのメニュー", uri:"http://www.dominos.jp/order/pizza/search/99999/10002"}
+                            {type:"uri", label: "すべてのメニュー", uri:"http://www.dominos.jp/order/pizza/search/"}
                         ]
+                    }
+                }
+            },
+            facebook_text: {
+                message_to_confirm: {
+                    text: "ご注文のピザは？"
+                }
+            },
+            facebook_quick_reply: {
+                message_to_confirm: {
+                    text: "ご注文のピザをお選びください。",
+                    quick_replies: [
+                        {content_type:"text",title:"マルゲリータ",payload:"マルゲリータ"},
+                        {content_type:"text",title:"マリナーラ",payload:"マリナーラ"},
+                    ]
+                }
+            },
+            facebook_quick_reply_more_than_4: {
+                message_to_confirm: {
+                    text: "ご注文のピザをお選びください。",
+                    quick_replies: [
+                        {content_type:"text",title:"マルゲリータ",payload:"マルゲリータ"},
+                        {content_type:"text",title:"マリナーラ",payload:"マリナーラ"},
+                        {content_type:"text",title:"カプリチョーザ",payload:"カプリチョーザ"},
+                        {content_type:"text",title:"アラビアータ",payload:"アラビアータ"},
+                        {content_type:"text",title:"クアトロフォルマッジ",payload:"クアトロフォルマッジ"},
+                    ]
+                }
+            },
+            facebook_template_button_postback: {
+                message_to_confirm: {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "button",
+                            text: "ご注文のピザをお選びください。",
+                            buttons: [
+                                {type: "postback", title: "マルゲリータ", payload: "マルゲリータ"},
+                                {type: "postback", title: "マリナーラ", payload: "マリナーラ"}
+                            ]
+                        }
+                    }
+                }
+            },
+            facebook_template_button_web_url: {
+                message_to_confirm: {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "button",
+                            text: "ご注文のピザをお選びください。",
+                            buttons: [
+                                {type: "postback", title: "マルゲリータ", payload: "マルゲリータ"},
+                                {type: "postback", title: "マリナーラ", payload: "マリナーラ"},
+                                {type: "web_url", title: "すべてのメニュー", url: "http://www.dominos.jp/order/pizza/search/"}
+                            ]
+                        }
                     }
                 }
             }/*,
