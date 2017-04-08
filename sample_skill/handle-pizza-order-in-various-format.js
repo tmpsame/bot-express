@@ -6,13 +6,13 @@ module.exports = class SkillCompileMessage {
 
     constructor() {
         this.required_parameter = {
-            line_text: {
+            line_text: { // Will be text in facebook.
                 message_to_confirm: {
                     type: "text",
                     text: "ご注文のピザは？"
                 }
             },
-            line_template_postback: {
+            line_template_postback: { // Will be quick reply in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -21,12 +21,14 @@ module.exports = class SkillCompileMessage {
                         text: "ご注文のピザをお選びください。",
                         actions: [
                             {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
-                            {type:"postback",label:"マリナーラ",data:"マリナーラ"}
+                            {type:"postback",label:"マリナーラ",data:"マリナーラ"},
+                            {type:"postback",label:"カプリチョーザ",data:"カプリチョーザ"},
+                            {type:"postback",label:"クワトロフォルマッジ",data:"クワトロフォルマッジ"}
                         ]
                     }
                 }
             },
-            line_template_message: {
+            line_template_message: { // Will be quick reply in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -35,12 +37,14 @@ module.exports = class SkillCompileMessage {
                         text: "ご注文のピザをお選びください。",
                         actions: [
                             {type:"message",label:"マルゲリータ",text:"マルゲリータ"},
-                            {type:"message",label:"マリナーラ",text:"マリナーラ"}
+                            {type:"message",label:"マリナーラ",text:"マリナーラ"},
+                            {type:"message",label:"カプリチョーザ",text:"カプリチョーザ"},
+                            {type:"message",label:"クワトロフォルマッジ",text:"クワトロフォルマッジ"}
                         ]
                     }
                 }
             },
-            line_template_uri: {
+            line_template_uri: { // Will be template button in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -55,7 +59,7 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            line_template_uri_more_than_3: {
+            line_template_uri_more_than_3: { // Will catch exception in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -71,12 +75,12 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            facebook_text: {
+            facebook_text: { // Will be text in line.
                 message_to_confirm: {
                     text: "ご注文のピザは？"
                 }
             },
-            facebook_quick_reply: {
+            facebook_quick_reply: { // Will be template button message in line.
                 message_to_confirm: {
                     text: "ご注文のピザをお選びください。",
                     quick_replies: [
@@ -85,7 +89,7 @@ module.exports = class SkillCompileMessage {
                     ]
                 }
             },
-            facebook_quick_reply_more_than_4: {
+            facebook_quick_reply_more_than_4: { // Will be text in line.
                 message_to_confirm: {
                     text: "ご注文のピザをお選びください。",
                     quick_replies: [
@@ -97,7 +101,7 @@ module.exports = class SkillCompileMessage {
                     ]
                 }
             },
-            facebook_template_button_postback: {
+            facebook_template_button_postback: { // Will be template button postback in line.
                 message_to_confirm: {
                     attachment: {
                         type: "template",
@@ -112,7 +116,7 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            facebook_template_button_web_url: {
+            facebook_template_button_web_url: { // Will be template button postback and uri in line.
                 message_to_confirm: {
                     attachment: {
                         type: "template",
@@ -124,6 +128,31 @@ module.exports = class SkillCompileMessage {
                                 {type: "postback", title: "マリナーラ", payload: "マリナーラ"},
                                 {type: "web_url", title: "すべてのメニュー", url: "http://www.dominos.jp/order/pizza/search/"}
                             ]
+                        }
+                    }
+                }
+            },
+            facebook_template_generic: { // Will be template carousel in line.
+                message_to_confirm: {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "generic",
+                            elements: [{
+                                title: "マルゲリータ",
+                                image_url: "http://www.dominos.jp/common/img/itemimgsx/90.jpg?_=12016",
+                                buttons: [
+                                    {type: "postback", title: "注文する", payload: "マルゲリータ"},
+                                    {type: "web_url", title: "詳細", url: "http://www.dominos.jp/order/pizza/detail/99999/19001/90"}
+                                ]
+                            },{
+                                title: "ジェノベーゼ",
+                                image_url: "http://www.dominos.jp/common/img/itemimgsx/216.jpg?_=12016",
+                                buttons: [
+                                    {type: "postback", title: "注文する", payload: "ジェノベーゼ"},
+                                    {type: "web_url", title: "詳細", url: "http://www.dominos.jp/order/pizza/detail/99999/19001/216"}
+                                ]
+                            }]
                         }
                     }
                 }
@@ -162,29 +191,6 @@ module.exports = class SkillCompileMessage {
                 message_to_confirm: {
                     type: "imagemap",
                     originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
-                }
-            }
-            /*
-
-            size: { // common, facebook format, quick reply type
-                message_to_confirm: {
-                    text: "サイズはいかがいたしましょうか？ S、M、Lからお選びください。",
-                    quick_replies: [
-                        {content_type:"text",title:"S",payload:"S"},
-                        {content_type:"text",title:"M",payload:"M"},
-                        {content_type:"text",title:"L",payload:"L"}
-                    ]
-                }
-            },
-            address: { // common, line format, text type
-                message_to_confirm: {
-                    type: "text",
-                    text: "お届け先の住所を教えていただけますか？"
-                }
-            },
-            name: { // common, facebook format, text type
-                message_to_confirm: {
-                    text: "最後に、お客様のお名前を教えていただけますか？"
                 }
             }
             */

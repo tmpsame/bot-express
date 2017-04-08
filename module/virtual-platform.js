@@ -410,16 +410,16 @@ module.exports = class VirtualPlatform {
                         for (let quick_reply of message.quick_replies){
                             if (quick_reply.content_type == "text"){
                                 compiled_message.template.actions.push({
-                                    type: "postback",
+                                    type: "message",
                                     label: quick_reply.title,
-                                    data: quick_reply.payload
+                                    text: quick_reply.payload
                                 });
                             } else {
                                 // quick reply of location type is included but line does not corresponding template type so we insert "unsupported".
                                 compiled_message.template.actions.push({
-                                    type: "postback",
+                                    type: "message",
                                     label: "Unsupported",
-                                    data: "Unsupported"
+                                    text: "Unsupported"
                                 });
                             }
                         }
