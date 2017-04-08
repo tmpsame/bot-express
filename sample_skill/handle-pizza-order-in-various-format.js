@@ -54,7 +54,7 @@ module.exports = class SkillCompileMessage {
                         actions: [
                             {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
                             {type:"postback",label:"マリナーラ",data:"マリナーラ"},
-                            {type:"uri", label: "すべてのメニュー", uri:"http://www.dominos.jp/order/pizza/search/"}
+                            {type:"uri", label: "すべてのメニュー", uri:"https://www.dominos.jp/order/pizza/search/"}
                         ]
                     }
                 }
@@ -70,7 +70,7 @@ module.exports = class SkillCompileMessage {
                             {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
                             {type:"postback",label:"マリナーラ",data:"マリナーラ"},
                             {type:"postback",label:"カプリチョーザ",data:"カプリチョーザ"},
-                            {type:"uri", label: "すべてのメニュー", uri:"http://www.dominos.jp/order/pizza/search/"}
+                            {type:"uri", label: "すべてのメニュー", uri:"https://www.dominos.jp/order/pizza/search/"}
                         ]
                     }
                 }
@@ -126,7 +126,7 @@ module.exports = class SkillCompileMessage {
                             buttons: [
                                 {type: "postback", title: "マルゲリータ", payload: "マルゲリータ"},
                                 {type: "postback", title: "マリナーラ", payload: "マリナーラ"},
-                                {type: "web_url", title: "すべてのメニュー", url: "http://www.dominos.jp/order/pizza/search/"}
+                                {type: "web_url", title: "すべてのメニュー", url: "https://www.dominos.jp/order/pizza/search/"}
                             ]
                         }
                     }
@@ -140,17 +140,17 @@ module.exports = class SkillCompileMessage {
                             template_type: "generic",
                             elements: [{
                                 title: "マルゲリータ",
-                                image_url: "http://www.dominos.jp/common/img/itemimgsx/90.jpg?_=12016",
+                                image_url: "https://www.dominos.jp/common/img/itemimgsx/90.jpg?_=12016",
                                 buttons: [
                                     {type: "postback", title: "注文する", payload: "マルゲリータ"},
-                                    {type: "web_url", title: "詳細", url: "http://www.dominos.jp/order/pizza/detail/99999/19001/90"}
+                                    {type: "web_url", title: "詳細", url: "https://www.dominos.jp/order/pizza/detail/99999/19001/90"}
                                 ]
                             },{
                                 title: "ジェノベーゼ",
-                                image_url: "http://www.dominos.jp/common/img/itemimgsx/216.jpg?_=12016",
+                                image_url: "https://www.dominos.jp/common/img/itemimgsx/216.jpg?_=12016",
                                 buttons: [
                                     {type: "postback", title: "注文する", payload: "ジェノベーゼ"},
-                                    {type: "web_url", title: "詳細", url: "http://www.dominos.jp/order/pizza/detail/99999/19001/216"}
+                                    {type: "web_url", title: "詳細", url: "https://www.dominos.jp/order/pizza/detail/99999/19001/216"}
                                 ]
                             }]
                         }
