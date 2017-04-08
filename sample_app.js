@@ -26,8 +26,7 @@ app.use('/webhook', bot_express({
     beacon_skill: {
         enter: "survey",
         leave: "bye"
-    },
-    skill_path: "../../test_skill"
+    }
 }));
 
 module.exports = app;
