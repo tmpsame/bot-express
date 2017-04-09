@@ -12,7 +12,7 @@ module.exports = class SkillCompileMessage {
                     text: "ご注文のピザは？"
                 }
             },
-            line_template_postback: { // Will be quick reply in facebook.
+            line_template_button_postback: { // Will be quick reply in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -28,7 +28,7 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            line_template_message: { // Will be quick reply in facebook.
+            line_template_button_message: { // Will be quick reply in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -44,7 +44,7 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            line_template_uri: { // Will be template button in facebook.
+            line_template_button_uri: { // Will be template button in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -59,7 +59,7 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            line_template_uri_more_than_3: { // Will catch exception in facebook.
+            line_template_button_uri_more_than_3: { // Will catch exception in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文のピザをお選びください。",
@@ -72,6 +72,44 @@ module.exports = class SkillCompileMessage {
                             {type:"postback",label:"カプリチョーザ",data:"カプリチョーザ"},
                             {type:"uri", label: "すべてのメニュー", uri:"https://www.dominos.jp/order/pizza/search/"}
                         ]
+                    }
+                }
+            },
+            line_template_confirm: { // Will be quick repy in facebook.
+                message_to_confirm: {
+                    type: "template",
+                    altText: "ご注文は以上ですか？",
+                    template: {
+                        type: "buttons",
+                        text: "ご注文は以上ですか？",
+                        actions: [
+                            {type:"message",label:"はい",text:"はい"},
+                            {type:"message",label:"いいえ",text:"いいえ"}
+                        ]
+                    }
+                }
+            },
+            line_template_carousel: { // Will be template generic
+                message_to_confirm: {
+                    type: "template",
+                    altText: "Carousel Template",
+                    template: {
+                        type: "carousel",
+                        columns: [{
+                            thumbnailImageUrl: "https://www.dominos.jp/common/img/itemimgsx/90.jpg?_=12016",
+                            text: "マルゲリータ",
+                            actions: [
+                                {type:"postback", label:"注文する", data:"マルゲリータ"},
+                                {type:"uri", label:"詳細", data:"https://www.dominos.jp/order/pizza/detail/99999/19001/90"}
+                            ]
+                        },{
+                            thumbnailImageUrl: "https://www.dominos.jp/common/img/itemimgsx/216.jpg?_=12016",
+                            text: "ジェノベーゼ",
+                            actions: [
+                                {type:"postback", label:"注文する", data:"ジェノベーゼ"},
+                                {type:"uri", label:"詳細", data:"https://www.dominos.jp/order/pizza/detail/99999/19001/216"}
+                            ]
+                        }]
                     }
                 }
             },
