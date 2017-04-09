@@ -702,7 +702,7 @@ module.exports = class VirtualPlatform {
                                 }
                             }
                             if (uri_included){
-                                if (column.actinos.length > 3){
+                                if (column.actions.length > 3){
                                     // Not supported since facebook does not allow template message including more than 3 buttons. line's threshold is 3, too.
                                     debug(`Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported.`);
                                     compiled_message = {
