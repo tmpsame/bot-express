@@ -418,8 +418,8 @@ module.exports = class VirtualPlatform {
                                 // quick reply of location type is included but line does not corresponding template type so we insert "unsupported".
                                 compiled_message.template.actions.push({
                                     type: "message",
-                                    label: "Unsupported",
-                                    text: "Unsupported"
+                                    label: "*Unsupported Location Type",
+                                    text: "*Unsupported Location Type"
                                 });
                             }
                         }
@@ -447,7 +447,11 @@ module.exports = class VirtualPlatform {
                         duration: undefined
                     }
                     */
-                    throw(`Compiling ${format.type} message from facebook format to line format is not supported. Supported types are text(may includes quick replies), image and template.`);
+                    debug(`Compiling ${format.type} message from facebook format to line format is not supported since facebook does not have the property corresponding to "duration". Supported types are text(may includes quick replies), image and template.`);
+                    compiled_message = {
+                        type: text,
+                        text: `*Message type is audio and it was made in facebook format. It lacks required "duration" property so we could not translate.`
+                    }
                 break;
                 case "video":
                     // Not supported since facebook does not have property corresponding to "previewImageUrl".
@@ -458,11 +462,19 @@ module.exports = class VirtualPlatform {
                         previewImageUrl: undefined
                     }
                     */
-                    throw(`Compiling ${format.type} message from facebook format to line format is not supported. Supported types are text(may includes quick replies), image and template.`);
+                    debug(`Compiling ${format.type} message from facebook format to line format is not supported since facebook does not have property corresponding to "previewImageUrl". Supported types are text(may includes quick replies), image and template.`);
+                    compiled_message = {
+                        type: text,
+                        text: `*Message type is video and it was made in facebook format. It lacks required "previewImageUrl" property so we could not translate.`
+                    }
                 break;
                 case "file":
                     // Not supported since line does not have corresponding message object.
-                    throw(`Compiling ${format.type} message from facebook format to line format is not supported. Supported types are text(may includes quick replies), image and template.`);
+                    debug(`Compiling ${format.type} message from facebook format to line format is not supported since line does not have corresponding message object. Supported types are text(may includes quick replies), image and template.`);
+                    compiled_message = {
+                        type: text,
+                        text: `*Message type is file and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
+                    }
                 break;
                 case "template":
                     if (message.attachment.payload.template_type == "button"){
@@ -491,7 +503,11 @@ module.exports = class VirtualPlatform {
                                 });
                             } else {
                                 // Not supported since line does not have corresponding template.
-                                throw(`Compiling template messege including ${button.type} button from facebook format to line format is not supported.`);
+                                debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`);
+                                compiled_message = {
+                                    type: "text",
+                                    text: `*Message type is template and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
+                                }
                             }
                         }
                     } else if (message.attachment.payload.template_type == "generic"){
@@ -525,18 +541,30 @@ module.exports = class VirtualPlatform {
                                     });
                                 } else {
                                     // Not supported since line does not have corresponding template.
-                                    throw(`Compiling template messege including ${button.type} button from facebook format to line format is not supported.`);
+                                    debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`);
+                                    compiled_message = {
+                                        type: "text",
+                                        text: `*Message type is template and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
+                                    }
                                 }
                             }
                             compiled_message.template.columns.push(column);
                         }
                     } else {
                         // Not supported since line does not have corresponiding template.
-                        throw(`Compiling template messege of ${message.attachment.payload.template_type} from facebook format to line format is not supported. Supported type of template are button and generic.`);
+                        debug(`Compiling template messege of ${message.attachment.payload.template_type} from facebook format to line format is not supported. Supported type of template are button and generic.`);
+                        compiled_message = {
+                            type: "text",
+                            text: `*Message type is template of ${message.attachment.payload.template_type} and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
+                        }
                     }
                 break;
                 default:
-                    throw(`Compiling ${format.type} message from facebook format to line format is not supported. Supported types are text(may includes quick replies), image and template.`);
+                    debug(`Compiling ${format.type} message from facebook format to line format is not supported. Supported types are text(may includes quick replies), image and template.`);
+                    compiled_message = {
+                        type: "text",
+                        text: "*Original Message had unsupported information"
+                    }
                 break;
             } // End of switch(format.type)
         } // End of if (format.provider == "facebook")
@@ -596,8 +624,11 @@ module.exports = class VirtualPlatform {
                         if (uri_included){
                             // This template message include uri button so we use template message in facebook as well.
                             if (message.template.actions.length > 3){
-                                // Not supported since facebook does not allow template message including more than 3 buttons.
-                                throw(`Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported.`);
+                                // Not supported since facebook does not allow template message including more than 3 buttons. The threshold of action of line template button is 4.
+                                debug(`Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message.`);
+                                compiled_message = {
+                                    text: message.altText + "*Original Message had unsupported information"
+                                }
                             } else {
                                 compiled_message = {
                                     attachment: {
@@ -672,8 +703,11 @@ module.exports = class VirtualPlatform {
                             }
                             if (uri_included){
                                 if (column.actinos.length > 3){
-                                    // Not supported since facebook does not allow template message including more than 3 buttons.
-                                    throw(`Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported.`);
+                                    // Not supported since facebook does not allow template message including more than 3 buttons. line's threshold is 3, too.
+                                    debug(`Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported.`);
+                                    compiled_message = {
+                                        text: message.altText + " *Original Message had unsupported information"
+                                    }
                                 }
                             }
                             for (let action of column.actions){
@@ -702,7 +736,10 @@ module.exports = class VirtualPlatform {
                     }
                 break;
                 default:
-                    throw(`Compiling ${format.type} message from line format to facebook format is not supported. Supported types are text, image, video, audio and template.`);
+                    debug(`Compiling ${format.type} message from line format to facebook format is not supported. Supported types are text, image, video, audio and template.`);
+                    compiled_message = {
+                        text: "*Original Message had unsupported information"
+                    }
                 break;
             } // End of switch(format.type)
         } // End of if (format.provider == "line")
