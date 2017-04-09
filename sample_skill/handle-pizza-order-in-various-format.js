@@ -113,6 +113,44 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
+            /*
+            line_image: {
+                message_to_confirm: {
+                    type: "image",
+                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
+                }
+            },
+            line_video: {
+                message_to_confirm: {
+                    type: "video",
+                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
+                }
+            },
+            line_audio: {
+                message_to_confirm: {
+                    type: "sticker",
+                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
+                }
+            },
+            line_sticker: {
+                message_to_confirm: {
+                    type: "sticker",
+
+                }
+            },
+            line_location: {
+                message_to_confirm: {
+                    type: "location",
+
+                }
+            },
+            line_imagemap: {
+                message_to_confirm: {
+                    type: "imagemap",
+                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
+                }
+            }
+            */
             facebook_text: { // Will be text in line.
                 message_to_confirm: {
                     text: "ご注文のピザは？"
@@ -194,41 +232,26 @@ module.exports = class SkillCompileMessage {
                         }
                     }
                 }
-            }/*,
-            line_image: {
+            }
+            /*
+            facebook_audio: {
                 message_to_confirm: {
-                    type: "image",
-                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
-                }
-            },
-            line_video: {
-                message_to_confirm: {
-                    type: "video",
-                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
-                }
-            },
-            line_audio: {
-                message_to_confirm: {
-                    type: "sticker",
-                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
-                }
-            },
-            line_sticker: {
-                message_to_confirm: {
-                    type: "sticker",
 
                 }
             },
-            line_location: {
+            facebook_file: {
                 message_to_confirm: {
-                    type: "location",
 
                 }
             },
-            line_imagemap: {
+            facebook_image: {
                 message_to_confirm: {
-                    type: "imagemap",
-                    originalContentUrl: "https://www.dropbox.com/sh/lbmx3s1yg392mvh/AAAwCzdEjO_I5OK9nrbDurdra?dl=1"
+
+                }
+            },
+            facebook_video: {
+                message_to_confirm: {
+
                 }
             }
             */
