@@ -726,7 +726,7 @@ module.exports = class VirtualPlatform {
                                 } else if (action.type == "uri"){
                                     element.buttons.push({
                                         type: "web_url",
-                                        url: action.url,
+                                        url: action.uri,
                                         title: action.label
                                     });
                                 }
