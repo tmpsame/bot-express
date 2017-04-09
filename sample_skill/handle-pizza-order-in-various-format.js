@@ -80,7 +80,7 @@ module.exports = class SkillCompileMessage {
                     type: "template",
                     altText: "ご注文は以上ですか？",
                     template: {
-                        type: "buttons",
+                        type: "confirm",
                         text: "ご注文は以上ですか？",
                         actions: [
                             {type:"message",label:"はい",text:"はい"},
@@ -100,14 +100,14 @@ module.exports = class SkillCompileMessage {
                             text: "マルゲリータ",
                             actions: [
                                 {type:"postback", label:"注文する", data:"マルゲリータ"},
-                                {type:"uri", label:"詳細", data:"https://www.dominos.jp/order/pizza/detail/99999/19001/90"}
+                                {type:"uri", label:"詳細", uri:"https://www.dominos.jp/order/pizza/detail/99999/19001/90"}
                             ]
                         },{
                             thumbnailImageUrl: "https://www.dominos.jp/common/img/itemimgsx/216.jpg?_=12016",
                             text: "ジェノベーゼ",
                             actions: [
                                 {type:"postback", label:"注文する", data:"ジェノベーゼ"},
-                                {type:"uri", label:"詳細", data:"https://www.dominos.jp/order/pizza/detail/99999/19001/216"}
+                                {type:"uri", label:"詳細", uri:"https://www.dominos.jp/order/pizza/detail/99999/19001/216"}
                             ]
                         }]
                     }
