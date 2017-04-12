@@ -15,8 +15,8 @@ module.exports = class SkillHandlePizzaOrder {
                         type: "buttons",
                         text: "ご注文のピザはお決まりでしょうか？",
                         actions: [
-                            {type:"postback",label:"マルゲリータ",data:"マルゲリータ"},
-                            {type:"postback",label:"マリナーラ",data:"マリナーラ"}
+                            {type:"message",label:"マルゲリータ",text:"マルゲリータ"},
+                            {type:"message",label:"マリナーラ",text:"マリナーラ"}
                         ]
                     }
                 }
@@ -29,9 +29,9 @@ module.exports = class SkillHandlePizzaOrder {
                         type: "buttons",
                         text: "サイズはいかがいたしましょうか？",
                         actions: [
-                            {type:"postback",label:"S",data:"S"},
-                            {type:"postback",label:"M",data:"M"},
-                            {type:"postback",label:"L",data:"L"}
+                            {type:"message",label:"S",text:"S"},
+                            {type:"message",label:"M",text:"M"},
+                            {type:"message",label:"L",text:"L"}
                         ]
                     }
                 }
