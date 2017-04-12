@@ -1,9 +1,5 @@
 'use strict';
 
-const DEFAULT_INTENT = "input.unknown";
-const DEFAULT_SKILL = "builtin_default";
-const DEFAULT_SKILL_PATH = "../../../../skill/";
-
 let Promise = require('bluebird');
 let debug = require("debug")("flow");
 let apiai = require('apiai');
@@ -13,8 +9,8 @@ module.exports = class Flow {
         this.vp = vp;
         this.bot_event = bot_event;
         this.context = context;
-        this.default_intent = options.default_intent || DEFAULT_INTENT;
-        this.default_skill = options.default_skill || DEFAULT_SKILL;
+        this.default_intent = options.default_intent;
+        this.default_skill = options.default_skill;
         this.skill_path = options.skill_path;
         this.skill = this._instantiate_skill(this.context.intent.action);
 

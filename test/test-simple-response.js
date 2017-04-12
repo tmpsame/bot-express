@@ -20,7 +20,7 @@ for (let message_platform of message_platform_list){
                 let webhook = new Webhook(options);
                 return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "こんにちは。"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "こんにちは。"));
                     }
                 ).then(
                     function(response){

@@ -14,17 +14,23 @@ module.exports = class Test_Utility {
             facebook_page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
             apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
             default_intent: oneoff_options.default_intent || "input.unknown", // This is optional but required for this testing since test does not go through index.js which sets default parameter.
-            default_skill: oneoff_options.default_skill || null,
-            beacon_skill: oneoff_options.beacon_skill || null
+            default_skill: oneoff_options.default_skill || "builtin_default",
+            beacon_skill: oneoff_options.beacon_skill || undefined
         }
         return options;
     }
 
-    static create_req(message_platform, event_type, user_id, message_type, payload){
-        return Test_Utility[message_platform + "_create_req"](event_type, user_id, message_type, payload);
+    /*
+    message_platform: line | facebook
+    event_type: message | postback | beacon
+    user_id: <string>
+    payload: <object>
+    */
+    static create_req(message_platform, event_type, user_id, payload){
+        return Test_Utility[message_platform + "_create_req"](event_type, user_id, payload);
     }
 
-    static line_create_req(event_type, user_id, message_type, payload){
+    static line_create_req(event_type, user_id, payload){
         let req = {
             body: {
                 events: [{
@@ -44,11 +50,11 @@ module.exports = class Test_Utility {
                 return header[param];
             }
         }
-        req.body.events[0][event_type] = Test_Utility["line_create_" + event_type + "_event_payload"](message_type, payload);
+        req.body.events[0][event_type] = Test_Utility["line_create_" + event_type + "_event_payload"](payload);
         return req;
     }
 
-    static facebook_create_req(event_type, user_id, message_type, payload){
+    static facebook_create_req(event_type, user_id, payload){
         let req = {
             body: {
                 object: "page",
@@ -70,11 +76,11 @@ module.exports = class Test_Utility {
                 return header[param];
             }
         }
-        req.body.entry[0].messaging[0][event_type] = Test_Utility["facebook_create_" + event_type + "_event_payload"](message_type, payload);
+        req.body.entry[0].messaging[0][event_type] = Test_Utility["facebook_create_" + event_type + "_event_payload"](payload);
         return req;
     }
 
-    static unsupported_create_req(event_type, user_id, message_type, payload){
+    static unsupported_create_req(event_type, user_id, payload){
         let req = {
             body: {},
             get: function(param){
@@ -85,7 +91,7 @@ module.exports = class Test_Utility {
         return req;
     }
 
-    static line_create_message_event_payload(message_type, payload){
+    static line_create_message_event_payload(payload){
         let event_payload;
         if (typeof payload == "string"){
             event_payload = {
@@ -98,7 +104,7 @@ module.exports = class Test_Utility {
         return event_payload;
     }
 
-    static facebook_create_message_event_payload(message_type, payload){
+    static facebook_create_message_event_payload(payload){
         let event_payload;
         if (typeof payload == "string"){
             event_payload = {
@@ -110,19 +116,19 @@ module.exports = class Test_Utility {
         return event_payload
     }
 
-    static line_create_postback_event_payload(message_type, payload){
+    static line_create_postback_event_payload(payload){
         return {
             data: payload
         }
     }
 
-    static facebook_create_postback_event_payload(message_type, payload){
+    static facebook_create_postback_event_payload(payload){
         return {
             payload: payload
         };
     }
 
-    static line_create_beacon_event_payload(message_type, payload){
+    static line_create_beacon_event_payload(payload){
         let event_payload;
         event_payload = payload || {
             "hwid": "d41d8cd98f",
@@ -131,15 +137,15 @@ module.exports = class Test_Utility {
         return event_payload;
     }
 
-    static facebook_create_beacon_event_payload(message_type, payload){
+    static facebook_create_beacon_event_payload(payload){
         return {}
     }
 
-    static line_create_unsupported_event_payload(message_type, payload){
+    static line_create_unsupported_event_payload(payload){
         return null;
     }
 
-    static facebook_create_unsupported_event_payload(message_type, payload){
+    static facebook_create_unsupported_event_payload(payload){
         return null;
     }
 

@@ -22,7 +22,7 @@ for (let message_platform of message_platform_list){
                 let webhook = new Webhook(options);
                 return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ライトの色変えて"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "ライトの色変えて"));
                     }
                 ).then(
                     function(response){
@@ -40,7 +40,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "赤")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "赤")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({color:"FF7B7B"});
                         response.should.have.property("confirming", null);
@@ -56,7 +56,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "黄")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "黄")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({color:"FFFA6A"});
                         response.should.have.property("confirming", null);
@@ -72,7 +72,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ライトの色を青に変えて")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "ライトの色を青に変えて")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({color:"5068FF"});
                         response.should.have.property("confirming", null);
@@ -88,7 +88,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "赤")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "赤")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({color:"FF7B7B"});
                         response.should.have.property("confirming", null);
@@ -104,7 +104,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, "postback", user_id, null, "黄")).then(
+                return webhook.run(Util.create_req(message_platform, "postback", user_id, "黄")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({color:"FFFA6A"});
                         response.should.have.property("confirming", null);

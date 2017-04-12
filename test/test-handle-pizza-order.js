@@ -22,7 +22,7 @@ for (let message_platform of message_platform_list){
                 let webhook = new Webhook(options);
                 return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "ピザを注文したいのですが"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "ピザを注文したいのですが"));
                     }
                 ).then(
                     function(response){
@@ -43,7 +43,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "マルゲリータで。")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "マルゲリータで。")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({pizza:"マルゲリータ"});
                         response.should.have.property("confirming", "size");
@@ -61,7 +61,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "Mサイズで。")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "Mサイズで。")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({pizza:"マルゲリータ", size:"M"});
                         response.should.have.property("confirming", "address");
@@ -78,7 +78,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "港区北青山1-1-1")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "港区北青山1-1-1")).then(
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({
                             pizza:"マルゲリータ",
@@ -102,7 +102,7 @@ for (let message_platform of message_platform_list){
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "中嶋一樹")).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "中嶋一樹")).then(
                     function(response){
                         should.not.exist(response);
                     }
@@ -117,7 +117,7 @@ for (let message_platform of message_platform_list){
                 let webhook = new Webhook(options);
                 return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                     function(response){
-                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "text", "マリナーラのLサイズをお願いしたいのですが"));
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "マリナーラのLサイズをお願いしたいのですが"));
                     }
                 ).then(
                     function(response){
@@ -164,7 +164,7 @@ for (let message_platform of message_platform_list){
                         }]
                     }
                 }
-                return webhook.run(Util.create_req(message_platform, event_type, user_id, "location", payload)).then(
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, payload)).then(
                     function(response){
                         response.should.have.property("confirmed").and.have.property("pizza").and.equal("マリナーラ");
                         response.should.have.property("confirmed").and.have.property("size").and.equal("L");
