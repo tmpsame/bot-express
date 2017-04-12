@@ -39,7 +39,7 @@ module.exports = (options) => {
         options.enable_ask_retry = false;
     }
     options.message_to_ask_retry = options.message_to_ask_retry || "ごめんなさい、もうちょっと正確にお願いできますか？";
-    options.facebook_verify_token = options.facebook_verify_token || options.facebook_page_access_token;
+    options.facebook_verify_token = options.facebook_verify_token || options.facebook_app_secret;
 
     // Check if common required options are set.
     for (let req_opt of REQUIRED_OPTIONS["common"]){
@@ -70,14 +70,14 @@ module.exports = (options) => {
     router.get("/", (req, res, next) => {
         if (!options.facebook_verify_token){
             debug("Failed validation. facebook_verify_token not set.");
-            res.sendStatus(403);
+            return res.sendStatus(403);
         }
         if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === options.facebook_verify_token) {
             debug("Validating webhook");
-            res.status(200).send(req.query['hub.challenge']);
+            return res.status(200).send(req.query['hub.challenge']);
         } else {
             debug("Failed validation. Make sure the validation tokens match.");
-            res.sendStatus(403);
+            return res.sendStatus(403);
         }
     });
 
