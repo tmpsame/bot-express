@@ -54,7 +54,7 @@ module.exports = class SkillSurvey {
         } catch(error){
             parsed_value = false;
         }
-        if (typeof parsed_value != "number" || parsed_value == NaN || parsed_value < 1 || parsed_value > 5){
+        if (typeof parsed_value != "number" || Number.isNaN(parsed_value) || parsed_value < 1 || parsed_value > 5){
             debug(`Value is outside of range.`);
             parsed_value = false;
         }
