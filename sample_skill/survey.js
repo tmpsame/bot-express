@@ -11,67 +11,34 @@ module.exports = class SkillSurvey {
         this.required_parameter = {
             satisfaction: {
                 message_to_confirm: {
-                    line: {
-                        type: "text",
-                        text: "勉強会お疲れ様でした！今回の満足度を5段階で教えてください。（5が最高、1が最低）"
-                    },
-                    facebook: {
-                        text: "勉強会お疲れ様でした！今回の満足度を5段階で教えてください。",
-                        quick_replies: [
-                            {content_type:"text", title:"5 高", payload:5},
-                            {content_type:"text", title:"4", payload:4},
-                            {content_type:"text", title:"3", payload:3},
-                            {content_type:"text", title:"2", payload:2},
-                            {content_type:"text", title:"1 低", payload:1},
-                        ]
-                    }
+                    text: "勉強会お疲れ様でした！今回の満足度を5段階で教えてください。（5が最高、1が最低）",
+                    quick_replies: [
+                        {content_type:"text", title:"5 高", payload:5},
+                        {content_type:"text", title:"4", payload:4},
+                        {content_type:"text", title:"3", payload:3},
+                        {content_type:"text", title:"2", payload:2},
+                        {content_type:"text", title:"1 低", payload:1},
+                    ]
                 }
             }, // End of satisfaction
             difficulty: {
                 message_to_confirm: {
-                    line: {
-                        type: "template",
-                        altText: "難易度はどうでした？(難しい or 適当 or 易しい）",
-                        template: {
-                            type: "buttons",
-                            text: "難易度はどうでした？",
-                            actions: [
-                                {type:"postback", label:"難しい", data:"難しい"},
-                                {type:"postback", label:"適当", data:"適当"},
-                                {type:"postback", label:"易しい", data:"易しい"}
-                            ]
-                        }
-                    },
-                    facebook: {
-                        text: "難易度はどうでした？",
-                        quick_replies: [
-                            {content_type:"text", title:"難しい", payload:"難しい"},
-                            {content_type:"text", title:"適当", payload:"適当"},
-                            {content_type:"text", title:"易しい", payload:"易しい"}
-                        ]
-                    }
+                    text: "難易度はどうでした？",
+                    quick_replies: [
+                        {content_type:"text", title:"難しい", payload:"難しい"},
+                        {content_type:"text", title:"適当", payload:"適当"},
+                        {content_type:"text", title:"易しい", payload:"易しい"}
+                    ]
                 }
             }, // End of difficulty
             free_comment: {
                 message_to_confirm: {
-                    line: {
-                        type: "text",
-                        text: "是非感想を教えてください！"
-                    },
-                    facebook: {
-                        text: "是非感想を教えてください！"
-                    }
+                    text: "是非感想を教えてください！"
                 }
             }, // End of free_comment
             mail: {
                 message_to_confirm: {
-                    line: {
-                        type: "text",
-                        text: "最後にメールアドレス教えてもらえますか？"
-                    },
-                    facebook: {
-                        text: "最後にメールアドレス教えてもらえますか？"
-                    }
+                    text: "最後にメールアドレス教えてもらえますか？"
                 }
             } // End of mail
         } // End of required_parameter
@@ -98,7 +65,7 @@ module.exports = class SkillSurvey {
     parse_difficulty(value){
         debug(`Parsing difficulty.`);
         let parsed_value = false;
-        if (value.match(/難/) || value.match(/むずかし/) || value.match(/むずい/) || value.match(/げきむず/) || value.match(/ゲキムズ/)){
+        if (value.match(/難/) || value.match(/むずかし/) || value.match(/むずい/) || value.match(/げきむず/) || value.match(/ゲキムズ/) || value.match(/激ムズ/)){
             parsed_value = 1;
         } else if (value.match(/適/) || value.match(/てきとう/) || value.match(/てきせつ/) || value.match(/ちょうど/) || value.match(/普通/) || value.match(/ふつう/)){
             parsed_value = 0;
