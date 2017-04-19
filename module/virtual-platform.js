@@ -297,7 +297,7 @@ module.exports = class VirtualPlatform {
         if (typeof this.context.message_queue == "undefined"){
             this.context.message_queue = [];
         }
-        this.context.message_queue.concat(messages);
+        this.context.message_queue = this.context.message_queue.concat(messages);
     }
 
     reply(bot_event, messages){
