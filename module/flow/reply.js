@@ -33,7 +33,7 @@ module.exports = class ReplyFlow extends Flow {
                 return super.react(true, Object.keys(response)[0], response[Object.keys(response)[0]]);
             },
             (response) => {
-                return super.react(false, Object.keys(response)[0], response[Object.keys(response)[0]]);
+                return super.react(false, this.context.confirming, param_value);
             }
         ).then(
             (response) => {
