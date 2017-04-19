@@ -307,7 +307,15 @@ module.exports = class VirtualPlatform {
             });
         }
         this.queue(messages);
-        return this[`_${this.type}_reply`](bot_event, this.context.message_queue);
+        return this[`_${this.type}_reply`](bot_event, this.context.message_queue).then(
+            (response) => {
+                this.context.message_queue = [];
+                return response;
+            },
+            (response) => {
+                return Promise.reject(response);
+            }
+        );
     }
 
     _line_reply(bot_event, messages){

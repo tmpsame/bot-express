@@ -20,7 +20,7 @@ module.exports = class SkillSurvey {
                         {content_type:"text", title:"1 低", payload:1},
                     ]
                 },
-                reaction: (bot, bot_event, parse_result, value) => {
+                reaction: (bot, bot_event, context, parse_result, value) => {
                     if (parse_result === true){
                         let messages = [];
                         if (value == 5){
@@ -30,7 +30,7 @@ module.exports = class SkillSurvey {
                         } else {
                             return Promise.resolve();
                         }
-                        return bot.reply(bot_event, messages);
+                        return bot.queue(messages);
                     }
                 }
             }, // End of satisfaction
