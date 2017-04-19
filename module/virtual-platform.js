@@ -293,13 +293,21 @@ module.exports = class VirtualPlatform {
         return compiled_message;
     }
 
+    queue(messages){
+        if (typeof this.context.message_queue == "undefined"){
+            this.context.message_queue = [];
+        }
+        this.context.message_queue.concat(messages);
+    }
+
     reply(bot_event, messages){
         if (process.env.BOT_EXPRESS_ENV == "test"){
             return new Promise((resolve, reject) => {
                 return resolve();
             });
         }
-        return this[`_${this.type}_reply`](bot_event, messages);
+        this.queue(messages);
+        return this[`_${this.type}_reply`](bot_event, this.context.message_queue);
     }
 
     _line_reply(bot_event, messages){
