@@ -19,15 +19,6 @@ module.exports = class SkillHandlePizzaOrder {
                             {type:"message",label:"マリナーラ",text:"マリナーラ"}
                         ]
                     }
-                },
-                reaction: (parse_result, value, bot) => {
-                    if (parse_result === true){
-                        if (value == "マルゲリータ"){
-                            bot.queue([bot.create_text_message("承知しました。やっぱり定番ですよね。")]);
-                        } else if (value == "マリナーラ"){
-                            bot.queue([bot.create_text_message("通ですね、ニンニクの香りがたまらないマリナーラ。わかります。")]);
-                        }
-                    }
                 }
             },
             size: {
