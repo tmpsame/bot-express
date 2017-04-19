@@ -38,34 +38,47 @@ module.exports = class ChangeParameterFlow extends Flow {
         let param_value = this.vp.extract_param_value(this.bot_event);
 
         let is_fit = false;
+        let all_parameters_processed = [];
         for (let previously_confirmed_param_key of this.context.previous.confirmed){
-            try {
-                debug(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
-                super.change_parameter(previously_confirmed_param_key, param_value);
-                debug(`Great fit!`);
-                is_fit = true;
-                break;
-            } catch(err){
-                debug(`It does not fit.`);
-            }
-        }
-        if (!is_fit){
-            if (this.enable_ask_retry && typeof param_value == "string" && param_value.length <= 10){
-                return Promise.resolve({
-                    result: true,
-                    response: super.ask_retry(this.message_to_ask_retry)
-                });
-            }
-            return Promise.resolve({
-                result: false,
-                reason: "not fit"
-            });
+            debug(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
+            all_parameters_processed.push(
+                super.change_parameter(previously_confirmed_param_key, param_value).then(
+                    (response) => {
+                        debug(`Great fit!`);
+                        is_fit = true;
+                        return super.react(true, Object.keys(response)[0], response[Object.keys(response)[0]]);
+                    },
+                    (response) => {
+                        debug(`Does not fit`);
+                    }
+                )
+            );
         }
 
-        // Run final action.
-        return Promise.resolve({
-            result: true,
-            response: super.finish()
-        });
+        return Promise.all(all_parameters_processed).then(
+            (response) => {
+                if (!is_fit){
+                    debug(`We have not found any corresponding parameter.`);
+                    // 10 should not be the perfect condition. This condition itself is not so good, either.
+                    if (this.enable_ask_retry && typeof param_value == "string" && param_value.length <= 10){
+                        return {
+                            result: true,
+                            response: super.ask_retry(this.message_to_ask_retry)
+                        };
+                    }
+                    return {
+                        result: false,
+                        reason: "not fit"
+                    };
+                } else {
+                    debug(`We identified corresponding parameter.`);
+                    // Run final action.
+                    return {
+                        result: true,
+                        response: super.finish()
+                    };
+                }
+            }
+        );
     } // End of run()
 };

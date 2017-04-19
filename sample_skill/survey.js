@@ -19,6 +19,19 @@ module.exports = class SkillSurvey {
                         {content_type:"text", title:"2", payload:2},
                         {content_type:"text", title:"1 低", payload:1},
                     ]
+                },
+                reaction: (bot, bot_event, parse_result, value) => {
+                    if (parse_result === true){
+                        let messages = [];
+                        if (value == 5){
+                            messages.push(bot.create_text_message("うぉー！！よかった！"));
+                        } else if (value == 1){
+                            messages.push(bot.create_text_message("なんてこった・・"));
+                        } else {
+                            return Promise.resolve();
+                        }
+                        return bot.reply(bot_event, messages);
+                    }
                 }
             }, // End of satisfaction
             difficulty: {

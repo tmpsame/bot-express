@@ -18,25 +18,15 @@ module.exports = class SkillChangeLightColor {
         this.required_parameter = {
             color: {
                 message_to_confirm: {
-                    line: {
-                        type: "template",
-                        altText: "何色にしますか？（青か赤か黄）",
-                        template: {
-                            type: "buttons",
-                            text: "何色にしますか？",
-                            actions: [
-                                {type:"postback",label:"青",data:"青"},
-                                {type:"postback",label:"赤",data:"赤"},
-                                {type:"postback",label:"黄",data:"黄"}
-                            ]
-                        }
-                    },
-                    facebook: {
+                    type: "template",
+                    altText: "何色にしますか？（青か赤か黄）",
+                    template: {
+                        type: "buttons",
                         text: "何色にしますか？",
-                        quick_replies: [
-                            {content_type:"text",title:"青",payload:"青"},
-                            {content_type:"text",title:"赤",payload:"赤"},
-                            {content_type:"text",title:"黄",payload:"黄"}
+                        actions: [
+                            {type:"postback",label:"青",data:"青"},
+                            {type:"postback",label:"赤",data:"赤"},
+                            {type:"postback",label:"黄",data:"黄"}
                         ]
                     }
                 },
