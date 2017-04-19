@@ -20,7 +20,7 @@ module.exports = class SkillSurvey {
                         {content_type:"text", title:"1 低", payload:1},
                     ]
                 },
-                reaction: (bot, bot_event, context, parse_result, value) => {
+                reaction: (parse_result, value, bot) => {
                     if (parse_result === true){
                         let messages = [];
                         if (value == 5){

@@ -20,7 +20,7 @@ module.exports = class SkillHandlePizzaOrder {
                         ]
                     }
                 },
-                reaction: (bot, bot_event, context, parse_result, value) => {
+                reaction: (parse_result, value, bot) => {
                     if (parse_result === true){
                         if (value == "マルゲリータ"){
                             bot.queue([bot.create_text_message("承知しました。やっぱり定番ですよね。")]);

@@ -182,11 +182,11 @@ module.exports = class Flow {
             if (!!this.skill.required_parameter[key].reaction){
                 // This parameter has reaction. So do it and return its promise.
                 debug(`Perform reaction. Param value is ${value}`);
-                return this.skill.required_parameter[key].reaction(this.vp, this.bot_event, this.context, parse_result, value);
+                return this.skill.required_parameter[key].reaction(parse_result, value, this.vp);
             } else if (!!this.skill["reaction_" + key]){
                 // This parameter has reaction. So do it and return its promise.
                 debug(`Perform reaction. Param value is ${value}`);
-                return this.skill["reaction_" + key](this.vp, this.bot_event, this.context, parse_result, value);
+                return this.skill["reaction_" + key](parse_result, value, this.vp);
             } else {
                 // This parameter does not have reaction so do nothing.
                 debug(`We have no reaction to perform.`);
