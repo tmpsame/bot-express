@@ -11,7 +11,7 @@ module.exports = class SkillSurvey {
         this.required_parameter = {
             satisfaction: {
                 message_to_confirm: {
-                    text: "勉強会お疲れ様でした！今回の満足度を5段階で教えてください。（5が最高、1が最低）",
+                    text: "今回の勉強会の満足度を5段階で教えてください。（5が最高、1が最低）",
                     quick_replies: [
                         {content_type:"text", title:"5 高", payload:5},
                         {content_type:"text", title:"4", payload:4},
@@ -28,8 +28,11 @@ module.exports = class SkillSurvey {
                         } else if (value == 1){
                             messages.push(bot.create_text_message("なんてこった・・"));
                         } else {
-                            return Promise.resolve();
+                            return;
                         }
+                        return bot.queue(messages);
+                    } else {
+                        let messages = [bot.create_text_message("ん？1が最低、5が最高の5段階評価ですよ。")];
                         return bot.queue(messages);
                     }
                 }
