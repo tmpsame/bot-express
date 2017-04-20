@@ -73,7 +73,9 @@ this.required_parameter = {
 finish(bot, bot_event, context){
     return hue.change_color(context.confirmed.color).then(
         (response) => {
-            let messages = [bot.create_text_message("了解しましたー。")];
+            let messages = [{
+                text: "了解しましたー。"
+            }];
             // 送信元のメッセージプラットフォームを通じてメッセージが送信される。
             return bot.reply(bot_event, messages);
         },
@@ -261,7 +263,9 @@ color: {
     reaction: (parse_result, parsed_value, bot) => {
         if (parse_result === true){
             if (parsed_value == "赤"){
-                bot.queue([bot.create_text_message("センスいいですね！")]);
+                bot.queue([{
+                    text: "センスいいですね！"
+                }]);
             }
         }
     }
@@ -321,7 +325,9 @@ parse_color(value){
 finish(bot, bot_event, context){
     return Hue.change_color(context.confirmed.color).then(
         (response) => {
-            let messages = [bot.create_text_message("了解しましたー。")];
+            let messages = [{
+                text: "了解しましたー。"
+            }];
             return bot.reply(bot_event, messages);
         },
         (response) => {
@@ -335,8 +341,7 @@ finish(bot, bot_event, context){
 
 finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。利用しているメッセージプラットフォームを意識せずに処理を記述することができます。このインスタンスの機能は下記になります。
 
-- **create_text_message(message_text)** : reply()メソッドに渡すテキストメッセージのオブジェクトを生成するためのメソッドです。イベント発生元のメッセージプラットフォームに合わせたフォーマットのオブジェクトが作成されます。テキストメッセージ以外のタイプのメッセージオブジェクトを生成したい場合は、[LINE](https://devdocs.line.me/ja/#send-message-object)または[Facebook](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)のAPI Referenceを参照し、手動でそのオブジェクトを生成してください。
-- **reply(bot_event, messages)** : メッセージの返信をおこなうメソッドです。messagesにはcreate_text_message()を使って生成したメッセージオブジェクトをセットするか、あるいは各メッセージプラットフォームで定義されているメッセージフォーマットに従い、オブジェクトをマニュアルで作成してセットします。
+- **reply(bot_event, messages)** : メッセージの返信をおこなうメソッドです。messagesにはいずれかのメッセージプラットフォームで定義されているフォーマットにメッセージオブジェクトを配列でセットします。
 - **queue(messages)** : 返信するメッセージをキュー（実行待ち）に入れるためのメソッドです。キューに入れておいたメッセージはreply()が実行された時に一括で送信されます。reply()は一度のイベントで一回しか実行できないため、複数のメッセージを返信する必要がある場合はこのメソッドを利用してください。
 - **change_message_to_confirm(parameter_key, message)** : parameter_keyで指定したパラメーターのmessage_to_confirmを一時的に変更します。これは主にparse処理が失敗した時にユーザーに再入力を促がす際に有用です。
 - **collect(bot_event, parameter)** : 明示的にパラメーターを収集するメソッドです。parameterはconstructor()で指定するrequired_parameterやoptional_parameterと同じフォーマットで指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。

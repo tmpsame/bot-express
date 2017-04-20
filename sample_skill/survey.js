@@ -24,9 +24,13 @@ module.exports = class SkillSurvey {
                     if (parse_result === true){
                         let messages = [];
                         if (value == 5){
-                            messages.push(bot.create_text_message("うぉー！！よかった！"));
+                            messages.push({
+                                text: "うぉー！！よかった！"
+                            });
                         } else if (value == 1){
-                            messages.push(bot.create_text_message("なんてこった・・"));
+                            messages.push({
+                                text: "なんてこった・・"
+                            });
                         } else {
                             return;
                         }
