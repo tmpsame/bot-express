@@ -262,7 +262,9 @@ module.exports = class SkillCompileMessage {
 
     // パラメーターが全部揃ったら実行する処理を記述します。
     finish(bot, bot_event, context){
-        let messages = [bot.create_text_message("完了")];
+        let messages = [{
+            text: "完了"
+        }];
         return bot.reply(bot_event, messages);
     }
 };

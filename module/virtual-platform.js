@@ -311,7 +311,11 @@ module.exports = class VirtualPlatform {
             });
         }
         this.queue(messages);
-        return this[`_${this.type}_reply`](bot_event, this.context.message_queue).then(
+        let compiled_messages = [];
+        for (let message of this.context.message_queue){
+            compiled_messages.push(this.compile_message(message));
+        }
+        return this[`_${this.type}_reply`](bot_event, compiled_messages).then(
             (response) => {
                 this.context.message_queue = [];
                 return response;
@@ -336,7 +340,11 @@ module.exports = class VirtualPlatform {
                 return resolve();
             });
         }
-        return this[`_${this.type}_send`](recipient_id, messages);
+        let compiled_messages = [];
+        for (let message of messages){
+            compiled_messages.push(this.compile_message(message));
+        }
+        return this[`_${this.type}_send`](recipient_id, compiled_messages);
     }
 
     _line_send(recipient_id, messages){
@@ -356,12 +364,21 @@ module.exports = class VirtualPlatform {
         this.context.confirming = param_key;
         Object.assign(this.context.to_confirm, parameter);
 
-        if (!parameter[param_key].message_to_confirm[this.type]){
+        let messages;
+        if (!!parameter[param_key].message_to_confirm[this.type]){
+            // Found message platform specific message object.
+            debug("Found message platform specific message object.");
+            messages = [parameter[param_key].message_to_confirm[this.type]];
+        } else if (!!parameter[param_key].message_to_confirm){
+            // Found common message object. We compile this message object to get message platform specific message object.
+            debug("Found common message object.");
+            messages = [parameter[param_key].message_to_confirm];
+        } else {
+            debug("While we need to send a message to confirm parameter, the message not found.");
             return Promise.reject("While we need to send a message to confirm parameter, the message not found.");
         }
 
         // Send question to the user.
-        let messages = [parameter[param_key].message_to_confirm[this.type]];
         return this.reply(bot_event, messages);
     }
 
