@@ -33,7 +33,14 @@ module.exports = class SkillSurvey {
                         bot.queue(messages);
                     } else {
                         bot.change_message_to_confirm("satisfaction", {
-                            text: "ん？1が最低、5が最高の5段階評価ですよ。数字で1から5のどれかで教えてくださいね。"
+                            text: "ん？1が最低、5が最高の5段階評価ですよ。数字で1から5のどれかで教えてくださいね。",
+                            quick_replies: [
+                                {content_type:"text", title:"5 高", payload:5},
+                                {content_type:"text", title:"4", payload:4},
+                                {content_type:"text", title:"3", payload:3},
+                                {content_type:"text", title:"2", payload:2},
+                                {content_type:"text", title:"1 低", payload:1},
+                            ]
                         });
                     }
                 }
