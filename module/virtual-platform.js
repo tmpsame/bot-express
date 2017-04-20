@@ -293,6 +293,10 @@ module.exports = class VirtualPlatform {
         return compiled_message;
     }
 
+    change_message_to_confirm(param_key, message){
+        this.context.to_confirm[param_key].message_to_confirm = message;
+    }
+
     queue(messages){
         if (typeof this.context.message_queue == "undefined"){
             this.context.message_queue = [];

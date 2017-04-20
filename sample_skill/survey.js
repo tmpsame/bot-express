@@ -30,10 +30,11 @@ module.exports = class SkillSurvey {
                         } else {
                             return;
                         }
-                        return bot.queue(messages);
+                        bot.queue(messages);
                     } else {
-                        let messages = [bot.create_text_message("ん？1が最低、5が最高の5段階評価ですよ。")];
-                        return bot.queue(messages);
+                        bot.change_message_to_confirm("satisfaction", {
+                            text: "ん？1が最低、5が最高の5段階評価ですよ。数字で1から5のどれかで教えてくださいね。"
+                        });
                     }
                 }
             }, // End of satisfaction
