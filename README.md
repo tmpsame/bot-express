@@ -190,13 +190,15 @@ constructor() {
 パラメータを収集する際、ユーザーに確認するメッセージをそのプロパティ配下のmessage_to_confirmプロパティに設定します。message_to_confirmに設定するメッセージはサポートされているいずれかのメッセージプラットフォームのメッセージフォーマットに従ってください。上記はLINEのフォーマットに従った例です。Facebook Messengerのフォーマットで同様のメッセージを表現すると下記のようになります。
 
 ```
-message_to_confirm: {
-    text: "何色にしますか？",
-    quick_replies: [
-        {content_type:"text",title:"青",payload:"青"},
-        {content_type:"text",title:"赤",payload:"赤"},
-        {content_type:"text",title:"黄",payload:"黄"}
-    ]
+color: {
+    message_to_confirm: {
+        text: "何色にしますか？",
+        quick_replies: [
+            {content_type:"text",title:"青",payload:"青"},
+            {content_type:"text",title:"赤",payload:"赤"},
+            {content_type:"text",title:"黄",payload:"黄"}
+        ]
+    }
 }
 ```
 
@@ -208,8 +210,41 @@ message_to_confirm: {
 いずれのフォーマットで設定した場合でも、イベントの送信元がLINEであればLINEのフォーマットに、Facebook MessengerであればFacebook Messengerのフォーマットに **ベストエフォートで** 変換されます。ベストエフォートなのは、各メッセージプラットフォームによって当然差異があるため、すべて変換できるとは限らないためです。万全を期す場合は、下記のようにサポートされているメッセージプラットフォームごとにメッセージオブジェクトを設定することもできます。
 
 ```
-message_to_confirm: {
-    line: {
+color: {
+    message_to_confirm: {
+        line: {
+            type: "template",
+            altText: "何色にしますか？（青か赤か黄）",
+            template: {
+                type: "buttons",
+                text: "何色にしますか？",
+                actions: [
+                    {type:"postback",label:"青",data:"青"},
+                    {type:"postback",label:"赤",data:"赤"},
+                    {type:"postback",label:"黄",data:"黄"}
+                ]
+            }
+        },
+        facebook: {
+            text: "何色にしますか？",
+            quick_replies: [
+                {content_type:"text",title:"青",payload:"青"},
+                {content_type:"text",title:"赤",payload:"赤"},
+                {content_type:"text",title:"黄",payload:"黄"}
+            ]
+        }
+    },
+    parse: this.parse_color
+}
+```
+
+また、parseプロパティでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
+
+また、パラメーター収集後に何らかのリアクションを取りたい場合、下記のようにreactionプロパティで指定することができます。
+
+```
+color: {
+    message_to_confirm: {
         type: "template",
         altText: "何色にしますか？（青か赤か黄）",
         template: {
@@ -222,18 +257,23 @@ message_to_confirm: {
             ]
         }
     },
-    facebook: {
-        text: "何色にしますか？",
-        quick_replies: [
-            {content_type:"text",title:"青",payload:"青"},
-            {content_type:"text",title:"赤",payload:"赤"},
-            {content_type:"text",title:"黄",payload:"黄"}
-        ]
+    parse: this.parse_color,
+    reaction: (parse_result, parsed_value, bot) => {
+        if (parse_result === true){
+            if (parsed_value == "赤"){
+                bot.queue([bot.create_text_message("センスいいですね！")]);
+            }
+        }
     }
 }
 ```
 
-また、parseプロパティでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
+reactionはパラメータのparse処理が終った後に実行されます。上記の例ではユーザーが「赤」と回答した時に「センスいいですね！」という返信を行うように記述しています。 *bot.queue(MESSAGE_OBJECT_ARRAY)は返信するメッセージをキューに入れておくためのメソッドです。finish()でbot.reply()が呼ばれたらキューに入っている全てのメッセージが一括で送信されます。*
+
+reactionは3つの引数を取ります。
+第一引数にはparse処理が成功したかどうかの結果がtrueまたはfalseでセットされています。
+第二引数にはparse処理された値がセットされています。
+第三引数にはメッセージの返信やキューイングを行うためのライブラリがセットされています。
 
 パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。どちらかだけ設定することもできますし、両方同時に設定することもできます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは埋まらない限りユーザーに確認メッセージが送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
 
@@ -297,6 +337,7 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 
 - **create_text_message(message_text)** : reply()メソッドに渡すテキストメッセージのオブジェクトを生成するためのメソッドです。イベント発生元のメッセージプラットフォームに合わせたフォーマットのオブジェクトが作成されます。テキストメッセージ以外のタイプのメッセージオブジェクトを生成したい場合は、[LINE](https://devdocs.line.me/ja/#send-message-object)または[Facebook](https://developers.facebook.com/docs/messenger-platform/send-api-reference/contenttypes)のAPI Referenceを参照し、手動でそのオブジェクトを生成してください。
 - **reply(bot_event, messages)** : メッセージの返信をおこなうメソッドです。messagesにはcreate_text_message()を使って生成したメッセージオブジェクトをセットするか、あるいは各メッセージプラットフォームで定義されているメッセージフォーマットに従い、オブジェクトをマニュアルで作成してセットします。
+- **queue(messages)** : 返信するメッセージをキュー（実行待ち）に入れるためのメソッドです。キューに入れておいたメッセージはreply()が実行された時に一括で送信されます。reply()は一度のイベントで一回しか実行できないため、複数のメッセージを返信する必要がある場合はこのメソッドを利用してください。
 - **collect(bot_event, parameter)** : 明示的にパラメーターを収集するメソッドです。parameterはconstructor()で指定するrequired_parameterやoptional_parameterと同じフォーマットで指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。
 
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
