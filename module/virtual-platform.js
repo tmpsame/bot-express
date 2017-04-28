@@ -304,13 +304,15 @@ module.exports = class VirtualPlatform {
         this.context.message_queue = this.context.message_queue.concat(messages);
     }
 
-    reply(bot_event, messages){
+    reply(bot_event, messages = null){
         if (process.env.BOT_EXPRESS_ENV == "test"){
             return new Promise((resolve, reject) => {
                 return resolve();
             });
         }
-        this.queue(messages);
+        if (messages){
+            this.queue(messages);
+        }
         let compiled_messages = [];
         for (let message of this.context.message_queue){
             compiled_messages.push(this.compile_message(message));
