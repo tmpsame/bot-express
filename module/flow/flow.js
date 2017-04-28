@@ -19,7 +19,10 @@ module.exports = class Flow {
         } else {
             debug(`This skill requires 0 parameters.`);
         }
-        this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
+
+        if (Object.keys(this.context.to_confirm).length == 0){
+            this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
+        }
 
         debug(`We have ${Object.keys(this.context.to_confirm).length} parameters to confirm.`);
     }
