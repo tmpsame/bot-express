@@ -117,10 +117,13 @@ module.exports = class Flow {
             // Parse the value. If the value is not suitable for this key, exception will be thrown.
             if (this.skill.required_parameter[key]){
                 if (!!this.skill.required_parameter[key].parse){
+                    debug("parse method found.");
                     parsed_value = this.skill.required_parameter[key].parse(value);
                 } else if (!!this.skill["parse_" + key]){
+                    debug("parse method found.");
                     parsed_value = this.skill["parse_" + key](value);
                 } else {
+                    debug("parse method not found. We use the value as is as long as the value is set.");
                     // If parse method is not implemented, we use the value as-is.
                     if (value === null || value == ""){
                         parsed_value = false;
@@ -130,10 +133,13 @@ module.exports = class Flow {
                 }
             } else if (this.skill.optional_parameter[key]){
                 if (!!this.skill.optional_parameter[key].parse){
+                    debug("parse method found.");
                     parsed_value = this.skill.optional_parameter[key].parse(value);
                 } else if (!!this.skill["parse_" + key]){
+                    debug("parse method found.");
                     parsed_value = this.skill["parse_" + key](value);
                 } else {
+                    debug("parse method not found. We use the value as is as long as the value is set.");
                     // If parse method is not implemented, we use the value as-is.
                     if (value === null || value == ""){
                         parsed_value = false;
