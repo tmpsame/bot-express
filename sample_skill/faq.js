@@ -17,35 +17,23 @@ module.exports = class SkillFaq {
                         type: "confirm",
                         text: "",
                         actions: [
-                            {type: "message", label: "いいね！", text: "いいね！"},
-                            {type: "message", label: "微妙", text: "微妙"}
+                            {type: "message", label: "解決した", text: "解決した"},
+                            {type: "message", label: "解決しない", text: "解決しない"}
                         ]
                     }
                 },
                 reaction: (parse_result, value, bot) => {
                     if (parse_result === true){
-                        if (value == 1){
+                        if (value == "解決した"){
                             return bot.queue({text: "ホッ。"});
-                        } else if (value == 0){
-                            return bot.queue({text: "この度は誠に申し訳ありませんでした。"});
+                        } else if (value == "解決しない"){
+                            return bot.queue({text: "誠に申し訳ありません。"});
                         }
                     }
                 }
             }
         }
         this.clear_context_on_finish = true;
-    }
-
-    parse_rating(value){
-        debug(`Parsing rating.`);
-        let parsed_value = false;
-        if (value.match(/いいね/) || value.match(/[lL][iI][kK][eE]/)){
-            parsed_value = 1;
-        } else if (value.match(/微妙/)){
-            parsed_value = 0;
-        }
-        debug(`Parsed value is ${parsed_value}.`);
-        return parsed_value;
     }
 
     finish(bot, bot_event, context){
