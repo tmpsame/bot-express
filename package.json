@@ -29,7 +29,8 @@
     "memory-cache": "^0.1.6",
     "moji": "^0.5.1",
     "morgan": "^1.8.1",
-    "request": "^2.79.0"
+    "request": "^2.79.0",
+    "striptags": "^3.0.1"
   },
   "devDependencies": {
     "chai": "*",
