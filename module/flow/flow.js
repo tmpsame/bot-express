@@ -152,13 +152,13 @@ module.exports = class Flow {
             } else {
                 // This is not the parameter we care about. So skip it.
                 debug("This is not the parameter we care about.");
-                return reject("This is not the parameter we care about.");
+                reject("This is not the parameter we care about.");
             }
 
             if (parsed_value === false){
                 // This means user defined skill says this value does not fit to this parameter.
                 debug("The value does not fit to this parameter.");
-                return reject("The value does not fit to this parameter.");
+                reject("The value does not fit to this parameter.");
             }
 
             debug(`Adding parameter {${key}: "${parsed_value}"}`);
@@ -184,7 +184,7 @@ module.exports = class Flow {
             }
 
             debug(`We have ${Object.keys(this.context.to_confirm).length} parameters to confirm.`);
-            return resolve(param);
+            resolve(param);
         });
     }
 
