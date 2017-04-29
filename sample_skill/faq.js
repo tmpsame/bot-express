@@ -22,7 +22,7 @@ module.exports = class SkillFaq {
                         ]
                     }
                 },
-                reation: (parse_result, value, bot) => {
+                reaction: (parse_result, value, bot) => {
                     if (parse_result === true){
                         if (value == 1){
                             return bot.queue({text: "ホッ。"});
