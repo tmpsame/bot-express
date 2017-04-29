@@ -51,7 +51,7 @@ module.exports = class SkillFaq {
         if (typeof context.confirmed.rating != "undefined"){
             return bot.reply(bot_event).then(
                 (response) => {
-                    context = null;
+                    return context = null;
                 },
                 (response) => {
                     return Promise.reject(response);
