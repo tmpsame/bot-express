@@ -33,6 +33,7 @@ module.exports = class SkillFaq {
                 }
             }
         }
+        this.clear_context_on_finish = true;
     }
 
     parse_rating(value){
@@ -51,8 +52,7 @@ module.exports = class SkillFaq {
         if (typeof context.confirmed.rating != "undefined"){
             return bot.reply(bot_event).then(
                 (response) => {
-                    debug("Clearing context.");
-                    context = null;
+                    debug("Reply succeeded.");
                     return;
                 },
                 (response) => {
