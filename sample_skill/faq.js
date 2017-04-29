@@ -70,17 +70,12 @@ module.exports = class SkillFaq {
                     messages = [{
                         text: "ごめんなさい、ちょっと分かりませんでした。"
                     }];
-                    context.confirmed.answer = "ごめんなさい、ちょっと分かりませんでした。";
+                    return bot.reply(bot_event, messages);
                 } else {
-                    messages = [{
-                        type: "template",
-                        text: striptags(response.Solution)
-                    }];
-                    context.confirmed.answer = striptags(response.Solution);
+                    this.optional_parameter.rating.message_to_confirm.altText = striptags(response.Solution);
+                    this.optional_parameter.rating.message_to_confirm.template.text = this.optional_parameter.rating.message_to_confirm.altText;
+                    return bot.collect(bot_event, {rating: this.optional_parameter.rating});
                 }
-                this.optional_parameter.rating.message_to_confirm.altText = context.confirmed.answer;
-                this.optional_parameter.rating.message_to_confirm.template.text = context.confirmed.answer;
-                return bot.collect(bot_event, {rating: this.optional_parameter.rating});
             },
             (response) => {
                 debug(response);

@@ -241,7 +241,7 @@ module.exports = class Flow {
         debug("Going to perform final action.");
         return this.skill.finish(this.vp, this.bot_event, this.context).then(
             (response) => {
-                if (this.skill.clear_context_on_finish){
+                if (this.skill.clear_context_on_finish && Object.keys(this.context.to_confirm).length == 0){
                     debug(`Clearing context.`);
                     this.context = null;
                 }
