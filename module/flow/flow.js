@@ -116,6 +116,7 @@ module.exports = class Flow {
 
             // Parse the value. If the value is not suitable for this key, exception will be thrown.
             if (this.skill.required_parameter[key]){
+                debug("This value is for required parameter.");
                 if (!!this.skill.required_parameter[key].parse){
                     debug("parse method found.");
                     parsed_value = this.skill.required_parameter[key].parse(value);
@@ -132,6 +133,7 @@ module.exports = class Flow {
                     }
                 }
             } else if (this.skill.optional_parameter[key]){
+                debug("This value is for optional parameter.");
                 if (!!this.skill.optional_parameter[key].parse){
                     debug("parse method found.");
                     parsed_value = this.skill.optional_parameter[key].parse(value);
