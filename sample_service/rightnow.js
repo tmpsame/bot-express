@@ -6,12 +6,11 @@ let memory = require("memory-cache");
 let request = require('request');
 let debug = require("debug")("service");
 let Promise = require("bluebird");
-let app_env = require("../environment_variables");
 
-const RN_USER = app_env.RN_USER;
-const RN_PASSWORD = app_env.RN_PASSWORD;
-const RN_HOSTNAME = app_env.RN_HOSTNAME;
-const RN_WSDL = app_env.RN_WSDL;
+const RN_USER = process.env.RN_USER;
+const RN_PASSWORD = process.env.RN_PASSWORD;
+const RN_HOSTNAME = process.env.RN_HOSTNAME;
+const RN_WSDL = process.env.RN_WSDL;
 const SOAP_WSS_SECURITY = new soap.WSSecurity(RN_USER, RN_PASSWORD, {hasTimeStamp: false, hasTokenCreated: false});
 const APP_API_ID = 'bot-express';
 const APP_IP_ADDRESS = '10.0.0.0';
