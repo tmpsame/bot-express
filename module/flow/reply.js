@@ -31,7 +31,7 @@ module.exports = class ReplyFlow extends Flow {
         return super.add_parameter(this.context.confirming, param_value).then(
             (response) => {
                 debug("add_parameter succeeded.");
-                debug(response):
+                debug(response);
                 return super.react(true, Object.keys(response)[0], response[Object.keys(response)[0]]);
             },
             (response) => {
