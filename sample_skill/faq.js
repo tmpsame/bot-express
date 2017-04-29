@@ -51,9 +51,12 @@ module.exports = class SkillFaq {
         if (typeof context.confirmed.rating != "undefined"){
             return bot.reply(bot_event).then(
                 (response) => {
-                    return context = null;
+                    debug("Clearing context.");
+                    context = null;
+                    return;
                 },
                 (response) => {
+                    debug("Failed to reply.");
                     return Promise.reject(response);
                 }
             )
