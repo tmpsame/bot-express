@@ -232,10 +232,13 @@ module.exports = class Flow {
             return this._collect();
         }
 
+        /*
+        // Deprecated. DO NOT USE this method anymore.
         if (this.skill["before_finish"]){
             debug("Going to process before finish.");
             return this.skill["before_finish"](this.vp, this.bot_event, this.context);
         }
+        */
 
         // If we have no parameters to confirm, we finish this conversation using finish method of skill.
         debug("Going to perform final action.");

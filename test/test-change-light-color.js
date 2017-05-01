@@ -77,7 +77,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirmed").and.deep.equal({color:"5068FF"});
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal({});
-                        response.should.have.property("previous").and.deep.equal({confirmed:["color", "color"]});
+                        response.should.have.property("previous").and.deep.equal({confirmed:["color"]});
                     }
                 );
             });
@@ -93,7 +93,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirmed").and.deep.equal({color:"FF7B7B"});
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal({});
-                        response.should.have.property("previous").and.deep.equal({confirmed:["color", "color"]});
+                        response.should.have.property("previous").and.deep.equal({confirmed:["color"]});
                     }
                 );
             });
@@ -109,7 +109,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirmed").and.deep.equal({color:"FFFA6A"});
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal({});
-                        response.should.have.property("previous").and.deep.equal({confirmed:["color", "color"]});
+                        response.should.have.property("previous").and.deep.equal({confirmed:["color"]});
                     }
                 );
             });

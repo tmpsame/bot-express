@@ -14,6 +14,12 @@ module.exports = class ServiceLine {
     }
 
     send(to, messages){
+        // If this is test, we will not actually issue call out.
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            debug("This is test so we skip the actual call out.");
+            return Promise.resolve();
+        }
+
         return new Promise((resolve, reject) => {
             let headers = {
                 'Content-Type': 'application/json',
@@ -46,6 +52,12 @@ module.exports = class ServiceLine {
     }
 
     reply(reply_token, messages){
+        // If this is test, we will not actually issue call out.
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            debug("This is test so we skip the actual call out.");
+            return Promise.resolve();
+        }
+
         return new Promise((resolve, reject) => {
             let headers = {
                 'Content-Type': 'application/json',
@@ -78,6 +90,12 @@ module.exports = class ServiceLine {
     }
 
     validate_signature(signature, raw_body){
+        // If this is test, we will not actually validate the signature.
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            debug("This is test so we skip validating signature.");
+            return true;
+        }
+        
         // Signature Validation
         let hash = crypto.createHmac('sha256', this._channel_secret).update(raw_body).digest('base64');
         if (hash != signature) {

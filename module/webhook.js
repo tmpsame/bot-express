@@ -69,12 +69,10 @@ module.exports = class webhook {
         debug("Virtual Message Platform instantiated.");
 
         // Signature Validation.
-        if (process.env.BOT_EXPRESS_ENV != "test"){
-            if (!vp.validate_signature(req)){
-                return Promise.reject("Signature Validation failed.");
-            }
-            debug("Signature Validation suceeded.");
+        if (!vp.validate_signature(req)){
+            return Promise.reject("Signature Validation failed.");
         }
+        debug("Signature Validation suceeded.");
 
         // Set Events.
         let bot_events = vp.extract_events(req.body);
@@ -209,8 +207,8 @@ module.exports = class webhook {
                         promise_is_change_intent_flow = apiai.identify_intent(session_id, text).then(
                             (response) => {
                                 if (response.result.action != this.options.default_intent){
-                                    // This is change intent flow.
-                                    debug("This is change intent flow since we could identify intent.");
+                                    // This is change intent flow or restart intent flow.
+                                    debug("This is change intent flow or restart intent flow since we could identify intent.");
                                     return {
                                         result: true,
                                         intent: response.result
@@ -233,19 +231,42 @@ module.exports = class webhook {
                     promise_flow_completed = promise_is_change_intent_flow.then(
                         (response) => {
                             if (response.result){
-                                /*
-                                ** Change Intent Flow
-                                */
-
-                                // Set new intent while keeping other data.
-                                context.intent = response.intent;
-                                try {
-                                    flow = new change_intent_flow(vp, bot_event, context, this.options);
-                                } catch(err){
-                                    return Promise.reject(err);
+                                if (response.intent.action == context.intent.action){
+                                    /*
+                                    ** Restart Intent Flow (= Start Conversation Flow)
+                                    */
+                                    // Instantiate the conversation object. This will be saved as Bot Memory.
+                                    context = {
+                                        intent: response.intent,
+                                        confirmed: {},
+                                        to_confirm: {},
+                                        confirming: null,
+                                        previous: {
+                                            confirmed: []
+                                        }
+                                    };
+                                    vp.context = context;
+                                    try {
+                                        flow = new start_conversation_flow(vp, bot_event, context, this.options);
+                                    } catch(err) {
+                                        return Promise.reject(err);
+                                    }
+                                    return flow.run();
+                                    // End of Restart Intent Flow
+                                } else {
+                                    /*
+                                    ** Change Intent Flow
+                                    */
+                                    // Set new intent while keeping other data.
+                                    context.intent = response.intent;
+                                    try {
+                                        flow = new change_intent_flow(vp, bot_event, context, this.options);
+                                    } catch(err){
+                                        return Promise.reject(err);
+                                    }
+                                    return flow.run();
+                                    // End of Change Intent Flow
                                 }
-                                return flow.run();
-                                // End of Change Intent Flow
                             } else {
                                 context.intent.fulfillment = response.intent.fulfillment;
 

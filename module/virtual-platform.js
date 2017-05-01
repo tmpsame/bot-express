@@ -284,6 +284,7 @@ module.exports = class VirtualPlatform {
         return message_text;
     }
 
+    // Deprecated. DO NOT USE this method anymore. Use compile_message() instead.
     create_text_message(text_message){
         let message_to_compile = {
             type: "text",
@@ -305,11 +306,6 @@ module.exports = class VirtualPlatform {
     }
 
     reply(bot_event, messages = null){
-        if (process.env.BOT_EXPRESS_ENV == "test"){
-            return new Promise((resolve, reject) => {
-                return resolve();
-            });
-        }
         if (messages){
             this.queue(messages);
         }
@@ -337,11 +333,6 @@ module.exports = class VirtualPlatform {
     }
 
     send(recipient_id, messages){
-        if (process.env.BOT_EXPRESS_ENV == "test"){
-            return new Promise((resolve, reject) => {
-                return resolve();
-            });
-        }
         let compiled_messages = [];
         for (let message of messages){
             compiled_messages.push(this.compile_message(message));

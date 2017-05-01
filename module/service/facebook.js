@@ -13,6 +13,12 @@ module.exports = class ServiceFacebook {
     }
 
     send(recipient, messages){
+        // If this is test, we will not actually issue call out.
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            debug("This is test so we skip the actual call out.");
+            return Promise.resolve();
+        }
+
         let all_sent = [];
         for (let message of messages){
             all_sent.push(new Promise((resolve, reject) => {
@@ -55,6 +61,12 @@ module.exports = class ServiceFacebook {
     }
 
     validate_signature(signature, raw_body){
+        // If this is test, we will not actually validate the signature.
+        if (process.env.BOT_EXPRESS_ENV == "test"){
+            debug("This is test so we skip validating signature.");
+            return true;
+        }
+
         // Signature Validation
         let hash = "sha1=" + crypto.createHmac("sha1", this._app_secret).update(raw_body).digest("hex");
         if (hash != signature) {
