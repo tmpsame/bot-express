@@ -126,6 +126,6 @@ module.exports = class SkillHandlePizzaOrder {
         let messages = [{
             text: `${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address.address}までお届けに上がります。`
         }];
-        return bot.reply(bot_event, messages);
+        return bot.reply(messages);
     }
 };

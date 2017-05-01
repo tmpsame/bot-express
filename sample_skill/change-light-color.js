@@ -63,7 +63,7 @@ module.exports = class SkillChangeLightColor {
                 let messages = [{
                     text: "了解しましたー。"
                 }];
-                return bot.reply(bot_event, messages);
+                return bot.reply(messages);
             },
             (response) => {
                 return Promise.reject("Failed to change light color.");

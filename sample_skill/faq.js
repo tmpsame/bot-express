@@ -38,7 +38,7 @@ module.exports = class SkillFaq {
 
     finish(bot, bot_event, context){
         if (typeof context.confirmed.rating != "undefined"){
-            return bot.reply(bot_event).then(
+            return bot.reply().then(
                 (response) => {
                     debug("Reply succeeded.");
                     return;
@@ -50,7 +50,7 @@ module.exports = class SkillFaq {
             )
         }
 
-        let message_text = bot.extract_message_text(bot_event);
+        let message_text = bot.extract_message_text();
         return rightnow.search_answer(message_text).then(
             (response) => {
                 let messages;
@@ -58,11 +58,11 @@ module.exports = class SkillFaq {
                     messages = [{
                         text: "ごめんなさい、ちょっと分かりませんでした。"
                     }];
-                    return bot.reply(bot_event, messages);
+                    return bot.reply(messages);
                 } else {
                     this.optional_parameter.rating.message_to_confirm.altText = striptags(response.Solution);
                     this.optional_parameter.rating.message_to_confirm.template.text = this.optional_parameter.rating.message_to_confirm.altText;
-                    return bot.collect(bot_event, {rating: this.optional_parameter.rating});
+                    return bot.collect({rating: this.optional_parameter.rating});
                 }
             },
             (response) => {

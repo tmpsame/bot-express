@@ -101,7 +101,7 @@ module.exports = class Flow {
         this.context.confirming = Object.keys(this.context.to_confirm)[0];
 
         // Send question to the user.
-        return this.vp.reply(this.bot_event, messages);
+        return this.vp.reply(messages);
     }
 
     change_parameter(key, value){
@@ -222,7 +222,7 @@ module.exports = class Flow {
 
     ask_retry(message_text){
         let messages = [this.vp.create_text_message(message_text)];
-        return this.vp.reply(this.bot_event, messages);
+        return this.vp.reply(messages);
     }
 
     finish(){

@@ -85,8 +85,10 @@ module.exports = class webhook {
             debug(`Processing following event.`);
             debug(bot_event);
 
+            vp.bot_event = bot_event;
+
             // Recall Memory
-            let memory_id = vp.extract_memory_id(bot_event);
+            let memory_id = vp.extract_memory_id();
             debug(`memory id is ${memory_id}.`);
 
             let context = memory.get(memory_id);
@@ -95,11 +97,11 @@ module.exports = class webhook {
             let promise_flow_completed;
             let flow;
 
-            if (vp.extract_event_type(bot_event) == "beacon"){
+            if (vp.extract_event_type() == "beacon"){
                 /*
                 ** Beacon Flow
                 */
-                let beacon_event_type = vp.extract_beacon_event_type(bot_event);
+                let beacon_event_type = vp.extract_beacon_event_type();
 
                 if (!beacon_event_type){
                     return Promise.resolve("Unsupported beacon event.");
@@ -132,13 +134,13 @@ module.exports = class webhook {
                 */
 
                 // Check if this event type is supported in this flow.
-                if (!vp.check_supported_event_type("start_conversation", bot_event)){
+                if (!vp.check_supported_event_type("start_conversation")){
                     return Promise.resolve(`unsupported event for start conversation flow`);
                 }
 
                 // Set session id for api.ai and text to identify intent.
-                let session_id = vp.extract_session_id(bot_event);
-                let text = vp.extract_message_text(bot_event);
+                let session_id = vp.extract_session_id();
+                let text = vp.extract_message_text();
 
                 promise_flow_completed = apiai.identify_intent(session_id, text).then(
                     (response) => {
@@ -175,7 +177,7 @@ module.exports = class webhook {
                     */
 
                     // Check if this event type is supported in this flow.
-                    if (!vp.check_supported_event_type("reply", bot_event)){
+                    if (!vp.check_supported_event_type("reply")){
                         debug(`This is unsupported event type in this flow so skip processing.`)
                         return Promise.resolve(`unsupported event for reply flow`);
                     }
@@ -191,7 +193,7 @@ module.exports = class webhook {
                     // Check if this is Change Intent Flow.
                     let promise_is_change_intent_flow;
 
-                    if (!vp.check_supported_event_type("change_intent", bot_event)){
+                    if (!vp.check_supported_event_type("change_intent")){
                         promise_is_change_intent_flow = new Promise((resolve, reject) => {
                             resolve({
                                 result: false,
@@ -201,8 +203,8 @@ module.exports = class webhook {
                         });
                     } else {
                         // Set session id for api.ai and text to identify intent.
-                        let session_id = vp.extract_session_id(bot_event);
-                        let text = vp.extract_message_text(bot_event);
+                        let session_id = vp.extract_session_id();
+                        let text = vp.extract_message_text();
 
                         promise_is_change_intent_flow = apiai.identify_intent(session_id, text).then(
                             (response) => {

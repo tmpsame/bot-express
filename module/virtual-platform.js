@@ -5,11 +5,12 @@ let Facebook = require("./service/facebook");
 let debug = require("debug")("vp");
 
 module.exports = class VirtualPlatform {
-    constructor(options){
+    constructor(options, bot_event){
         this.type = options.message_platform_type;
         this.options = options;
         this.service = this.instantiate_service();
         this.context = null; // Will be set later in webhook;
+        this.bot_event = bot_event;
     }
 
     instantiate_service(){
@@ -52,8 +53,8 @@ module.exports = class VirtualPlatform {
         return events;
     }
 
-    extract_event_type(bot_event){
-        return this[`_${this.type}_extract_event_type`](bot_event);
+    extract_event_type(){
+        return this[`_${this.type}_extract_event_type`](this.bot_event);
     }
 
     _line_extract_event_type(bot_event){
@@ -77,8 +78,8 @@ module.exports = class VirtualPlatform {
         return event_type;
     }
 
-    extract_beacon_event_type(bot_event){
-        return this[`_${this.type}_extract_beacon_event_type`](bot_event);
+    extract_beacon_event_type(){
+        return this[`_${this.type}_extract_beacon_event_type`](this.bot_event);
     }
 
     _line_extract_beacon_event_type(bot_event){
@@ -96,8 +97,8 @@ module.exports = class VirtualPlatform {
         return beacon_event_type;
     }
 
-    extract_memory_id(bot_event){
-        return this[`_${this.type}_extract_memory_id`](bot_event);
+    extract_memory_id(){
+        return this[`_${this.type}_extract_memory_id`](this.bot_event);
     }
 
     _line_extract_memory_id(bot_event){
@@ -108,8 +109,8 @@ module.exports = class VirtualPlatform {
         return bot_event.sender.id;
     }
 
-    check_supported_event_type(flow, bot_event){
-        return this[`_${this.type}_check_supported_event_type`](flow, bot_event);
+    check_supported_event_type(flow){
+        return this[`_${this.type}_check_supported_event_type`](flow, this.bot_event);
     }
 
     _line_check_supported_event_type(flow, bot_event){
@@ -197,8 +198,8 @@ module.exports = class VirtualPlatform {
         }
     }
 
-    extract_session_id(bot_event){
-        return this[`_${this.type}_extract_session_id`](bot_event);
+    extract_session_id(){
+        return this[`_${this.type}_extract_session_id`](this.bot_event);
     }
 
     _line_extract_session_id(bot_event){
@@ -209,8 +210,8 @@ module.exports = class VirtualPlatform {
         return bot_event.sender.id;
     }
 
-    extract_param_value(bot_event){
-        return this[`_${this.type}_extract_param_value`](bot_event);
+    extract_param_value(){
+        return this[`_${this.type}_extract_param_value`](this.bot_event);
     }
 
     _line_extract_param_value(bot_event){
@@ -250,8 +251,8 @@ module.exports = class VirtualPlatform {
         return param_value;
     }
 
-    extract_message_text(bot_event){
-        return this[`_${this.type}_extract_message_text`](bot_event);
+    extract_message_text(){
+        return this[`_${this.type}_extract_message_text`](this.bot_event);
     }
 
     _line_extract_message_text(bot_event){
@@ -305,7 +306,7 @@ module.exports = class VirtualPlatform {
         this.context.message_queue = this.context.message_queue.concat(messages);
     }
 
-    reply(bot_event, messages = null){
+    reply(messages = null){
         if (messages){
             this.queue(messages);
         }
@@ -313,7 +314,7 @@ module.exports = class VirtualPlatform {
         for (let message of this.context.message_queue){
             compiled_messages.push(this.compile_message(message));
         }
-        return this[`_${this.type}_reply`](bot_event, compiled_messages).then(
+        return this[`_${this.type}_reply`](this.bot_event, compiled_messages).then(
             (response) => {
                 this.context.message_queue = [];
                 return response;
@@ -349,7 +350,7 @@ module.exports = class VirtualPlatform {
     }
 
     // While collect method exists in flow, this method is for developers to explicitly collect a parameter.
-    collect(bot_event, parameter){
+    collect(parameter){
         if (Object.keys(parameter).length != 1){
             return Promise.reject("Malformed parameter.");
         }
@@ -372,7 +373,7 @@ module.exports = class VirtualPlatform {
         }
 
         // Send question to the user.
-        return this.reply(bot_event, messages);
+        return this.reply(this.bot_event, messages);
     }
 
     compile_message(message){

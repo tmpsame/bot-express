@@ -27,7 +27,7 @@ module.exports = class ChangeParameterFlow extends Flow {
         debug("\n### ASSUME This is Change Parameter Flow. ###\n");
 
         // Check if the event is supported one in this flow.
-        if (!this.vp.check_supported_event_type("change_parameter", this.bot_event)){
+        if (!this.vp.check_supported_event_type("change_parameter")){
             return Promise.resolve({
                 result: false,
                 reason: "unsupported event for change parameter flow"
@@ -35,7 +35,7 @@ module.exports = class ChangeParameterFlow extends Flow {
         }
 
         // Add Parameter from message text or postback data.
-        let param_value = this.vp.extract_param_value(this.bot_event);
+        let param_value = this.vp.extract_param_value();
 
         let is_fit = false;
         let all_parameters_processed = [];

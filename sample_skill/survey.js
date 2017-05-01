@@ -127,6 +127,6 @@ module.exports = class SkillSurvey {
         let messages = [{
             text: `完璧です！ありがとうございました！！`
         }];
-        return bot.reply(bot_event, messages);
+        return bot.reply(messages);
     }
 };

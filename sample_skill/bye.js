@@ -11,6 +11,6 @@ module.exports = class SkillBye {
         let messages = [{
             text: "Bye"
         }];
-        return bot.reply(bot_event, messages);
+        return bot.reply(messages);
     }
 };

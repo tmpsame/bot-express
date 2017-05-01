@@ -265,6 +265,6 @@ module.exports = class SkillCompileMessage {
         let messages = [{
             text: "完了"
         }];
-        return bot.reply(bot_event, messages);
+        return bot.reply(messages);
     }
 };

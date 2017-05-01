@@ -77,7 +77,7 @@ finish(bot, bot_event, context){
                 text: "了解しましたー。"
             }];
             // 送信元のメッセージプラットフォームを通じてメッセージが送信される。
-            return bot.reply(bot_event, messages);
+            return bot.reply(messages);
         },
         (response) => {
             return Promise.reject("Failed to change light color.");
@@ -328,7 +328,7 @@ finish(bot, bot_event, context){
             let messages = [{
                 text: "了解しましたー。"
             }];
-            return bot.reply(bot_event, messages);
+            return bot.reply(messages);
         },
         (response) => {
             return Promise.reject("Failed to change light color.");
@@ -341,10 +341,10 @@ finish(bot, bot_event, context){
 
 finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。利用しているメッセージプラットフォームを意識せずに処理を記述することができます。このインスタンスの機能は下記になります。
 
-- **reply(bot_event, messages)** : メッセージの返信をおこなうメソッドです。messagesにはいずれかのメッセージプラットフォームで定義されているフォーマットにメッセージオブジェクトを配列でセットします。
+- **reply(messages)** : メッセージの返信をおこなうメソッドです。messagesにはいずれかのメッセージプラットフォームで定義されているフォーマットにメッセージオブジェクトを配列でセットします。
 - **queue(messages)** : 返信するメッセージをキュー（実行待ち）に入れるためのメソッドです。キューに入れておいたメッセージはreply()が実行された時に一括で送信されます。reply()は一度のイベントで一回しか実行できないため、複数のメッセージを返信する必要がある場合はこのメソッドを利用してください。
 - **change_message_to_confirm(parameter_key, message)** : parameter_keyで指定したパラメーターのmessage_to_confirmを一時的に変更します。これは主にparse処理が失敗した時にユーザーに再入力を促がす際に有用です。
-- **collect(bot_event, parameter)** : 明示的にパラメーターを収集するメソッドです。parameterはconstructor()で指定するrequired_parameterやoptional_parameterと同じフォーマットで指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。
+- **collect(parameter)** : 明示的にパラメーターを収集するメソッドです。parameterはconstructor()で指定するrequired_parameterやoptional_parameterと同じフォーマットで指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。
 
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
 
