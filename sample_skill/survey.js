@@ -87,8 +87,6 @@ module.exports = class SkillSurvey {
                 }
             }
         }
-
-        this.clear_context_on_finish = true;
     }
 
     parse_satisfaction(value){
