@@ -364,16 +364,15 @@ module.exports = class VirtualPlatform {
     _collect_by_param_key(param_key){
         debug("Going to collect parameter. Message should be defined in skill.");
 
-        let param;
         let param_value;
         let message_to_confirm;
 
         if (!!this.skill.required_parameter && !!this.skill.required_parameter[param_key]){
             debug(`We are going to collect required parameter "${param_key}".`);
-            param = this.skill.required_parameter[param_key];
+            param_value = this.skill.required_parameter[param_key];
         } else if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_key]){
             debug(`We are going to collect optional parameter "${param_key}".`);
-            param = this.skill.optional_parameter[param_key];
+            param_value = this.skill.optional_parameter[param_key];
         } else {
             debug(`Spedified parameter not found in skill.`);
             return Promise.reject(`Spedified parameter not found in skill.`);
