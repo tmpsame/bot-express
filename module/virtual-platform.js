@@ -362,6 +362,8 @@ module.exports = class VirtualPlatform {
     }
 
     _collect_by_param_key(param_key){
+        debug("Going to collect parameter. Message should be defined in skill.");
+
         let param_value;
         let message_to_confirm;
 
@@ -395,6 +397,8 @@ module.exports = class VirtualPlatform {
     }
 
     _collect_by_param(parameter){
+        debug("Going to collect parameter. Message should be enveloped in the argument.");
+
         if (Object.keys(parameter).length != 1){
             return Promise.reject("Malformed parameter.");
         }
