@@ -132,7 +132,7 @@ module.exports = class SkillSurvey {
     }
 
     finish(bot, bot_event, context){
-        if (context.confirmed.satisfaction == 1 && context.confirmed.suggestion == undefined){
+        if (context.confirmed.satisfaction == 1 && !context.confirmed.suggestion){
             return bot.collect("suggestion");
         }
 
