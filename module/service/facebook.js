@@ -19,7 +19,7 @@ module.exports = class ServiceFacebook {
             return Promise.resolve();
         }
 
-        let page_access_token = this._page_access_token.find(token => token.page_id === page_id);
+        let page_access_token = this._page_access_token.find(token => token.page_id === page_id).page_access_token;
         if (!page_access_token){
             return Promise.reject("page access token not found.");
         }
