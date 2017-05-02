@@ -371,7 +371,7 @@ module.exports = class VirtualPlatform {
         } else if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_key]){
             debug(`We are going to collect optional parameter "${param_key}".`);
             param = this.skill.optional_parameter[param_key];
-        } else (
+        } else {
             debug(`Spedified parameter not found in skill.`);
             return Promise.reject(`Spedified parameter not found in skill.`);
         )
