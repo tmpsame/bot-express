@@ -374,7 +374,7 @@ module.exports = class VirtualPlatform {
         } else {
             debug(`Spedified parameter not found in skill.`);
             return Promise.reject(`Spedified parameter not found in skill.`);
-        )
+        }
 
         if (!!param_value.message_to_confirm && !!param_value.message_to_confirm[this.type]){
             debug("Found message platform specific message object.");
