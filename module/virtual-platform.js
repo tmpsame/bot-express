@@ -364,6 +364,7 @@ module.exports = class VirtualPlatform {
     _collect_by_param_key(param_key){
         debug("Going to collect parameter. Message should be defined in skill.");
 
+        let param;
         let param_value;
         let message_to_confirm;
 
