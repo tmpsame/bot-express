@@ -71,7 +71,15 @@ for (let message_platform of message_platform_list){
                     }
                 ).then(
                     function(response){
-                        should.not.exist(response);
+                        response.should.have.property("confirmed").and.deep.equal({
+                            satisfaction: 5,
+                            difficulty: 1,
+                            free_comment: "とても有意義でした。",
+                            mail: "nakajima@hoge.com"
+                        });
+                        response.should.have.property("confirming", null);
+                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("previous").and.deep.equal({confirmed:["mail","free_comment","difficulty","satisfaction"]});
                     }
                 );
             });
@@ -275,7 +283,8 @@ for (let message_platform of message_platform_list){
                 ).then(
                     function(response){
                         // finished
-                        should.not.exist(response);
+                        response.should.have.property("confirming").and.equal(null);
+                        response.should.have.property("to_confirm").and.deep.equal({});
                     }
                 );
             });

@@ -256,8 +256,6 @@ module.exports = class SkillCompileMessage {
             }
             */
         };
-
-        this.clear_context_on_finish = true;
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。

@@ -116,7 +116,10 @@ app.use('/webhook', bot_express({
     line_channel_secret: 'あなたのLINE Channel Secret', // LINE対応の場合必須
     line_channel_access_token: 'あなたのLINE Channel Access Token', // LINE対応の場合必須
     facebook_app_secret: 'あなたのFacebook App Secret', // Facebook対応の場合必須
-    facebook_page_access_token: 'あなたのFacebook Page Access Token', // Facebook対応の場合必須
+    facebook_page_access_token: [
+        page_id: 'あなたのFacebook Page ID',
+        page_access_token: 'あなたのFacebook Page Access Token',
+    ], // Facebook対応の場合必須
     facebook_verify_token: 'あなたのFacebook Verify Token', // オプション。FacebookのWebhook認証用トークン。デフォルトはfacebook_app_secretに指定した値
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
     default_skill: 'あなたのskill', // オプション。Intentが特定されなかった場合に使うスキル。デフォルトは組み込まれているdefaultスキル（api.aiからのText Reponseをそのまま返信するスキル）

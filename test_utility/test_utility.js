@@ -11,7 +11,9 @@ module.exports = class Test_Utility {
             line_channel_secret: process.env.LINE_CHANNEL_SECRET,
             line_channel_access_token: process.env.LINE_CHANNEL_ACCESS_TOKEN,
             facebook_app_secret: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
-            facebook_page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN,
+            facebook_page_access_token: [
+                {page_id: process.env.FACEBOOK_PAGE_ID, page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN}
+            ],
             apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
             default_intent: oneoff_options.default_intent || "input.unknown", // This is optional but required for this testing since test does not go through index.js which sets default parameter.
             default_skill: oneoff_options.default_skill || "builtin_default",

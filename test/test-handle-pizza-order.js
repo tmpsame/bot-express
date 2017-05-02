@@ -104,7 +104,19 @@ for (let message_platform of message_platform_list){
                 let webhook = new Webhook(options);
                 return webhook.run(Util.create_req(message_platform, event_type, user_id, "中嶋一樹")).then(
                     function(response){
-                        should.not.exist(response);
+                        response.should.have.property("confirmed").and.deep.equal({
+                            pizza:"マルゲリータ",
+                            size:"M",
+                            address:{
+                                address: "港区北青山1-1-1",
+                                latitude: null,
+                                longitude: null
+                            },
+                            name: "中嶋一樹"
+                        });
+                        response.should.have.property("confirming", null);
+                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("previous").and.deep.equal({confirmed:["name","address","size","pizza"]});
                     }
                 );
             });

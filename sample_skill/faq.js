@@ -33,7 +33,6 @@ module.exports = class SkillFaq {
                 }
             }
         }
-        this.clear_context_on_finish = true;
     }
 
     finish(bot, bot_event, context){

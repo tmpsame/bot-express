@@ -12,12 +12,18 @@ module.exports = class ServiceFacebook {
         this._page_access_token = page_access_token;
     }
 
-    send(recipient, messages){
+    send(page_id, recipient, messages){
         // If this is test, we will not actually issue call out.
         if (process.env.BOT_EXPRESS_ENV == "test"){
             debug("This is test so we skip the actual call out.");
             return Promise.resolve();
         }
+
+        let page_access_token = this._page_access_token.find(token => token.page_id === page_id);
+        if (!page_access_token){
+            return Promise.reject("page access token not found.");
+        }
+        debug(`page_id is ${page_id}. Corresponding page_access_token is ${page_access_token}`);
 
         let all_sent = [];
         for (let message of messages){
@@ -29,7 +35,7 @@ module.exports = class ServiceFacebook {
                     recipient: recipient,
                     message: message
                 }
-                let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + this._page_access_token;
+                let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
                 request({
                     url: url,
                     method: 'POST',
