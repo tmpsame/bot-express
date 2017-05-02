@@ -136,8 +136,6 @@ module.exports = class SkillSurvey {
             return bot.collect("suggestion");
         }
 
-        if (context.confirmed.difficulty)
-
         return bot.reply([{
             text: `完璧です！ありがとうございました！！`
         }]);
