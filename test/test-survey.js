@@ -125,109 +125,159 @@ for (let message_platform of message_platform_list){
                     }
                 );
             });
-            describe("#Acceptable zenkaku input for satisfaction", function(){
-                it("will be converted to hankaku.", function(){
-                    this.timeout(8000);
+        });
+        describe("#Acceptable zenkaku input for satisfaction", function(){
+            it("will be converted to hankaku.", function(){
+                this.timeout(8000);
 
-                    let options = Util.create_options();
-                    let webhook = new Webhook(options);
-                    return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
-                        function(response){
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot says "Please tell me satisfaction score.".
-                            response.should.have.property("confirmed").and.deep.equal({});
-                            response.should.have.property("confirming", "satisfaction");
-                            response.should.have.property("to_confirm").have.property("satisfaction");
-                            response.should.have.property("to_confirm").have.property("difficulty");
-                            response.should.have.property("to_confirm").have.property("free_comment");
-                            response.should.have.property("to_confirm").have.property("mail");
-                            response.should.have.property("previous").and.deep.equal({confirmed:[]});
-                            // Answer the value which is out of range.
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "５"));
-                        }
-                    ).then(
-                        function(response){
-                            response.should.have.property("confirmed").and.deep.equal({satisfaction: 5});
-                            response.should.have.property("confirming", "difficulty");
-                            response.should.have.property("to_confirm").have.property("difficulty");
-                            response.should.have.property("to_confirm").have.property("free_comment");
-                            response.should.have.property("to_confirm").have.property("mail");
-                            response.should.have.property("previous").and.deep.equal({confirmed:["satisfaction"]});
-                        }
-                    );
-                });
+                let options = Util.create_options();
+                let webhook = new Webhook(options);
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
+                    function(response){
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot says "Please tell me satisfaction score.".
+                        response.should.have.property("confirmed").and.deep.equal({});
+                        response.should.have.property("confirming", "satisfaction");
+                        response.should.have.property("to_confirm").have.property("satisfaction");
+                        response.should.have.property("to_confirm").have.property("difficulty");
+                        response.should.have.property("to_confirm").have.property("free_comment");
+                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("previous").and.deep.equal({confirmed:[]});
+                        // Answer the value which is out of range.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "５"));
+                    }
+                ).then(
+                    function(response){
+                        response.should.have.property("confirmed").and.deep.equal({satisfaction: 5});
+                        response.should.have.property("confirming", "difficulty");
+                        response.should.have.property("to_confirm").have.property("difficulty");
+                        response.should.have.property("to_confirm").have.property("free_comment");
+                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("previous").and.deep.equal({confirmed:["satisfaction"]});
+                    }
+                );
             });
-            describe("#Acceptable text for difficulty", function(){
-                it("will be accepted and converted to corresponding value.", function(){
-                    this.timeout(8000);
+        });
+        describe("#Acceptable text for difficulty", function(){
+            it("will be accepted and converted to corresponding value.", function(){
+                this.timeout(8000);
 
-                    let options = Util.create_options();
-                    let webhook = new Webhook(options);
-                    return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
-                        function(response){
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking satisfaction.
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "5"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking difficulty.
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "激ムズでした。"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking difficulty.
-                            response.should.have.property("confirmed").and.deep.equal({
-                                satisfaction: 5,
-                                difficulty: 1
-                            });
-                        }
-                    );
-                });
+                let options = Util.create_options();
+                let webhook = new Webhook(options);
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
+                    function(response){
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking satisfaction.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "5"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking difficulty.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "激ムズでした。"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking difficulty.
+                        response.should.have.property("confirmed").and.deep.equal({
+                            satisfaction: 5,
+                            difficulty: 1
+                        });
+                    }
+                );
             });
-            describe("#Illegal email", function(){
-                it("will be rejected and be asked same question once again.", function(){
-                    this.timeout(8000);
+        });
+        describe("#Illegal email", function(){
+            it("will be rejected and be asked same question once again.", function(){
+                this.timeout(8000);
 
-                    let options = Util.create_options();
-                    let webhook = new Webhook(options);
-                    return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
-                        function(response){
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking satisfaction.
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "5"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking difficulty.
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "激ムズでした。"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking free_comment
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "特になし"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is asking mail
-                            return webhook.run(Util.create_req(message_platform, event_type, user_id, "nakajima.hoge.com"));
-                        }
-                    ).then(
-                        function(response){
-                            // Bot is still asking mail
-                            response.should.have.property("confirming").and.equal("mail");
-                        }
-                    );
-                });
+                let options = Util.create_options();
+                let webhook = new Webhook(options);
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
+                    function(response){
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking satisfaction.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "5"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking difficulty.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "激ムズでした。"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking free_comment
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "特になし"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking mail
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "nakajima.hoge.com"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is still asking mail
+                        response.should.have.property("confirming").and.equal("mail");
+                    }
+                );
+            });
+        });
+        describe("#satisfaction is 1", function(){
+            it("will trigger collect() and bot asks for optional parameter.", function(){
+                this.timeout(8000);
+
+                let options = Util.create_options();
+                let webhook = new Webhook(options);
+                return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
+                    function(response){
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking satisfaction.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "1"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking difficulty.
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "難しい"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking free_comment
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "特になし"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking mail
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "nakajima@hoge.com"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking suggestion
+                        response.should.have.property("confirming").and.equal("suggestion");
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "音楽でもかけたらいいじゃないですか。"));
+                    }
+                ).then(
+                    function(response){
+                        // Bot is asking come_back
+                        response.should.have.property("confirming").and.equal("come_back");
+                        return webhook.run(Util.create_req(message_platform, event_type, user_id, "いいとも"));
+                    }
+                ).then(
+                    function(response){
+                        // finished
+                        should.not.exist(response);
+                    }
+                );
             });
         });
     });

@@ -66,7 +66,7 @@ module.exports = class SkillSurvey {
             }, // End of free_comment
             mail: {
                 message_to_confirm: {
-                    text: "最後にメールアドレス教えてもらえますか？"
+                    text: "メールアドレス教えてもらえますか？"
                 }
             } // End of mail
         } // End of required_parameter
@@ -74,7 +74,16 @@ module.exports = class SkillSurvey {
         this.optional_parameter = {
             suggestion: {
                 message_to_confirm: {
-                    text: "どのようにすれば改善できると思いますか？"
+                    text: "この勉強会はどのようにすれば改善できると思いますか？"
+                }
+            },
+            come_back: {
+                message_to_confirm: {
+                    text: "いただいた意見を踏まえて改善していこうと思います。なので、また来てくれるかな？",
+                    quick_replies: [
+                        {content_type:"text", title:"いいとも", payload:"いいとも"},
+                        {content_type:"text", title:"それはどうかな", payload:"それはどうかな"}
+                    ]
                 }
             }
         }
@@ -134,6 +143,9 @@ module.exports = class SkillSurvey {
     finish(bot, bot_event, context){
         if (context.confirmed.satisfaction == 1 && !context.confirmed.suggestion){
             return bot.collect("suggestion");
+        }
+        if (context.confirmed.satisfaction == 1 && !context.confirmed.come_back){
+            return bot.collect({come_back: this.optional_parameter.come_back});
         }
 
         return bot.reply([{
