@@ -390,7 +390,7 @@ module.exports = class VirtualPlatform {
         }
 
         this.context.confirming = param_key;
-        Object.assign(this.context.to_confirm, {param_key: param_value});
+        this.context.to_confirm[param_key] = param_value;
 
         // Send question to the user.
         return this.reply([message_to_confirm]);
