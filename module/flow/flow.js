@@ -13,6 +13,7 @@ module.exports = class Flow {
         this.default_skill = options.default_skill;
         this.skill_path = options.skill_path;
         this.skill = this._instantiate_skill(this.context.intent.action);
+        this.vp.skill = this.skill;
 
         if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
             debug(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
@@ -20,6 +21,8 @@ module.exports = class Flow {
             debug(`This skill requires 0 parameters.`);
         }
 
+        // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
+        // After that, we depend on context.to_confirm to identify to_confirm parameters.
         if (Object.keys(this.context.to_confirm).length == 0){
             this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
         }

@@ -9,8 +9,9 @@ module.exports = class VirtualPlatform {
         this.type = options.message_platform_type;
         this.options = options;
         this.service = this.instantiate_service();
-        this.context = null; // Will be set later in webhook;
+        this.context = null; // Will be set later in webhook
         this.bot_event = bot_event;
+        this.skill = null; // Will be set in flow constructor
     }
 
     instantiate_service(){
@@ -350,30 +351,74 @@ module.exports = class VirtualPlatform {
     }
 
     // While collect method exists in flow, this method is for developers to explicitly collect a parameter.
-    collect(parameter){
-        if (Object.keys(parameter).length != 1){
-            return Promise.reject("Malformed parameter.");
+    collect(arg){
+        if (typeof arg == "string"){
+            return this._collect_by_param_key(arg);
+        } else if (typeof arg == "object"){
+            return this._collect_by_param(arg);
+        } else {
+            return Promise.reject("Invalid argument for vp.collect()");
         }
-        let param_key = Object.keys(parameter)[0];
-        this.context.confirming = param_key;
-        Object.assign(this.context.to_confirm, parameter);
+    }
 
-        let messages;
-        if (!!parameter[param_key].message_to_confirm[this.type]){
-            // Found message platform specific message object.
+    _collect_by_param_key(param_key){
+        let param_value;
+        let message_to_confirm;
+
+        if (!!this.skill.required_parameter && !!this.skill.required_parameter[param_key]){
+            debug(`We are going to collect required parameter "${param_key}".`);
+            param = this.skill.required_parameter[param_key];
+        } else if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_key]){
+            debug(`We are going to collect optional parameter "${param_key}".`);
+            param = this.skill.optional_parameter[param_key];
+        } else (
+            debug(`Spedified parameter not found in skill.`);
+            return Promise.reject(`Spedified parameter not found in skill.`);
+        )
+
+        if (!!param_value.message_to_confirm && !!param_value.message_to_confirm[this.type]){
             debug("Found message platform specific message object.");
-            messages = [parameter[param_key].message_to_confirm[this.type]];
-        } else if (!!parameter[param_key].message_to_confirm){
-            // Found common message object. We compile this message object to get message platform specific message object.
+            message_to_confirm = param_value.message_to_confirm[this.type];
+        } else if (!!param_value.message_to_confirm){
             debug("Found common message object.");
-            messages = [parameter[param_key].message_to_confirm];
+            message_to_confirm = param_value.message_to_confirm;
         } else {
             debug("While we need to send a message to confirm parameter, the message not found.");
             return Promise.reject("While we need to send a message to confirm parameter, the message not found.");
         }
 
+        this.context.confirming = param_key;
+        Object.assign(this.context.to_confirm, {param_key: param_value});
+
         // Send question to the user.
-        return this.reply(this.bot_event, messages);
+        return this.reply([message_to_confirm]);
+    }
+
+    _collect_by_param(parameter){
+        if (Object.keys(parameter).length != 1){
+            return Promise.reject("Malformed parameter.");
+        }
+        let param_key = Object.keys(parameter)[0];
+
+        let message_to_confirm;
+        if (!!parameter[param_key].message_to_confirm[this.type]){
+            // Found message platform specific message object.
+            debug("Found message platform specific message object.");
+            message_to_confirm = parameter[param_key].message_to_confirm[this.type];
+        } else if (!!parameter[param_key].message_to_confirm){
+            // Found common message object. We compile this message object to get message platform specific message object.
+            debug("Found common message object.");
+            message_to_confirm = parameter[param_key].message_to_confirm;
+        } else {
+            debug("While we need to send a message to confirm parameter, the message not found.");
+            return Promise.reject("While we need to send a message to confirm parameter, the message not found.");
+        }
+
+        this.context.confirming = param_key;
+        Object.assign(this.context.to_confirm, parameter);
+
+        // Send question to the user.
+        return this.reply([message_to_confirm]);
     }
 
     compile_message(message){
