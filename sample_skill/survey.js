@@ -34,9 +34,9 @@ module.exports = class SkillSurvey {
                         } else {
                             return;
                         }
-                        bot.queue(messages);
+                        return bot.queue(messages);
                     } else {
-                        bot.change_message_to_confirm("satisfaction", {
+                        return bot.change_message_to_confirm("satisfaction", {
                             text: "ん？1が最低、5が最高の5段階評価ですよ。数字で1から5のどれかで教えてくださいね。",
                             quick_replies: [
                                 {content_type:"text", title:"5 高", payload:5},
@@ -70,6 +70,14 @@ module.exports = class SkillSurvey {
                 }
             } // End of mail
         } // End of required_parameter
+
+        this.optional_parameter = {
+            suggestion: {
+                message_to_confirm: {
+                    text: "どのようにすれば改善できると思いますか？"
+                }
+            }
+        }
 
         this.clear_context_on_finish = true;
     }
@@ -124,9 +132,14 @@ module.exports = class SkillSurvey {
     }
 
     finish(bot, bot_event, context){
-        let messages = [{
+        if (context.confirmed.satisfaction == 1 && context.confirmed.suggestion == undefined){
+            return bot.collect("suggestion");
+        }
+
+        if (context.confirmed.difficulty)
+
+        return bot.reply([{
             text: `完璧です！ありがとうございました！！`
-        }];
-        return bot.reply(messages);
+        }]);
     }
 };
