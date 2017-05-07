@@ -75,7 +75,7 @@ module.exports = class SkillCompileMessage {
                     }
                 }
             },
-            line_template_confirm: { // Will be quick repy in facebook.
+            line_template_confirm: { // Will be quick reply in facebook.
                 message_to_confirm: {
                     type: "template",
                     altText: "ご注文は以上ですか？",
@@ -173,7 +173,7 @@ module.exports = class SkillCompileMessage {
                         {content_type:"text",title:"マリナーラ",payload:"マリナーラ"},
                         {content_type:"text",title:"カプリチョーザ",payload:"カプリチョーザ"},
                         {content_type:"text",title:"アラビアータ",payload:"アラビアータ"},
-                        {content_type:"text",title:"クアトロフォルマッジ",payload:"クアトロフォルマッジ"},
+                        {content_type:"text",title:"クワトロフォルマッジ",payload:"クワトロフォルマッジ"},
                     ]
                 }
             },

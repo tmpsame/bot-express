@@ -734,7 +734,7 @@ module.exports = class VirtualPlatform {
                                 // Not supported since facebook does not allow template message including more than 3 buttons. The threshold of action of line template button is 4.
                                 debug(`Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message.`);
                                 compiled_message = {
-                                    text: message.altText + "*Original Message had unsupported information"
+                                    text: message.altText + " *Original Message had unsupported information"
                                 }
                             } else {
                                 compiled_message = {
