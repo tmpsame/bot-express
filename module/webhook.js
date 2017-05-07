@@ -118,7 +118,8 @@ module.exports = class webhook {
                     to_confirm: [],
                     confirming: null,
                     previous: {
-                        confirmed: []
+                        confirmed: [],
+                        message: []
                     }
                 };
                 vp.context = context;
@@ -153,7 +154,8 @@ module.exports = class webhook {
                             to_confirm: [],
                             confirming: null,
                             previous: {
-                                confirmed: []
+                                confirmed: [],
+                                message: []
                             }
                         };
                         vp.context = context;
@@ -244,7 +246,8 @@ module.exports = class webhook {
                                         to_confirm: [],
                                         confirming: null,
                                         previous: {
-                                            confirmed: []
+                                            confirmed: [],
+                                            message: []
                                         }
                                     };
                                     vp.context = context;

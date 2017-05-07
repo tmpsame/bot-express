@@ -26,8 +26,9 @@ module.exports = class Flow {
         if (this.context.to_confirm.length == 0){
             this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
         }
-
         debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
+
+        this.context.previous.message.unshift(vp.extract_message());
     }
 
     _instantiate_skill(intent){

@@ -252,6 +252,33 @@ module.exports = class VirtualPlatform {
         return param_value;
     }
 
+    extract_message(){
+        return this[`_${this.type}_extract_message`](this.bot_event);
+    }
+
+    _line_extract_message(bot_event){
+        let message;
+        switch(bot_event.type){
+            case "message":
+                message = bot_event.message;
+            break;
+            case "postback":
+                message = bot_event.postback;
+            break;
+        }
+        return message;
+    }
+
+    _facebook_extract_message(bot_event){
+        let message;
+        if (bot_event.message){
+            message = bot_event.message;
+        } else if (bot_event.postback){
+            message = bot_event.postback;
+        }
+        return message;
+    }
+
     extract_message_text(){
         return this[`_${this.type}_extract_message_text`](this.bot_event);
     }
