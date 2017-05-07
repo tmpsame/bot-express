@@ -26,8 +26,11 @@ module.exports = class SkillSurvey {
                         if (value == 5){
                             bot.queue([{
                                 text: "うぉー！！よかった！"
-                            }])
+                            }]);
                         } else if (value == 1){
+                            bot.queue([{
+                                text: "なんてこった。。"
+                            }]);
                             bot.collect("suggestion");
                         }
                     } else {
