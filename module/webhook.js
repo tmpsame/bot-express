@@ -115,7 +115,7 @@ module.exports = class webhook {
                 context = {
                     intent: {action: this.options.beacon_skill[beacon_event_type]},
                     confirmed: {},
-                    to_confirm: {},
+                    to_confirm: [],
                     confirming: null,
                     previous: {
                         confirmed: []
@@ -150,7 +150,7 @@ module.exports = class webhook {
                         context = {
                             intent: response.result,
                             confirmed: {},
-                            to_confirm: {},
+                            to_confirm: [],
                             confirming: null,
                             previous: {
                                 confirmed: []
@@ -241,7 +241,7 @@ module.exports = class webhook {
                                     context = {
                                         intent: response.intent,
                                         confirmed: {},
-                                        to_confirm: {},
+                                        to_confirm: [],
                                         confirming: null,
                                         previous: {
                                             confirmed: []

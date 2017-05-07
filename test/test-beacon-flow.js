@@ -48,10 +48,11 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "satisfaction");
-                        response.should.have.property("to_confirm").and.have.property("satisfaction");
-                        response.should.have.property("to_confirm").and.have.property("difficulty");
-                        response.should.have.property("to_confirm").and.have.property("free_comment");
-                        response.should.have.property("to_confirm").and.have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("satisfaction");
+                        response.to_confirm[1].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[2].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[3].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                     }
                 );
@@ -74,7 +75,7 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", null);
-                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("to_confirm").and.deep.equal([]);
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                     }
                 );

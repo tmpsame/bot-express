@@ -28,10 +28,11 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "pizza");
-                        response.should.have.property("to_confirm").have.property("pizza");
-                        response.should.have.property("to_confirm").have.property("size");
-                        response.should.have.property("to_confirm").have.property("address");
-                        response.should.have.property("to_confirm").have.property("name");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("pizza");
+                        response.to_confirm[1].should.have.property("name").and.equal("size");
+                        response.to_confirm[2].should.have.property("name").and.equal("address");
+                        response.to_confirm[3].should.have.property("name").and.equal("name");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                     }
                 );
@@ -47,9 +48,10 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({pizza:"マルゲリータ"});
                         response.should.have.property("confirming", "size");
-                        response.should.have.property("to_confirm").have.property("size");
-                        response.should.have.property("to_confirm").have.property("address");
-                        response.should.have.property("to_confirm").have.property("name");
+                        response.should.have.property("to_confirm").have.lengthOf(3);
+                        response.to_confirm[0].should.have.property("name").and.equal("size");
+                        response.to_confirm[1].should.have.property("name").and.equal("address");
+                        response.to_confirm[2].should.have.property("name").and.equal("name");
                         response.should.have.property("previous").and.deep.equal({confirmed:["pizza"]});
                     }
                 );
@@ -65,8 +67,9 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({pizza:"マルゲリータ", size:"M"});
                         response.should.have.property("confirming", "address");
-                        response.should.have.property("to_confirm").have.property("address");
-                        response.should.have.property("to_confirm").have.property("name");
+                        response.should.have.property("to_confirm").have.lengthOf(2);
+                        response.to_confirm[0].should.have.property("name").and.equal("address");
+                        response.to_confirm[1].should.have.property("name").and.equal("name");
                         response.should.have.property("previous").and.deep.equal({confirmed:["size","pizza"]});
                     }
                 );
@@ -90,7 +93,8 @@ for (let message_platform of message_platform_list){
                             }
                         });
                         response.should.have.property("confirming", "name");
-                        response.should.have.property("to_confirm").have.property("name");
+                        response.should.have.property("to_confirm").have.lengthOf(1);
+                        response.to_confirm[0].should.have.property("name").and.equal("name");
                         response.should.have.property("previous").and.deep.equal({confirmed:["address","size","pizza"]});
                     }
                 );
@@ -115,7 +119,7 @@ for (let message_platform of message_platform_list){
                             name: "中嶋一樹"
                         });
                         response.should.have.property("confirming", null);
-                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("to_confirm").and.deep.equal([]);
                         response.should.have.property("previous").and.deep.equal({confirmed:["name","address","size","pizza"]});
                     }
                 );
@@ -138,8 +142,9 @@ for (let message_platform of message_platform_list){
                             size:"L"
                         });
                         response.should.have.property("confirming", "address");
-                        response.should.have.property("to_confirm").have.property("address");
-                        response.should.have.property("to_confirm").have.property("name");
+                        response.should.have.property("to_confirm").have.lengthOf(2);
+                        response.to_confirm[0].should.have.property("name").and.equal("address");
+                        response.to_confirm[1].should.have.property("name").and.equal("name");
                         response.should.have.property("previous").and.deep.equal({confirmed:["size","pizza"]});
                     }
                 );
@@ -188,7 +193,8 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirmed").and.have.property("address").and.have.property("latitude").and.equal(35.65910807942215);
                         response.should.have.property("confirmed").and.have.property("address").and.have.property("longitude").and.equal(139.70372892916203);
                         response.should.have.property("confirming", "name");
-                        response.should.have.property("to_confirm").have.property("name");
+                        response.should.have.property("to_confirm").have.lengthOf(1);
+                        response.to_confirm[0].should.have.property("name").and.equal("name");
                         response.should.have.property("previous").and.deep.equal({confirmed:["address","size","pizza"]});
                     }
                 );

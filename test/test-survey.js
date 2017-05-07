@@ -28,10 +28,11 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "satisfaction");
-                        response.should.have.property("to_confirm").have.property("satisfaction");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("satisfaction");
+                        response.to_confirm[1].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[2].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[3].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "5"));
                     }
@@ -39,9 +40,10 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({satisfaction: 5});
                         response.should.have.property("confirming", "difficulty");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(3);
+                        response.to_confirm[0].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[1].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[2].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:["satisfaction"]});
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "難しい"));
                     }
@@ -52,8 +54,9 @@ for (let message_platform of message_platform_list){
                             difficulty: 1
                         });
                         response.should.have.property("confirming", "free_comment");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(2);
+                        response.to_confirm[0].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[1].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:["difficulty","satisfaction"]});
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "とても有意義でした。"));
                     }
@@ -65,7 +68,8 @@ for (let message_platform of message_platform_list){
                             free_comment: "とても有意義でした。"
                         });
                         response.should.have.property("confirming", "mail");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(1);
+                        response.to_confirm[0].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:["free_comment","difficulty","satisfaction"]});
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "nakajima@hoge.com"));
                     }
@@ -78,7 +82,7 @@ for (let message_platform of message_platform_list){
                             mail: "nakajima@hoge.com"
                         });
                         response.should.have.property("confirming", null);
-                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("to_confirm").and.deep.equal([]);
                         response.should.have.property("previous").and.deep.equal({confirmed:["mail","free_comment","difficulty","satisfaction"]});
                     }
                 );
@@ -99,10 +103,11 @@ for (let message_platform of message_platform_list){
                         // Bot is asking satisfaction.
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "satisfaction");
-                        response.should.have.property("to_confirm").have.property("satisfaction");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("satisfaction");
+                        response.to_confirm[1].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[2].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[3].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                         // Answer the value which is out of range.
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "6"));
@@ -112,10 +117,11 @@ for (let message_platform of message_platform_list){
                         // Bot is asking satisfaction.
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "satisfaction");
-                        response.should.have.property("to_confirm").have.property("satisfaction");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("satisfaction");
+                        response.to_confirm[1].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[2].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[3].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                         // Answer the value of unacceptable data type.
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "良い"));
@@ -125,10 +131,11 @@ for (let message_platform of message_platform_list){
                         // Bot is asking satisfaction.
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "satisfaction");
-                        response.should.have.property("to_confirm").have.property("satisfaction");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("satisfaction");
+                        response.to_confirm[1].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[2].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[3].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                     }
                 );
@@ -149,10 +156,11 @@ for (let message_platform of message_platform_list){
                         // Bot says "Please tell me satisfaction score.".
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", "satisfaction");
-                        response.should.have.property("to_confirm").have.property("satisfaction");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("satisfaction");
+                        response.to_confirm[1].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[2].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[3].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                         // Answer the value which is out of range.
                         return webhook.run(Util.create_req(message_platform, event_type, user_id, "５"));
@@ -161,9 +169,10 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({satisfaction: 5});
                         response.should.have.property("confirming", "difficulty");
-                        response.should.have.property("to_confirm").have.property("difficulty");
-                        response.should.have.property("to_confirm").have.property("free_comment");
-                        response.should.have.property("to_confirm").have.property("mail");
+                        response.should.have.property("to_confirm").have.lengthOf(3);
+                        response.to_confirm[0].should.have.property("name").and.equal("difficulty");
+                        response.to_confirm[1].should.have.property("name").and.equal("free_comment");
+                        response.to_confirm[2].should.have.property("name").and.equal("mail");
                         response.should.have.property("previous").and.deep.equal({confirmed:["satisfaction"]});
                     }
                 );
@@ -284,7 +293,7 @@ for (let message_platform of message_platform_list){
                     function(response){
                         // finished
                         response.should.have.property("confirming").and.equal(null);
-                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("to_confirm").and.deep.equal([]);
                     }
                 );
             });

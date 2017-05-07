@@ -23,11 +23,11 @@ module.exports = class Flow {
 
         // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
         // After that, we depend on context.to_confirm to identify to_confirm parameters.
-        if (Object.keys(this.context.to_confirm).length == 0){
+        if (this.context.to_confirm.length == 0){
             this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
         }
 
-        debug(`We have ${Object.keys(this.context.to_confirm).length} parameters to confirm.`);
+        debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
     }
 
     _instantiate_skill(intent){
@@ -64,7 +64,7 @@ module.exports = class Flow {
     }
 
     _identify_to_confirm_parameter(required_parameter, confirmed){
-        let to_confirm = {};
+        let to_confirm = [];
 
         // If there is no required_parameter, we just return empty object as confirmed.
         if (!required_parameter){
@@ -74,37 +74,43 @@ module.exports = class Flow {
         // Scan confirmed parameters and if missing required parameters found, we add them to to_confirm.
         for (let req_param_key of Object.keys(required_parameter)){
             if (typeof confirmed[req_param_key] == "undefined"){
-                to_confirm[req_param_key] = required_parameter[req_param_key];
+                to_confirm.push({
+                    name: req_param_key,
+                    label: required_parameter[req_param_key].label,
+                    message_to_confirm: required_parameter[req_param_key].message_to_confirm,
+                    reaction: required_parameter[req_param_key].reaction
+                });
             }
         }
         return to_confirm;
     }
 
     _collect(){
-        if (Object.keys(this.context.to_confirm).length == 0){
+        if (this.context.to_confirm.length == 0){
             debug("While collect() is called, there is no parameter to confirm.");
             return Promise.reject();
         }
-        let messages;
-        if (!!this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm[this.vp.type]){
+        let message;
+
+        if (!!this.context.to_confirm[0].message_to_confirm[this.vp.type]){
             // Found message platform specific message object.
             debug("Found message platform specific message object.");
-            messages = [this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm[this.vp.type]];
-        } else if (!!this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm){
+            message = this.context.to_confirm[0].message_to_confirm[this.vp.type];
+        } else if (!!this.context.to_confirm[0].message_to_confirm){
             // Found common message object. We compile this message object to get message platform specific message object.
             debug("Found common message object.");
-            messages = [this.context.to_confirm[Object.keys(this.context.to_confirm)[0]].message_to_confirm];
+            message = this.context.to_confirm[0].message_to_confirm;
         } else {
             debug("While we need to send a message to confirm parameter, the message not found.");
             return Promise.reject();
         }
-        debug(messages);
+        debug(message);
 
         // Set confirming.
-        this.context.confirming = Object.keys(this.context.to_confirm)[0];
+        this.context.confirming = this.context.to_confirm[0].name;
 
         // Send question to the user.
-        return this.vp.reply(messages);
+        return this.vp.reply([message]);
     }
 
     change_parameter(key, value){
@@ -177,16 +183,15 @@ module.exports = class Flow {
             }
 
             // Remove item from to_confirm.
-            if (this.context.to_confirm[key]){
-                delete this.context.to_confirm[key];
-            }
+            let index_to_remove = this.context.to_confirm.findIndex(param => param.name === key);
+            this.context.to_confirm.splice(index_to_remove, 1);
 
             // Clear confirming.
             if (this.context.confirming == key){
                 this.context.confirming = null;
             }
 
-            debug(`We have ${Object.keys(this.context.to_confirm).length} parameters to confirm.`);
+            debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
             resolve(param);
         });
     }
@@ -230,24 +235,23 @@ module.exports = class Flow {
 
     finish(){
         // If we still have parameters to confirm, we collect them.
-        if (Object.keys(this.context.to_confirm).length > 0){
+        if (this.context.to_confirm.length > 0){
             debug("Going to collect parameter.");
             return this._collect();
         }
-
-        /*
-        // Deprecated. DO NOT USE this method anymore.
-        if (this.skill["before_finish"]){
-            debug("Going to process before finish.");
-            return this.skill["before_finish"](this.vp, this.bot_event, this.context);
-        }
-        */
 
         // If we have no parameters to confirm, we finish this conversation using finish method of skill.
         debug("Going to perform final action.");
         return this.skill.finish(this.vp, this.bot_event, this.context).then(
             (response) => {
-                if (this.skill.clear_context_on_finish && Object.keys(this.context.to_confirm).length == 0){
+                // Double check if we have no parameters to confirm since developers can execute collect() method inside finsh().
+                if (this.context.to_confirm.length > 0){
+                    debug("Going to collect parameter.");
+                    return this._collect();
+                }
+
+                debug("Final action done. Wrapping up.");
+                if (this.skill.clear_context_on_finish && this.context.to_confirm.length == 0){
                     debug(`Clearing context.`);
                     this.context = null;
                 }

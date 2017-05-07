@@ -296,8 +296,13 @@ module.exports = class VirtualPlatform {
         return compiled_message;
     }
 
-    change_message_to_confirm(param_key, message){
-        this.context.to_confirm[param_key].message_to_confirm = message;
+    change_message_to_confirm(param_name, message){
+        let param_index = this.context.to_confirm.findIndex(param => param.name === param_name);
+        if (param_index === undefined){
+            debug("The parameter to change message to confirm not found.");
+            throw("The parameter to change message to confirm not found.");
+        }
+        this.context.to_confirm[param_index].message_to_confirm = message;
     }
 
     queue(messages){
@@ -353,76 +358,50 @@ module.exports = class VirtualPlatform {
     // While collect method exists in flow, this method is for developers to explicitly collect a parameter.
     collect(arg){
         if (typeof arg == "string"){
-            return this._collect_by_param_key(arg);
+            return this._collect_by_param_name(arg);
         } else if (typeof arg == "object"){
             return this._collect_by_param(arg);
         } else {
-            return Promise.reject("Invalid argument for vp.collect()");
+            throw("Invalid argument for vp.collect()");
         }
     }
 
-    _collect_by_param_key(param_key){
+    _collect_by_param_name(param_name){
         debug("Going to collect parameter. Message should be defined in skill.");
 
-        let param_value;
-        let message_to_confirm;
-
-        if (!!this.skill.required_parameter && !!this.skill.required_parameter[param_key]){
-            debug(`We are going to collect required parameter "${param_key}".`);
-            param_value = this.skill.required_parameter[param_key];
-        } else if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_key]){
-            debug(`We are going to collect optional parameter "${param_key}".`);
-            param_value = this.skill.optional_parameter[param_key];
+        let param_to_collect;
+        if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_name]){
+            param_to_collect = {
+                name: param_name,
+                label: this.skill.optional_parameter[param_name].label,
+                message_to_confirm: this.skill.optional_parameter[param_name].message_to_confirm,
+                reaction: this.skill.optional_parameter[param_name].reaction
+            }
         } else {
-            debug(`Spedified parameter not found in skill.`);
-            return Promise.reject(`Spedified parameter not found in skill.`);
+            debug(`Spedified optional parameter not found in skill.`);
+            throw(`Spedified optional parameter not found in skill.`);
         }
 
-        if (!!param_value.message_to_confirm && !!param_value.message_to_confirm[this.type]){
-            debug("Found message platform specific message object.");
-            message_to_confirm = param_value.message_to_confirm[this.type];
-        } else if (!!param_value.message_to_confirm){
-            debug("Found common message object.");
-            message_to_confirm = param_value.message_to_confirm;
-        } else {
-            debug("While we need to send a message to confirm parameter, the message not found.");
-            return Promise.reject("While we need to send a message to confirm parameter, the message not found.");
-        }
-
-        this.context.confirming = param_key;
-        this.context.to_confirm[param_key] = param_value;
-
-        // Send question to the user.
-        return this.reply([message_to_confirm]);
+        debug(`We add optional parameter "${param_name}" to the top of to_confirm list.`);
+        this.context.to_confirm.unshift(param_to_collect);
     }
 
-    _collect_by_param(parameter){
+    _collect_by_param(param){
         debug("Going to collect parameter. Message should be enveloped in the argument.");
 
-        if (Object.keys(parameter).length != 1){
-            return Promise.reject("Malformed parameter.");
-        }
-        let param_key = Object.keys(parameter)[0];
-
-        let message_to_confirm;
-        if (!!parameter[param_key].message_to_confirm[this.type]){
-            // Found message platform specific message object.
-            debug("Found message platform specific message object.");
-            message_to_confirm = parameter[param_key].message_to_confirm[this.type];
-        } else if (!!parameter[param_key].message_to_confirm){
-            // Found common message object. We compile this message object to get message platform specific message object.
-            debug("Found common message object.");
-            message_to_confirm = parameter[param_key].message_to_confirm;
-        } else {
-            debug("While we need to send a message to confirm parameter, the message not found.");
-            return Promise.reject("While we need to send a message to confirm parameter, the message not found.");
+        if (Object.keys(param).length != 1){
+            throw("Malformed parameter.");
         }
 
-        this.context.confirming = param_key;
-        Object.assign(this.context.to_confirm, parameter);
+        let param_to_collect = {
+            name: Object.keys(param)[0],
+            label: param[Object.keys(param)[0]].label,
+            message_to_confirm: param[Object.keys(param)[0]].message_to_confirm,
+            reaction: param[Object.keys(param)[0]].reaction
+        }
 
-        // Send question to the user.
-        return this.reply([message_to_confirm]);
+        debug(`We add optional parameter "${param_to_collect.name}" to the top of to_confirm list.`);
+        this.context.to_confirm.unshift(param_to_collect);
     }
 
     compile_message(message){

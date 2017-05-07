@@ -26,7 +26,7 @@ for (let message_platform of message_platform_list){
                     function(response){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", null);
-                        response.should.have.property("to_confirm").and.deep.equal({});
+                        response.should.have.property("to_confirm").and.deep.equal([]);
                         response.should.have.property("previous").and.deep.equal({confirmed:[]});
                         response.should.have.property("intent").and.have.property("fulfillment").and.have.property("speech").and.equal("どうも。");
                     }

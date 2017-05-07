@@ -17,7 +17,7 @@ module.exports = class ChangeIntentFlow extends Flow {
     */
 
     constructor(vp, bot_event, context, options) {
-        context.to_confirm = {};
+        context.to_confirm = [];
         context.confirming = null;
         super(vp, bot_event, context, options);
         this.context._flow = "change_intent";

@@ -24,19 +24,14 @@ module.exports = class SkillSurvey {
                     if (parse_result === true){
                         let messages = [];
                         if (value == 5){
-                            messages.push({
+                            bot.queue([{
                                 text: "うぉー！！よかった！"
-                            });
+                            }])
                         } else if (value == 1){
-                            messages.push({
-                                text: "なんてこった・・"
-                            });
-                        } else {
-                            return;
+                            bot.collect("suggestion");
                         }
-                        return bot.queue(messages);
                     } else {
-                        return bot.change_message_to_confirm("satisfaction", {
+                        bot.change_message_to_confirm("satisfaction", {
                             text: "ん？1が最低、5が最高の5段階評価ですよ。数字で1から5のどれかで教えてくださいね。",
                             quick_replies: [
                                 {content_type:"text", title:"5 高", payload:5},
@@ -75,6 +70,11 @@ module.exports = class SkillSurvey {
             suggestion: {
                 message_to_confirm: {
                     text: "この勉強会はどのようにすれば改善できると思いますか？"
+                },
+                reaction: (result, value, bot){
+                    bot.queue([{
+                        text: "貴重なご意見、ありがとうございます！"
+                    }])
                 }
             },
             come_back: {
@@ -139,11 +139,9 @@ module.exports = class SkillSurvey {
     }
 
     finish(bot, bot_event, context){
-        if (context.confirmed.satisfaction == 1 && !context.confirmed.suggestion){
-            return bot.collect("suggestion");
-        }
-        if (context.confirmed.satisfaction == 1 && !context.confirmed.come_back){
-            return bot.collect({come_back: this.optional_parameter.come_back});
+        if (!!context.confirmed.suggestion && !context.confirmed.come_back){
+            bot.collect({come_back: this.optional_parameter.come_back});
+            return Promise.resolve();
         }
 
         return bot.reply([{
