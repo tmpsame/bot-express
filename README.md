@@ -185,7 +185,7 @@ constructor() {
                     ]
                 }
             },
-            parse: this.parse_color
+            parser: this.parse_color
         }
     };
 }
@@ -202,7 +202,8 @@ color: {
             {content_type:"text",title:"赤",payload:"赤"},
             {content_type:"text",title:"黄",payload:"黄"}
         ]
-    }
+    },
+    parser: this.parse_color
 }
 ```
 
@@ -238,11 +239,11 @@ color: {
             ]
         }
     },
-    parse: this.parse_color
+    parser: this.parse_color
 }
 ```
 
-また、parseプロパティでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
+また、parserプロパティでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
 
 また、パラメーター収集後に何らかのリアクションを取りたい場合、下記のようにreactionプロパティで指定することができます。
 
@@ -261,7 +262,7 @@ color: {
             ]
         }
     },
-    parse: this.parse_color,
+    parser: this.parse_color,
     reaction: (parse_result, parsed_value, bot) => {
         if (parse_result === true){
             if (parsed_value == "赤"){

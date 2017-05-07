@@ -421,6 +421,7 @@ module.exports = class VirtualPlatform {
                 name: param_name,
                 label: this.skill.optional_parameter[param_name].label,
                 message_to_confirm: this.skill.optional_parameter[param_name].message_to_confirm,
+                parser: this.skill.optional_parameter[param_name].parser,
                 reaction: this.skill.optional_parameter[param_name].reaction
             }
         } else {
@@ -443,6 +444,7 @@ module.exports = class VirtualPlatform {
             name: Object.keys(param)[0],
             label: param[Object.keys(param)[0]].label,
             message_to_confirm: param[Object.keys(param)[0]].message_to_confirm,
+            parser: param[Object.keys(param)[0]].parser,
             reaction: param[Object.keys(param)[0]].reaction
         }
 
