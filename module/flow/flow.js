@@ -28,7 +28,10 @@ module.exports = class Flow {
         }
         debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
 
-        this.context.previous.message.unshift(vp.extract_message());
+        this.context.previous.message.unshift({
+            from: "user",
+            message: vp.extract_message()
+        });
     }
 
     _instantiate_skill(intent){
