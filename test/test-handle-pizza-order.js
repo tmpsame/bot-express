@@ -33,7 +33,7 @@ for (let message_platform of message_platform_list){
                         response.to_confirm[1].should.have.property("name").and.equal("size");
                         response.to_confirm[2].should.have.property("name").and.equal("address");
                         response.to_confirm[3].should.have.property("name").and.equal("name");
-                        response.should.have.property("previous").and.deep.equal({confirmed:[]});
+                        response.previous.confirmed.should.deep.equal([]);
                     }
                 );
             });
@@ -52,7 +52,7 @@ for (let message_platform of message_platform_list){
                         response.to_confirm[0].should.have.property("name").and.equal("size");
                         response.to_confirm[1].should.have.property("name").and.equal("address");
                         response.to_confirm[2].should.have.property("name").and.equal("name");
-                        response.should.have.property("previous").and.deep.equal({confirmed:["pizza"]});
+                        response.previous.confirmed.should.deep.equal(["pizza"]);
                     }
                 );
             });
@@ -70,7 +70,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("to_confirm").have.lengthOf(2);
                         response.to_confirm[0].should.have.property("name").and.equal("address");
                         response.to_confirm[1].should.have.property("name").and.equal("name");
-                        response.should.have.property("previous").and.deep.equal({confirmed:["size","pizza"]});
+                        response.previous.confirmed.should.deep.equal(["size","pizza"]);
                     }
                 );
             });
@@ -95,7 +95,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirming", "name");
                         response.should.have.property("to_confirm").have.lengthOf(1);
                         response.to_confirm[0].should.have.property("name").and.equal("name");
-                        response.should.have.property("previous").and.deep.equal({confirmed:["address","size","pizza"]});
+                        response.previous.confirmed.should.deep.equal(["address","size","pizza"]);
                     }
                 );
             });
@@ -120,7 +120,7 @@ for (let message_platform of message_platform_list){
                         });
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal([]);
-                        response.should.have.property("previous").and.deep.equal({confirmed:["name","address","size","pizza"]});
+                        response.previous.confirmed.should.deep.equal(["name","address","size","pizza"]);
                     }
                 );
             });
@@ -145,7 +145,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("to_confirm").have.lengthOf(2);
                         response.to_confirm[0].should.have.property("name").and.equal("address");
                         response.to_confirm[1].should.have.property("name").and.equal("name");
-                        response.should.have.property("previous").and.deep.equal({confirmed:["size","pizza"]});
+                        response.previous.confirmed.should.deep.equal(["size","pizza"]);
                     }
                 );
             });
@@ -195,7 +195,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirming", "name");
                         response.should.have.property("to_confirm").have.lengthOf(1);
                         response.to_confirm[0].should.have.property("name").and.equal("name");
-                        response.should.have.property("previous").and.deep.equal({confirmed:["address","size","pizza"]});
+                        response.previous.confirmed.should.deep.equal(["address","size","pizza"]);
                     }
                 );
             });

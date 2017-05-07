@@ -58,7 +58,6 @@ module.exports = (options) => {
             (response) => {
                 debug("Successful End of Webhook.");
                 debug(response);
-                debug(response.previous.message);
             },
             (response) => {
                 debug("Abnormal End of Webhook.");

@@ -27,7 +27,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirmed").and.deep.equal({});
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal([]);
-                        response.should.have.property("previous").and.deep.equal({confirmed:[]});
+                        response.previous.confirmed.should.deep.equal([]);
                     }
                 );
             });
