@@ -333,10 +333,10 @@ module.exports = class VirtualPlatform {
     }
 
     queue(messages){
-        if (typeof this.context.message_queue == "undefined"){
-            this.context.message_queue = [];
+        if (typeof this.context._message_queue == "undefined"){
+            this.context._message_queue = [];
         }
-        this.context.message_queue = this.context.message_queue.concat(messages);
+        this.context._message_queue = this.context._message_queue.concat(messages);
     }
 
     reply(messages = null){
@@ -344,12 +344,18 @@ module.exports = class VirtualPlatform {
             this.queue(messages);
         }
         let compiled_messages = [];
-        for (let message of this.context.message_queue){
+        for (let message of this.context._message_queue){
             compiled_messages.push(this.compile_message(message));
         }
         return this[`_${this.type}_reply`](this.bot_event, compiled_messages).then(
             (response) => {
-                this.context.message_queue = [];
+                for (let compiled_message of compiled_messages){
+                    this.context.previous.message.unshift({
+                        from: "bot",
+                        message: compiled_message
+                    });
+                }
+                this.context._message_queue = [];
                 return response;
             },
             (response) => {
@@ -371,7 +377,20 @@ module.exports = class VirtualPlatform {
         for (let message of messages){
             compiled_messages.push(this.compile_message(message));
         }
-        return this[`_${this.type}_send`](recipient_id, compiled_messages);
+        return this[`_${this.type}_send`](recipient_id, compiled_messages).then(
+            (response) => {
+                for (let compiled_message of compiled_messages){
+                    this.context.previous.message.unshift({
+                        from: "bot",
+                        message: compiled_message
+                    });
+                }
+                return response;
+            },
+            (response) => {
+                return Promise.reject(response);
+            }
+        );
     }
 
     _line_send(recipient_id, messages){
