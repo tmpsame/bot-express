@@ -20,8 +20,8 @@ module.exports = class SkillSurvey {
                         {content_type:"text", title:"1 低", payload:1},
                     ]
                 },
-                reaction: (parse_result, value, bot) => {
-                    if (parse_result === true){
+                reaction: (result, value, bot) => {
+                    if (result === true){
                         let messages = [];
                         if (value == 5){
                             bot.queue([{
@@ -71,7 +71,7 @@ module.exports = class SkillSurvey {
                 message_to_confirm: {
                     text: "この勉強会はどのようにすれば改善できると思いますか？"
                 },
-                reaction: (result, value, bot){
+                reaction: (result, value, bot) => {
                     bot.queue([{
                         text: "貴重なご意見、ありがとうございます！"
                     }])
