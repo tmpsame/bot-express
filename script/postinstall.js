@@ -20,14 +20,12 @@ fs.stat(index_script, function(err, stats){
 /*
 ** Import Packages
 */
-let express = require("express");
-let logger = require("morgan");
-let bot_express = require("./index.js");
+let app = require("express")();
+let bot_express = require("bot-express");
 
 /*
 ** Middleware Configuration
 */
-let app = express();
 app.use(logger("dev"));
 app.listen(process.env.PORT || 5000, () => {
     console.log("server is running...");
