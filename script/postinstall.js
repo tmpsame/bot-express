@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const skill_dir = "../../../skill";
-const index_script = "../../../index.js";
+const skill_dir = "../../skill";
+const index_script = "../../index.js";
 
 fs.stat(skill_dir, function(err, stats){
-    console.log(err);
     if (err && err.code == "ENOENT"){
+        console.log("Creating skill directory for you...");
         fs.mkdir(skill_dir);
     }
 });
 
 fs.stat(index_script, function(err, stats){
-    console.log(err);
     if (err && err.code == "ENOENT"){
+        console.log("Creating index.js for you...");
         fs.writeFile(index_script, `
 "use strict";
 
