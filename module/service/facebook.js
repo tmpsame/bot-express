@@ -54,8 +54,8 @@ module.exports = class ServiceFacebook {
                         }
                         resolve();
                     });
-                })), 3000);
-            }
+                }));
+            }, 3000);
         }
         return Promise.all(all_sent).then(
             (response) => {
