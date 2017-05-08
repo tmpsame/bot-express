@@ -1,20 +1,37 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
+const readline = require("readline");
 const skill_dir = "../../skill";
 const index_script = "../../index.js";
 
-fs.stat(skill_dir, function(err, stats){
-    if (err && err.code == "ENOENT"){
-        console.log("Creating skill directory for you...");
-        fs.mkdir(skill_dir);
-    }
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
 });
 
-fs.stat(index_script, function(err, stats){
-    if (err && err.code == "ENOENT"){
-        console.log("Creating index.js for you...");
-        fs.writeFile(index_script, `
+rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
+    if (answer == "y"){
+        create_skill_dir();
+        create_indexjs();
+    }
+    rl.close();
+});
+
+function create_skill_dir(){
+    fs.stat(skill_dir, function(err, stats){
+        if (err && err.code == "ENOENT"){
+            console.log("Creating skill directory for you...");
+            fs.mkdir(skill_dir);
+        }
+    });
+}
+
+function create_indexjs(){
+    fs.stat(index_script, function(err, stats){
+        if (err && err.code == "ENOENT"){
+            console.log("Creating index.js for you...");
+            fs.writeFile(index_script, `
 "use strict";
 
 /*
@@ -45,5 +62,6 @@ app.use("/webhook", bot_express({
 }));
 
 module.exports = app;`);
-    }
-});
+        }
+    });
+}
