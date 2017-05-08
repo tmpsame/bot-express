@@ -26,7 +26,6 @@ let bot_express = require("bot-express");
 /*
 ** Middleware Configuration
 */
-app.use(logger("dev"));
 app.listen(process.env.PORT || 5000, () => {
     console.log("server is running...");
 });
