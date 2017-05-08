@@ -27,34 +27,35 @@ module.exports = class ServiceFacebook {
 
         let all_sent = [];
         for (let message of messages){
-            setTimeout(all_sent.push(new Promise((resolve, reject) => {
-                let headers = {
-                    'Content-Type': 'application/json'
-                };
-                let body = {
-                    recipient: recipient,
-                    message: message
-                }
-                let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
-                debug(message);
-                request({
-                    url: url,
-                    method: 'POST',
-                    headers: headers,
-                    body: body,
-                    json: true
-                }, (error, response, body) => {
-                    if (error){
-                        return reject(error);
+            setTimeout(() => {
+                all_sent.push(new Promise((resolve, reject) => {
+                    let headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    let body = {
+                        recipient: recipient,
+                        message: message
                     }
-                    if (response.statusCode != 200){
-                        debug(body.error.message);
-                        return reject(body.error.message);
-                    }
-                    resolve();
-                });
-            })), 3000);
-
+                    let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
+                    debug(message);
+                    request({
+                        url: url,
+                        method: 'POST',
+                        headers: headers,
+                        body: body,
+                        json: true
+                    }, (error, response, body) => {
+                        if (error){
+                            return reject(error);
+                        }
+                        if (response.statusCode != 200){
+                            debug(body.error.message);
+                            return reject(body.error.message);
+                        }
+                        resolve();
+                    });
+                })), 3000);
+            }
         }
         return Promise.all(all_sent).then(
             (response) => {
