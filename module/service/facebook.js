@@ -27,7 +27,7 @@ module.exports = class ServiceFacebook {
 
         let all_sent = [];
         for (let message of messages){
-            all_sent.push(new Promise((resolve, reject) => {
+            setTimeout(all_sent.push(new Promise((resolve, reject) => {
                 let headers = {
                     'Content-Type': 'application/json'
                 };
@@ -36,6 +36,7 @@ module.exports = class ServiceFacebook {
                     message: message
                 }
                 let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
+                debug(message);
                 request({
                     url: url,
                     method: 'POST',
@@ -52,7 +53,8 @@ module.exports = class ServiceFacebook {
                     }
                     resolve();
                 });
-            }));
+            })), 3000);
+
         }
         return Promise.all(all_sent).then(
             (response) => {
