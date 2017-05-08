@@ -26,7 +26,13 @@ module.exports = class ServiceFacebook {
         debug(`page_id is ${page_id}. Corresponding page_access_token is ${page_access_token}`);
 
         let all_sent = [];
+        let interval = 0;
+        let offset = 0;
         for (let message of messages){
+            if (offset > 0 && interval == 0){
+                interval = 3000;
+            }
+            offset += 1;
             setTimeout(() => {
                 all_sent.push(new Promise((resolve, reject) => {
                     let headers = {
@@ -54,7 +60,7 @@ module.exports = class ServiceFacebook {
                         resolve();
                     });
                 }));
-            }, 1500);
+            }, interval);
         }
         return Promise.all(all_sent).then(
             (response) => {
