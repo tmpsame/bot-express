@@ -30,7 +30,7 @@ module.exports = class ServiceFacebook {
         let offset = 0;
         for (let message of messages){
             if (offset > 0 && interval == 0){
-                interval = 3000;
+                interval = 1500;
             }
             offset += 1;
             setTimeout(() => {
