@@ -37,7 +37,6 @@ module.exports = class ServiceFacebook {
                         message: message
                     }
                     let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
-                    debug(message);
                     request({
                         url: url,
                         method: 'POST',
@@ -55,7 +54,7 @@ module.exports = class ServiceFacebook {
                         resolve();
                     });
                 }));
-            }, 3000);
+            }, 1500);
         }
         return Promise.all(all_sent).then(
             (response) => {
