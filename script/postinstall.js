@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const skill_dir = "./skill";
-const index_script = "./index.js";
+const skill_dir = "../../../skill";
+const index_script = "../../../index.js";
 
 fs.stat(skill_dir, function(err, stats){
     console.log(err);
