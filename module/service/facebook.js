@@ -28,6 +28,8 @@ module.exports = class ServiceFacebook {
         let all_sent = [];
         let interval = 0;
         let offset = 0;
+
+        // If we have more then 1 message, we set 1500 msec interval to assure the message order.
         for (let message of messages){
             if (offset > 0 && interval == 0){
                 interval = 1500;
