@@ -61,8 +61,8 @@ module.exports = class Flow {
                 skill_class = require(`${this.skill_path}${skill}`);
                 debug("Skill found.")
             } catch(exception){
-                debug("Skill not found. Use default built-in skill.");
-                skill_class = require("../skill/default");
+                debug("Skill not found.");
+                throw(exception);
             }
             skill_instance = new skill_class();
         }
