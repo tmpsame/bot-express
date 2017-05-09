@@ -7,46 +7,36 @@ const index_script = "../../index.js";
 
 if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
 
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-
     fs.stat(skill_dir, function(err, stats){
-        if (!err){
-            return;
-        }
-    });
+        if (err && err.code == "ENOENT"){
+            fs.stat(index_script, function(err, stats){
+                if (err && err.code == "ENOENT"){
+                    const rl = readline.createInterface({
+                        input: process.stdin,
+                        output: process.stdout
+                    });
 
-    fs.stat(index_script, function(err, stats){
-        if (!err){
-            return;
+                    rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
+                        if (answer == "y"){
+                            create_skill_dir();
+                            create_indexjs();
+                        }
+                        rl.close();
+                    });
+                }
+            });
         }
-    });
-
-    rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
-        if (answer == "y"){
-            create_skill_dir();
-            create_indexjs();
-        }
-        rl.close();
     });
 }
 
 function create_skill_dir(){
-    fs.stat(skill_dir, function(err, stats){
-        if (err && err.code == "ENOENT"){
-            console.log("Creating skill directory for you...");
-            fs.mkdir(skill_dir);
-        }
-    });
+    console.log("Creating skill directory for you...");
+    fs.mkdir(skill_dir);
 }
 
 function create_indexjs(){
-    fs.stat(index_script, function(err, stats){
-        if (err && err.code == "ENOENT"){
-            console.log("Creating index.js for you...");
-            fs.writeFile(index_script, `
+    console.log("Creating index.js for you...");
+    fs.writeFile(index_script, `
 "use strict";
 
 /*
@@ -77,6 +67,4 @@ app.use("/webhook", bot_express({
 }));
 
 module.exports = app;`);
-        }
-    });
 }
