@@ -10,17 +10,17 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-if (process.env.BOT_EXPRESS_ENV == "test" || process.env.NODE_ENV == "production"){
-    return;
-}
+console.log(process.env);
 
-rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
-    if (answer == "y"){
-        create_skill_dir();
-        create_indexjs();
-    }
-    rl.close();
-});
+if (process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
+    rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
+        if (answer == "y"){
+            create_skill_dir();
+            create_indexjs();
+        }
+        rl.close();
+    });
+}
 
 function create_skill_dir(){
     fs.stat(skill_dir, function(err, stats){
