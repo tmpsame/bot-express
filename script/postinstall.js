@@ -10,9 +10,7 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-console.log(process.env);
-
-if (process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
+if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
     rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
         if (answer == "y"){
             create_skill_dir();
