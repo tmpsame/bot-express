@@ -12,6 +12,18 @@ if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_EN
         output: process.stdout
     });
 
+    fs.stat(skill_dir, function(err, stats){
+        if (!err){
+            return;
+        }
+    });
+
+    fs.stat(index_script, function(err, stats){
+        if (!err){
+            return;
+        }
+    });
+
     rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
         if (answer == "y"){
             create_skill_dir();
