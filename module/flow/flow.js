@@ -49,28 +49,24 @@ module.exports = class Flow {
         }
 
         let skill_instance;
-        try {
-            if (skill == "builtin_default"){
-                debug("Use built-in default skill.");
+
+        if (skill == "builtin_default"){
+            debug("Use built-in default skill.");
+            let skill_class = require("../skill/default");
+            skill_instance = new skill_class();
+        } else {
+            debug(`Look for ${skill} skill.`);
+            let skill_class;
+            try {
+                skill_class = require(`${this.skill_path}${skill}`);
+                debug("Skill found.")
+            } catch(exception){
+                debug("Skill not found. Use default built-in skill.");
                 let skill_class = require("../skill/default");
-                skill_instance = new skill_class();
-            } else {
-                debug(`Look for ${skill} skill.`);
-                let skill_class;
-                try {
-                    skill_class = require(`${this.skill_path}${skill}`);
-                    debug("Skill found.")
-                } catch(exception){
-                    debug("Skill not found. Use default built-in skill.");
-                    let skill_class = require("../skill/default");
-                }
-                skill_instance = new skill_class();
             }
-        } catch (err){
-            debug(`Cannnot import ${this.skill_path}${skill}`);
-            debug(err);
-            throw(err);
+            skill_instance = new skill_class();
         }
+
         return skill_instance;
     }
 
