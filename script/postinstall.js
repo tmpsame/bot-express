@@ -10,6 +10,10 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+if (process.env.BOT_EXPRESS_ENV == "test" || process.env.NODE_ENV == "production"){
+    return;
+}
+
 rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
     if (answer == "y"){
         create_skill_dir();
