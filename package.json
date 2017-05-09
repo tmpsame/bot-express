@@ -35,6 +35,8 @@
   "devDependencies": {
     "chai": "*",
     "chai-as-promised": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "moji": "*",
+    "isemail": "*"
   }
 }

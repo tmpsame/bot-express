@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
+const fs = require("fs");
+const readline = require("readline");
+const skill_dir = "../../skill";
+const index_script = "../../index.js";
+
 if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
-    const fs = require("fs");
-    const readline = require("readline");
-    const skill_dir = "../../skill";
-    const index_script = "../../index.js";
+
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
