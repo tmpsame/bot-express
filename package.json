@@ -2,7 +2,7 @@
   "description": "Chat Bot builder framework based on flow and skill model.",
   "main": "index.js",
   "name": "bot-express",
-  "version": "0.0.60",
+  "version": "0.0.61",
   "private": false,
   "repository": {
     "type": "git",
@@ -22,12 +22,12 @@
   },
   "author": "Kazuki Nakajima <nkjm.kzk@gmail.com>",
   "dependencies": {
-    "apiai": "^4.0.1",
-    "bluebird": "^3.4.7",
+    "apiai": "^4.0.2",
+    "bluebird": "^3.5.0",
     "body-parser": "~1.13.2",
     "crypto": "0.0.3",
     "debug": "^2.6.1",
-    "express": "~4.13.1",
+    "express": "~4.15.2",
     "memory-cache": "^0.1.6",
     "morgan": "^1.8.1",
     "request": "^2.79.0"
