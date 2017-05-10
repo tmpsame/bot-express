@@ -123,7 +123,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "start_conversation":
-                if (bot_event.type == "message" && bot_event.message.type == "text"){
+                if ((bot_event.type == "message" && bot_event.message.type == "text") || bot_event.type == "postback"){
                     return true;
                 }
                 return false;
@@ -164,7 +164,7 @@ module.exports = class VirtualPlatform {
                 return false;
             break;
             case "start_conversation":
-                if (bot_event.message && bot_event.message.text){
+                if ((bot_event.message && bot_event.message.text) || bot_event.postback){
                     return true;
                 }
                 return false;
