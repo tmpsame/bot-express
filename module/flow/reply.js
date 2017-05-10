@@ -23,7 +23,7 @@ module.exports = class ReplyFlow extends Flow {
     }
 
     run(){
-        debug("\n### This is Reply Flow. ###\n");
+        debug("### This is Reply Flow. ###");
 
         // Add Parameter from message text or postback data.
         let param_value = this.vp.extract_param_value();

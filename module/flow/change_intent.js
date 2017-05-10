@@ -24,7 +24,7 @@ module.exports = class ChangeIntentFlow extends Flow {
     }
 
     run(){
-        debug("\n### This is Change Intent Flow. ###\n");
+        debug("### This is Change Intent Flow. ###");
 
         // If we find some parameters from initial message, add them to the conversation.
         let all_parameters_processed = [];

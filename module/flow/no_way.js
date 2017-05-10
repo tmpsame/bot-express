@@ -20,7 +20,7 @@ module.exports = class NoWayFlow extends Flow {
     }
 
     run(){
-        debug("\n### This is No Way Flow. ###\n");
+        debug("### This is No Way Flow. ###");
 
         // Check if the event is supported one in this flow.
         if (!this.vp.check_supported_event_type("no_way")){

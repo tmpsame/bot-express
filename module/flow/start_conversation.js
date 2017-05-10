@@ -21,7 +21,7 @@ module.exports = class StartConversationFlow extends Flow {
     }
 
     run(){
-        debug("\n### This is Start Conversation Flow. ###\n");
+        debug("### This is Start Conversation Flow. ###");
 
         // If we find some parameters from initial message, add them to the conversation.
         let all_parameters_processed = [];

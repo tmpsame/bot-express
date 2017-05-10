@@ -192,7 +192,10 @@ module.exports = class Flow {
 
             // Remove item from to_confirm.
             let index_to_remove = this.context.to_confirm.findIndex(param => param.name === key);
-            this.context.to_confirm.splice(index_to_remove, 1);
+            if (index_to_remove !== -1){
+                debug(`Removing ${param.name} from to_confirm.`);
+                this.context.to_confirm.splice(index_to_remove, 1);
+            }
 
             // Clear confirming.
             if (this.context.confirming == key){

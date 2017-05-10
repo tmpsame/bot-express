@@ -24,7 +24,7 @@ module.exports = class ChangeParameterFlow extends Flow {
     }
 
     run(){
-        debug("\n### ASSUME This is Change Parameter Flow. ###\n");
+        debug("### ASSUME This is Change Parameter Flow. ###");
 
         // Check if the event is supported one in this flow.
         if (!this.vp.check_supported_event_type("change_parameter")){
