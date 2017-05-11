@@ -238,12 +238,12 @@ module.exports = class VirtualPlatform {
             if (bot_event.message.quick_reply){
                 // This is Quick Reply
                 param_value = bot_event.message.quick_reply.payload;
-            } else if (bot_event.message.attachments){
-                // This is Attachment
-                param_value = bot_event.message;
             } else if (bot_event.message.text){
                 // This is Text Message
                 param_value = bot_event.message.text;
+            } else if (bot_event.message.attachments){
+                // This is Attachemnt
+                param_value = bot_event.message.attachments;
             }
         } else if (bot_event.postback){
             // This is Postback
