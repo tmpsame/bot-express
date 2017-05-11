@@ -243,7 +243,7 @@ module.exports = class VirtualPlatform {
                 param_value = bot_event.message.text;
             } else if (bot_event.message.attachments){
                 // This is Attachemnt
-                param_value = bot_event.message.attachments;
+                param_value = bot_event.message;
             }
         } else if (bot_event.postback){
             // This is Postback
