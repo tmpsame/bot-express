@@ -6,11 +6,6 @@ const os = require("os");
 const skill_dir = "../../skill";
 const index_script = "../../index.js";
 
-if (os.type() == "Windows_NT"){
-    console.log("This is Windows so skip running postinstall script.");
-    return;
-}
-
 if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
 
     fs.stat(skill_dir, function(err, stats){
