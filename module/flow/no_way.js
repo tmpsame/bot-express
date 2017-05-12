@@ -16,6 +16,7 @@ module.exports = class NoWayFlow extends Flow {
 
     constructor(vp, bot_event, context, options) {
         super(vp, bot_event, context, options);
+        this.context.intent.action = options.default_intent;
         this.context._flow = "no_way";
     }
 

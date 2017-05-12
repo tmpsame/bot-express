@@ -308,6 +308,7 @@ module.exports = class webhook {
                                         /*
                                         ** This is No Way Flow
                                         */
+                                        context.intent = response.intent;
                                         try {
                                             flow = new no_way_flow(vp, bot_event, context, this.options);
                                         } catch(err){
