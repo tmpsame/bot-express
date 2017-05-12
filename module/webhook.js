@@ -273,7 +273,7 @@ module.exports = class webhook {
                                     // End of Change Intent Flow
                                 }
                             } else {
-                                context.intent.fulfillment = response.intent.fulfillment;
+                                let identified_intent = response.intent; // This should be an unknown intent. Will be used in no way flow.
 
                                 // Check if this is Change Parameter Flow.
                                 let promise_is_change_parameter_flow;
@@ -308,7 +308,7 @@ module.exports = class webhook {
                                         /*
                                         ** This is No Way Flow
                                         */
-                                        context.intent = response.intent;
+                                        context.intent = identified_intent;
                                         try {
                                             flow = new no_way_flow(vp, bot_event, context, this.options);
                                         } catch(err){
