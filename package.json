@@ -2,7 +2,7 @@
   "description": "Chat Bot builder framework based on flow and skill model.",
   "main": "index.js",
   "name": "bot-express",
-  "version": "0.0.68",
+  "version": "0.0.69",
   "private": false,
   "repository": {
     "type": "git",
@@ -17,7 +17,8 @@
     "facebook messenger"
   ],
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "postinstall": "./script/postinstall.js"
   },
   "author": "Kazuki Nakajima <nkjm.kzk@gmail.com>",
   "dependencies": {
