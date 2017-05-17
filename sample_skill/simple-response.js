@@ -11,6 +11,13 @@ module.exports = class SkillSimpleResponse {
         let messages = [{
             text: context.intent.fulfillment.speech
         }];
-        return bot.reply(messages);
+        return bot.reply(messages).then(
+            (response) => {
+                return resolve(response);
+            },
+            (response) => {
+                return reject(response);
+            }
+        )
     }
 };

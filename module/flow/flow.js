@@ -272,7 +272,7 @@ module.exports = class Flow {
 
         return finished.then(
             (response) => {
-                debug("final action succeeded.");
+                debug("Final action succeeded.");
                 // Double check if we have no parameters to confirm since developers can execute collect() method inside finsh().
                 if (this.context.to_confirm.length > 0){
                     debug("Going to collect parameter.");
@@ -287,7 +287,7 @@ module.exports = class Flow {
                 return response;
             },
             (response) => {
-                debug("final action failed.");
+                debug("Final action failed.");
                 return Promise.reject(response);
             }
         );
