@@ -118,7 +118,6 @@ module.exports = class SkillHandlePizzaOrder {
         let lastname, firstname, fullname;
         return mecab.parse(value).then(
             (response) => {
-                debug(response);
                 for (let elem of response){
                     if (elem[3] == "人名" && elem[4] == "姓"){
                         lastname = elem[0];

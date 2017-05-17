@@ -218,16 +218,8 @@ module.exports = class Flow {
                 }
             ).catch(
                 (exception) => {
-                    // This means user defined skill says this value does not fit to this parameter.
-                    debug("Exception: The value does not fit to this parameter.");
-                    return reject("The value does not fit to this parameter.");
+                    throw(exception);
                 }
-                /*
-                (response) => {
-                    // This means user defined skill says this value does not fit to this parameter.
-                    debug("The value does not fit to this parameter.");
-                    return reject("The value does not fit to this parameter.");
-                }*/
             );
         });
     }
@@ -302,28 +294,10 @@ module.exports = class Flow {
                 debug("Final action failed.");
                 return Promise.reject(response);
             }
-        );
-        /*
-        debug("Going to perform final action.");
-        return this.skill.finish(this.vp, this.bot_event, this.context).then(
-            (response) => {
-                // Double check if we have no parameters to confirm since developers can execute collect() method inside finsh().
-                if (this.context.to_confirm.length > 0){
-                    debug("Going to collect parameter.");
-                    return this._collect();
-                }
-
-                debug("Final action done. Wrapping up.");
-                if (this.skill.clear_context_on_finish && this.context.to_confirm.length == 0){
-                    debug(`Clearing context.`);
-                    this.context = null;
-                }
-                return response;
-            },
-            (response) => {
-                return Promise.reject(response);
+        ).catch(
+            (exception) => {
+                throw(exception);
             }
         );
-        */
     }
 };
