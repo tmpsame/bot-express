@@ -266,6 +266,33 @@ module.exports = class Flow {
 
         // If we have no parameters to confirm, we finish this conversation using finish method of skill.
         debug("Going to perform final action.");
+        let finished = new Promise((resolve, reject) => {
+            this.skill.finish(this.vp, this.bot_event, this.context, resolve, reject);
+        });
+
+        return finished.then(
+            (response) => {
+                debug("final action succeeded.");
+                // Double check if we have no parameters to confirm since developers can execute collect() method inside finsh().
+                if (this.context.to_confirm.length > 0){
+                    debug("Going to collect parameter.");
+                    return this._collect();
+                }
+
+                debug("Final action done. Wrapping up.");
+                if (this.skill.clear_context_on_finish && this.context.to_confirm.length == 0){
+                    debug(`Clearing context.`);
+                    this.context = null;
+                }
+                return response;
+            },
+            (response) => {
+                debug("final action failed.");
+                return Promise.reject(response);
+            }
+        );
+        /*
+        debug("Going to perform final action.");
         return this.skill.finish(this.vp, this.bot_event, this.context).then(
             (response) => {
                 // Double check if we have no parameters to confirm since developers can execute collect() method inside finsh().
@@ -285,5 +312,6 @@ module.exports = class Flow {
                 return Promise.reject(response);
             }
         );
+        */
     }
 };

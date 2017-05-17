@@ -37,9 +37,9 @@ module.exports = class SkillChangeLightColor {
     }
 
     // サポートする色かどうかを判別しカラーコードに変化する
-    parse_color(value){
+    parse_color(value, resolve, reject){
         if (value === null || value == ""){
-            return false;
+            return reject();
         }
 
         let parsed_value = {};
@@ -52,9 +52,9 @@ module.exports = class SkillChangeLightColor {
             }
         }
         if (!found_color){
-            return false
+            return reject();
         }
-        return parsed_value;
+        return resolve(parsed_value);
     }
 
     // IFTTT経由でHueのカラーを変更する

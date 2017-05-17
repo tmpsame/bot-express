@@ -286,16 +286,16 @@ reactionは3つの引数を取ります。
 
 いずれのパラメータも特定されればcontext.confirmedに登録され、後述のfinish()の中で参照することができます。
 
-**parse_パラメータ(value)**
+**parse_パラメータ(value, resolve, reject)**
 
 ユーザーが発したメッセージからパラメータを特定、変換する処理をパラメータごとに記述します。
 
 例えば、ユーザーが「ライトの色を変えてください」というメッセージを送信すると、Botはcolorパラメータが埋まっていないことに気付き、「何色にしますか？」と質問します。それに対しユーザーが「赤色」と返信したとします。Botはこの時、このメッセージにサポートする色が指定されているかどうか、また、最終的にライトの色を変更するために色をカラーコードに変換する必要があります。この判定処理、および変換処理を必要に応じてparse_パラメータ()に記述します。
 
 ```
-parse_color(value){
+parse_color(value, resolve, reject){
     if (value === null || value == ""){
-        return false;
+        return reject();
     }
 
     let parsed_value = {};
@@ -308,15 +308,15 @@ parse_color(value){
         }
     }
     if (!found_color){
-        return false;
+        return reject();
     }
-    return parsed_value;
+    return resolve(parsed_value);
 }
 ```
 
-適切な値が判定できた場合には、その値をそのまま返すか、変換が必要であれば変換した値を返します。上記の例ではCOLOR_MAPPINGSという定数にサポートする色一覧が設定されている前提で、その値に一致するかどうかを判定しています。また、一致した場合には同じくCOLOR_MAPPINGSに設定されている対応カラーコードに値を置き換え、それを返すという処理になっています。
+適切な値が判定できた場合には、その値をそのままかまたは必要に応じて変換した値をresolve()に渡してreturnします。上記の例ではCOLOR_MAPPINGSという定数にサポートする色一覧が設定されている前提で、その値に一致するかどうかを判定しています。また、一致した場合には同じくCOLOR_MAPPINGSに設定されている対応カラーコードに値を置き換え、それを返すという処理になっています。
 
-適切な値が判定できなかった場合にはfalseを返してください。
+適切な値が判定できなかった場合にはreject()を実行してreturnしてください。
 
 **finish(bot, bot_event, context)**
 
