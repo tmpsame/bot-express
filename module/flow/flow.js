@@ -1,7 +1,7 @@
 'use strict';
 
 let Promise = require('bluebird');
-let debug = require("debug")("flow");
+let debug = require("debug")("bot-express:flow");
 let apiai = require('apiai');
 
 module.exports = class Flow {

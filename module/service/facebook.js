@@ -3,7 +3,7 @@
 let crypto = require('crypto');
 let request = require('request');
 let Promise = require('bluebird');
-let debug = require("debug")("service");
+let debug = require("debug")("bot-express:service");
 
 module.exports = class ServiceFacebook {
 

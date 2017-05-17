@@ -8,7 +8,7 @@ const REQUIRED_OPTIONS = {
 // Import NPM Packages
 let Promise = require("bluebird");
 let memory = require("memory-cache");
-let debug = require("debug")("webhook");
+let debug = require("debug")("bot-express:webhook");
 
 // Import Flows
 let beacon_flow = require('./flow/beacon');

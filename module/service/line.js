@@ -3,7 +3,7 @@
 let crypto = require('crypto');
 let request = require('request');
 let Promise = require('bluebird');
-let debug = require("debug")("service");
+let debug = require("debug")("bot-express:service");
 
 module.exports = class ServiceLine {
 
@@ -95,7 +95,7 @@ module.exports = class ServiceLine {
             debug("This is test so we skip validating signature.");
             return true;
         }
-        
+
         // Signature Validation
         let hash = crypto.createHmac('sha256', this._channel_secret).update(raw_body).digest('base64');
         if (hash != signature) {

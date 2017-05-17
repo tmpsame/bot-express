@@ -4,7 +4,7 @@
 ** Import Packages
 */
 let Promise = require("bluebird");
-let debug = require("debug")("flow");
+let debug = require("debug")("bot-express:flow");
 let Flow = require("./flow");
 
 module.exports = class StartConversationFlow extends Flow {

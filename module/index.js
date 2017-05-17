@@ -11,7 +11,7 @@ const DEFAULT_SKILL = "builtin_default";
 let express = require("express");
 let router = express.Router();
 let body_parser = require("body-parser");
-let debug = require("debug")("index");
+let debug = require("debug")("bot-express:index");
 let Webhook = require("./webhook");
 
 router.use(body_parser.json({
