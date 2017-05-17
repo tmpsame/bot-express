@@ -127,16 +127,10 @@ module.exports = class SkillHandlePizzaOrder {
                     }
                 }
                 fullname = "";
-                if (lastname){
-                    fullname += lastname;
-                }
-                if (firstname){
-                    fullname += firstname;
-                }
-                if (fullname == ""){
-                    return reject();
-                }
-                return resolve(fullname);
+                if (lastname) fullname += lastname + " "; // Add trailing space. It will be removed if we don't have firstname.
+                if (firstname) fullname += firstname;
+                if (fullname == "") return reject();
+                return resolve(fullname.trim());
             },
             (response) => {
                 return reject(response);
