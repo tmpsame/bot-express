@@ -129,41 +129,49 @@ module.exports = class Flow {
         return new Promise((resolve, reject) => {
             debug(`Parsing parameter {${key}: "${value}"}`);
 
-            let parsed_value;
+            let value_parsed;
 
             // Parse the value. If the value is not suitable for this key, exception will be thrown.
             if (!!this.skill.required_parameter && !!this.skill.required_parameter[key]){
                 debug("This value is for required parameter.");
+
                 if (!!this.skill.required_parameter[key].parser){
                     debug("parse method found.");
-                    parsed_value = this.skill.required_parameter[key].parser(value);
+                    value_parsed = new Promise((resolve, reject) => {
+                        this.skill.required_parameter[key].parser(value, resolve, reject);
+                    });
                 } else if (!!this.skill["parse_" + key]){
                     debug("parse method found.");
-                    parsed_value = this.skill["parse_" + key](value);
+                    value_parsed = new Promise((resolve, reject) => {
+                        this.skill["parse_" + key](value, resolve, reject);
+                    });
                 } else {
                     debug("parse method not found. We use the value as is as long as the value is set.");
                     // If parse method is not implemented, we use the value as-is.
                     if (value === null || value == ""){
-                        parsed_value = false;
+                        value_parsed = Promise.reject();
                     } else {
-                        parsed_value = value;
+                        value_parsed = Promise.resolve(value);
                     }
                 }
             } else if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[key]){
                 debug("This value is for optional parameter.");
                 if (!!this.skill.optional_parameter[key].parser){
                     debug("parse method found.");
-                    parsed_value = this.skill.optional_parameter[key].parser(value);
+                    value_parsed = new Promise((resolve, reject) => {
+                        this.skill.optional_parameter[key].parser(value, resolve, reject);
+                    });
                 } else if (!!this.skill["parse_" + key]){
-                    debug("parse method found.");
-                    parsed_value = this.skill["parse_" + key](value);
+                    value_parsed = new Promise((resolve, reject) => {
+                        this.skill["parse_" + key](value, resolve, reject);
+                    });
                 } else {
                     debug("parse method not found. We use the value as is as long as the value is set.");
                     // If parse method is not implemented, we use the value as-is.
                     if (value === null || value == ""){
-                        parsed_value = false;
+                        value_parsed = Promise.reject();
                     } else {
-                        parsed_value = value;
+                        value_parsed = Promise.resolve(value);
                     }
                 }
             } else {
@@ -172,38 +180,43 @@ module.exports = class Flow {
                 return reject("This is not the parameter we care about.");
             }
 
-            if (parsed_value === false){
-                // This means user defined skill says this value does not fit to this parameter.
-                debug("The value does not fit to this parameter.");
-                return reject("The value does not fit to this parameter.");
-            }
+            return value_parsed.then(
+                (response) => {
+                    debug(`Parse succeeded. Going to add parameter {${key}: "${response}"}`);
 
-            debug(`Adding parameter {${key}: "${parsed_value}"}`);
+                    let parsed_value = response;
 
-            // Add the parameter to "confirmed".
-            let param = {};
-            param[key] = parsed_value;
-            Object.assign(this.context.confirmed, param);
+                    // Add the parameter to "confirmed".
+                    let param = {};
+                    param[key] = parsed_value;
+                    Object.assign(this.context.confirmed, param);
 
-            // At the same time, add the parameter key to previously confirmed list. The order of this list is newest first.
-            if (!is_change){
-                this.context.previous.confirmed.unshift(key);
-            }
+                    // At the same time, add the parameter key to previously confirmed list. The order of this list is newest first.
+                    if (!is_change){
+                        this.context.previous.confirmed.unshift(key);
+                    }
 
-            // Remove item from to_confirm.
-            let index_to_remove = this.context.to_confirm.findIndex(param => param.name === key);
-            if (index_to_remove !== -1){
-                debug(`Removing ${param.name} from to_confirm.`);
-                this.context.to_confirm.splice(index_to_remove, 1);
-            }
+                    // Remove item from to_confirm.
+                    let index_to_remove = this.context.to_confirm.findIndex(param => param.name === key);
+                    if (index_to_remove !== -1){
+                        debug(`Removing ${param.name} from to_confirm.`);
+                        this.context.to_confirm.splice(index_to_remove, 1);
+                    }
 
-            // Clear confirming.
-            if (this.context.confirming == key){
-                this.context.confirming = null;
-            }
+                    // Clear confirming.
+                    if (this.context.confirming == key){
+                        this.context.confirming = null;
+                    }
 
-            debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
-            resolve(param);
+                    debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
+                    return resolve(param);
+                },
+                (response) => {
+                    // This means user defined skill says this value does not fit to this parameter.
+                    debug("The value does not fit to this parameter.");
+                    return reject("The value does not fit to this parameter.");
+                }
+            );
         });
     }
 
