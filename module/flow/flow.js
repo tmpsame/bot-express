@@ -210,12 +210,19 @@ module.exports = class Flow {
 
                     debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
                     return resolve(param);
-                },
+                }
+            ).catch(
+                (exception) => {
+                    // This means user defined skill says this value does not fit to this parameter.
+                    debug("Exception: The value does not fit to this parameter.");
+                    return reject("The value does not fit to this parameter.");
+                }
+                /*
                 (response) => {
                     // This means user defined skill says this value does not fit to this parameter.
                     debug("The value does not fit to this parameter.");
                     return reject("The value does not fit to this parameter.");
-                }
+                }*/
             );
         });
     }
