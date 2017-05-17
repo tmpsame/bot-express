@@ -1,6 +1,7 @@
 'use strict';
 
-let debug = require("debug")("skill");
+let debug = require("debug")("bot-express:skill");
+let mecab = require("mecabaas-client");
 
 module.exports = class SkillHandlePizzaOrder {
 
@@ -51,19 +52,19 @@ module.exports = class SkillHandlePizzaOrder {
         };
     }
 
-    parse_pizza(value){
+    parse_pizza(value, resolve, reject){
         let parsed_value;
         if (value.match(/マルゲリータ/)){
             parsed_value = "マルゲリータ";
         } else if (value.match(/マリナーラ/)){
             parsed_value = "マリナーラ";
         } else {
-            parsed_value = false;
+            return reject();
         }
-        return parsed_value;
+        return resolve(parsed_value);
     }
 
-    parse_size(value){
+    parse_size(value, resolve, reject){
         let parsed_value;
         if (value.match(/[sS]/) || value.match(/小/)){
             parsed_value = "S";
@@ -72,12 +73,12 @@ module.exports = class SkillHandlePizzaOrder {
         } else if (value.match(/[lL]/) || value.match(/大/)){
             parsed_value = "L";
         } else {
-            parsed_value = false;
+            return reject();
         }
-        return parsed_value;
+        return resolve(parsed_value);
     }
 
-    parse_address(value){
+    parse_address(value, resolve, reject){
         let parsed_value;
         if (typeof value == "string"){
             parsed_value = {
@@ -104,19 +105,42 @@ module.exports = class SkillHandlePizzaOrder {
                     }
                 }
             } else {
-                parsed_value = false;
+                return reject();
             }
         } else {
-            parsed_value = false;
+            return reject();
         }
 
-        return parsed_value;
+        return resolve(parsed_value);
     }
 
-    parse_name(value){
-        let parsed_value;
-        parsed_value = value.replace("です", "").replace("でーす", "").replace("ですー", "").replace("と申します", "").replace("。", "");
-        return parsed_value;
+    parse_name(value, resolve, reject){
+        let lastname, firstname, fullname;
+        mecab.parse(value).then(
+            (response) => {
+                for (let elem of response){
+                    if (elem[3] == "人名" && elem[4] == "姓"){
+                        lastname = elem[0];
+                    } else if (elem[3] == "人名" && elem[4] == "名"){
+                        firstname = elem[0];
+                    }
+                }
+                fullname = "";
+                if (lastname){
+                    fullname += lastname;
+                }
+                if (firstname){
+                    fullname += firstname;
+                }
+                if (fullname == ""){
+                    return reject();
+                }
+                return resolve(fullname);
+            },
+            (response) => {
+                return reject(response);
+            }
+        )
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。

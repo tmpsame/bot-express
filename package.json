@@ -2,7 +2,7 @@
   "description": "Chat Bot builder framework based on flow and skill model.",
   "main": "index.js",
   "name": "bot-express",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "private": false,
   "repository": {
     "type": "git",
@@ -35,8 +35,9 @@
   "devDependencies": {
     "chai": "*",
     "chai-as-promised": "*",
+    "isemail": "*",
+    "mecabaas-client": "^1.0.2",
     "mocha": "*",
-    "moji": "*",
-    "isemail": "*"
+    "moji": "*"
   }
 }

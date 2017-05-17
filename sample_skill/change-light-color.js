@@ -2,6 +2,7 @@
 
 let Promise = require('bluebird');
 let hue = require('../sample_service/hue');
+let debug = require("debug")("bot-express:skill");
 
 const COLOR_MAPPINGS = [
     {label: "青",code: "5068FF"},

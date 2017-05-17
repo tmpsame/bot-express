@@ -2,7 +2,7 @@
 
 let Promise = require('bluebird');
 let striptags = require('striptags');
-let debug = require('debug')('skill');
+let debug = require('debug')('bot-express:skill');
 let rightnow = require('../sample_service/rightnow');
 
 module.exports = class SkillFaq {

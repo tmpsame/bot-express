@@ -1,6 +1,6 @@
 'use strict';
 
-let debug = require("debug")("skill");
+let debug = require("debug")("bot-express:skill");
 
 /*
 ** Just reply the text response provided from api.ai.

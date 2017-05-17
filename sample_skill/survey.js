@@ -2,7 +2,7 @@
 
 let Promise = require("bluebird");
 let moji = require("moji");
-let debug = require("debug")("skill");
+let debug = require("debug")("bot-express:skill");
 let is_email = require("isemail");
 
 module.exports = class SkillSurvey {
