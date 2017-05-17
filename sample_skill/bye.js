@@ -11,6 +11,13 @@ module.exports = class SkillBye {
         let messages = [{
             text: "Bye"
         }];
-        return bot.reply(messages);
+        return bot.reply(messages).then(
+            (response) => {
+                return resolve(response);
+            },
+            (response) => {
+                return reject(response);
+            }
+        )
     }
 };

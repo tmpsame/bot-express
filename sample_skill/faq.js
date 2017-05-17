@@ -35,16 +35,14 @@ module.exports = class SkillFaq {
         }
     }
 
-    finish(bot, bot_event, context){
+    finish(bot, bot_event, context, resolve, reject){
         if (typeof context.confirmed.rating != "undefined"){
             return bot.reply().then(
                 (response) => {
-                    debug("Reply succeeded.");
-                    return;
+                    return resolve(response);
                 },
                 (response) => {
-                    debug("Failed to reply.");
-                    return Promise.reject(response);
+                    return reject(response);
                 }
             )
         }
@@ -61,12 +59,16 @@ module.exports = class SkillFaq {
                 } else {
                     this.optional_parameter.rating.message_to_confirm.altText = striptags(response.Solution);
                     this.optional_parameter.rating.message_to_confirm.template.text = this.optional_parameter.rating.message_to_confirm.altText;
-                    return bot.collect({rating: this.optional_parameter.rating});
+                    bot.collect({rating: this.optional_parameter.rating});
                 }
-            },
+            }
+        ).then(
             (response) => {
-                debug(response);
-                return Promise.reject("Failed to get answer from rightnow.");
+                return resolve(response);
+            }
+        ).catch(
+            (exception) => {
+                return reject(exception);
             }
         );
     }

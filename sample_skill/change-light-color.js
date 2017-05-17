@@ -58,16 +58,21 @@ module.exports = class SkillChangeLightColor {
     }
 
     // IFTTT経由でHueのカラーを変更する
-    finish(bot, bot_event, context){
+    finish(bot, bot_event, context, resolve, reject){
         return hue.change_color(context.confirmed.color).then(
             (response) => {
                 let messages = [{
                     text: "了解しましたー。"
                 }];
                 return bot.reply(messages);
-            },
+            }
+        ).then(
             (response) => {
-                return Promise.reject("Failed to change light color.");
+                return resolve(response);
+            }
+        ).catch(
+            (exception) => {
+                return reject(exception);
             }
         );
     }

@@ -116,7 +116,7 @@ module.exports = class SkillHandlePizzaOrder {
 
     parse_name(value, resolve, reject){
         let lastname, firstname, fullname;
-        mecab.parse(value).then(
+        return mecab.parse(value).then(
             (response) => {
                 debug(response);
                 for (let elem of response){
@@ -139,10 +139,17 @@ module.exports = class SkillHandlePizzaOrder {
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。
-    finish(bot, bot_event, context){
+    finish(bot, bot_event, context, resolve, reject){
         let messages = [{
             text: `${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address.address}までお届けに上がります。`
         }];
-        return bot.reply(messages);
+        return bot.reply(messages).then(
+            (response) => {
+                return resolve(response);
+            },
+            (response) => {
+                return reject(response);
+            }
+        );
     }
 };

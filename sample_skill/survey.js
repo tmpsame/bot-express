@@ -143,14 +143,21 @@ module.exports = class SkillSurvey {
         return resolve(parsed_value);
     }
 
-    finish(bot, bot_event, context){
+    finish(bot, bot_event, context, resolve, reject){
         if (!!context.confirmed.suggestion && !context.confirmed.come_back){
             bot.collect({come_back: this.optional_parameter.come_back});
-            return Promise.resolve();
+            return resolve();
         }
 
         return bot.reply([{
             text: `完璧です！ありがとうございました！！`
-        }]);
+        }]).then(
+            (response) => {
+                return resolve(response);
+            },
+            (response) => {
+                return reject(response);
+            }
+        );
     }
 };

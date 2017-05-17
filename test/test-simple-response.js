@@ -16,6 +16,7 @@ for (let message_platform of message_platform_list){
         let event_type = "message";
         describe("#こんにちは", function(){
             it("responds fulfillment speech and left 0 to_confirm.", function(){
+                this.timeout(8000);
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
                 return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(

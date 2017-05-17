@@ -69,7 +69,7 @@ this.required_parameter = {
 いよいよユーザーのリクエストに応えるときがきました。照明の色を変えるのです。この処理は開発者がfinish()という関数を実装することで自由に作成できます。bot-expressはfinish関数にこれまでに収集した情報を構造化して提供し、さらにLINEやFacebook Messengerといったメッセージプラットフォームを通じたメッセージの送信処理を統一したインターフェースで記述することができるサービスを提供します。これらの情報と機能利用しながら、単純な返信処理から照明の色を変えるIoT的な処理、他のクラウドサービスとの連携を含む処理など無限大の能力を追加することができます。
 
 ```
-finish(bot, bot_event, context){
+finish(bot, bot_event, context, resolve, reject){
     return hue.change_color(context.confirmed.color).then(
         (response) => {
             let messages = [{
@@ -80,6 +80,14 @@ finish(bot, bot_event, context){
         },
         (response) => {
             return Promise.reject("Failed to change light color.");
+        }
+    ).then(
+        (response) => {
+            return resolve(response);
+        }
+    ).catch(
+        (response) => {
+            return reject(response);
         }
     );
 }
@@ -318,21 +326,26 @@ parse_color(value, resolve, reject){
 
 適切な値が判定できなかった場合にはreject()を実行してreturnしてください。
 
-**finish(bot, bot_event, context)**
+**finish(bot, bot_event, context, resolve, reject)**
 
 パラメータが全て揃ったら実行する最終処理を記述します。このメソッドはPromiseを返す必要があります。
 
 ```
-finish(bot, bot_event, context){
+finish(bot, bot_event, context, resolve, reject){
     return Hue.change_color(context.confirmed.color).then(
         (response) => {
             let messages = [{
                 text: "了解しましたー。"
             }];
             return bot.reply(messages);
-        },
+        }
+    ).then(
         (response) => {
-            return Promise.reject("Failed to change light color.");
+            return resolve(response);
+        }
+    ).catch(
+        (response) => {
+            return reject(response);
         }
     );
 }
@@ -350,6 +363,10 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
 
 第三引数（上記例ではcontext）はこれまでの会話から構造化された情報です。このcontextは下記のような構造になっています。
+
+第四引数（上記例ではresolve）は処理が成功した際のコールバックです。
+
+第五引数（上記例ではreject）は処理が失敗した際のコールバックです。
 
 ```
 {

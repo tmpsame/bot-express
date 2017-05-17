@@ -116,7 +116,7 @@ for (let message_platform of message_platform_list){
                                 latitude: null,
                                 longitude: null
                             },
-                            name: "中嶋一樹"
+                            name: "中嶋 一樹"
                         });
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal([]);
