@@ -416,7 +416,15 @@ module.exports = class VirtualPlatform {
         debug("Going to collect parameter. Message should be defined in skill.");
 
         let param_to_collect;
-        if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_name]){
+        if (!!this.skill.required_parameter && !!this.skill.required_parameter[param_name]){
+            param_to_collect = {
+                name: param_name,
+                label: this.skill.required_parameter[param_name].label,
+                message_to_confirm: this.skill.required_parameter[param_name].message_to_confirm,
+                parser: this.skill.required_parameter[param_name].parser,
+                reaction: this.skill.required_parameter[param_name].reaction
+            }
+        } else if (!!this.skill.optional_parameter && !!this.skill.optional_parameter[param_name]){
             param_to_collect = {
                 name: param_name,
                 label: this.skill.optional_parameter[param_name].label,
@@ -425,8 +433,12 @@ module.exports = class VirtualPlatform {
                 reaction: this.skill.optional_parameter[param_name].reaction
             }
         } else {
-            debug(`Spedified optional parameter not found in skill.`);
-            throw(`Spedified optional parameter not found in skill.`);
+            debug(`Spedified parameter not found in skill.`);
+            throw(`Spedified parameter not found in skill.`);
+        }
+
+        if (this.context.confirmed[param_name]){
+            delete this.context.confirmed[param_name];
         }
 
         debug(`We add optional parameter "${param_name}" to the top of to_confirm list.`);
@@ -446,6 +458,10 @@ module.exports = class VirtualPlatform {
             message_to_confirm: param[Object.keys(param)[0]].message_to_confirm,
             parser: param[Object.keys(param)[0]].parser,
             reaction: param[Object.keys(param)[0]].reaction
+        }
+
+        if (this.context.confirmed[param_name]){
+            delete this.context.confirmed[Object.keys(param)[0]];
         }
 
         debug(`We add optional parameter "${param_to_collect.name}" to the top of to_confirm list.`);
