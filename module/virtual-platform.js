@@ -441,6 +441,12 @@ module.exports = class VirtualPlatform {
             delete this.context.confirmed[param_name];
         }
 
+        let index_to_remove = this.context.to_confirm.findIndex(param => param.name === param_name);
+        if (index_to_remove !== -1){
+            debug(`Removing ${param.name} from to_confirm.`);
+            this.context.to_confirm.splice(index_to_remove, 1);
+        }
+
         debug(`We add optional parameter "${param_name}" to the top of to_confirm list.`);
         this.context.to_confirm.unshift(param_to_collect);
     }
@@ -462,6 +468,12 @@ module.exports = class VirtualPlatform {
 
         if (this.context.confirmed[Object.keys(param)[0]]){
             delete this.context.confirmed[Object.keys(param)[0]];
+        }
+
+        let index_to_remove = this.context.to_confirm.findIndex(param => param.name === Object.keys(param)[0]);
+        if (index_to_remove !== -1){
+            debug(`Removing ${param.name} from to_confirm.`);
+            this.context.to_confirm.splice(index_to_remove, 1);
         }
 
         debug(`We add optional parameter "${param_to_collect.name}" to the top of to_confirm list.`);
