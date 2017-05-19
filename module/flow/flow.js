@@ -254,6 +254,8 @@ module.exports = class Flow {
                     debug(`We have no reaction to perform.`);
                     return resolve();
                 }
+            } else {
+                return resolve();
             }
         });
     }
