@@ -238,7 +238,7 @@ module.exports = class Flow {
                 } else {
                     // This parameter does not have reaction so do nothing.
                     debug(`We have no reaction to perform.`);
-                    return Promise.resolve();
+                    return resolve();
                 }
             } else if (this.skill.optional_parameter && this.skill.optional_parameter[key]){
                 if (!!this.skill.optional_parameter[key].reaction){
@@ -252,7 +252,7 @@ module.exports = class Flow {
                 } else {
                     // This parameter does not have reaction so do nothing.
                     debug(`We have no reaction to perform.`);
-                    return Promise.resolve();
+                    return resolve();
                 }
             }
         });
