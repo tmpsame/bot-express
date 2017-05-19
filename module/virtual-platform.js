@@ -460,7 +460,7 @@ module.exports = class VirtualPlatform {
             reaction: param[Object.keys(param)[0]].reaction
         }
 
-        if (this.context.confirmed[param_name]){
+        if (this.context.confirmed[Object.keys(param)[0]]){
             delete this.context.confirmed[Object.keys(param)[0]];
         }
 
