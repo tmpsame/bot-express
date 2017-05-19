@@ -171,13 +171,13 @@ Intentに対応するスキルを作成するため、skillディレクトリ直
 skillファイルはbot-expressフレームワークを使う中で開発者が唯一必ずBot独自の処理を記述する必要のあるファイルです。
 skillファイルは大きく3つのパートで構成されます。下記にパート毎のサンプルコードと説明がありますが、skillファイルの全体像を確認するには、[sample_skill/change-light-color.js](./sample_skill/change-light-color.js)を参照してみてください。
 
-**constructor()**
+**constructor(bot, bot_event, context)**
 
 このスキルが完結するのに必要なパラメータ、およびそのパラメータを確認するためのメッセージを設定します。
 例えば「ライトの色を変更する」というスキルの場合、「色」の指定が不可欠となるので、これをrequired_parameterプロパティにcolorとして登録します。
 
 ```
-constructor() {
+constructor(bot, bot_event, context) {
     this.required_parameter = {
         color: {
             message_to_confirm: {
@@ -271,7 +271,7 @@ color: {
         }
     },
     parser: this.parse_color,
-    reaction: (parse_result, parsed_value, bot) => {
+    reaction: (parse_result, parsed_value, resolve, reject) => {
         if (parse_result === true){
             if (parsed_value == "赤"){
                 bot.queue([{
@@ -279,16 +279,18 @@ color: {
                 }]);
             }
         }
+        return resolve();
     }
 }
 ```
 
 reactionはパラメータのparse処理が終った後に実行されます。上記の例ではユーザーが「赤」と回答した時に「センスいいですね！」という返信を行うように記述しています。 *bot.queue(MESSAGE_OBJECT_ARRAY)は返信するメッセージをキューに入れておくためのメソッドです。finish()でbot.reply()が呼ばれたらキューに入っている全てのメッセージが一括で送信されます。*
 
-reactionは3つの引数を取ります。
+reactionは4つの引数を取ります。
 第一引数にはparse処理が成功したかどうかの結果がtrueまたはfalseでセットされています。
 第二引数にはparse処理された値がセットされています。
-第三引数にはメッセージの返信やキューイングを行うためのライブラリがセットされています。
+第三引数はreaction成功時のコールバック関数です。
+第四引数はreaction失敗時のコールバック関数です。
 
 パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。どちらかだけ設定することもできますし、両方同時に設定することもできます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは埋まらない限りユーザーに確認メッセージが送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
 
@@ -328,7 +330,7 @@ parse_color(value, resolve, reject){
 
 **finish(bot, bot_event, context, resolve, reject)**
 
-パラメータが全て揃ったら実行する最終処理を記述します。このメソッドはPromiseを返す必要があります。
+パラメータが全て揃ったら実行する最終処理を記述します。
 
 ```
 finish(bot, bot_event, context, resolve, reject){
