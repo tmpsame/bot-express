@@ -15,7 +15,7 @@ const COLOR_MAPPINGS = [
 */
 module.exports = class SkillChangeLightColor {
 
-    constructor() {
+    constructor(bot, bot_event, context) {
         this.required_parameter = {
             color: {
                 message_to_confirm: {

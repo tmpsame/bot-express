@@ -230,11 +230,11 @@ module.exports = class Flow {
                 if (!!this.skill.required_parameter[key].reaction){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill.required_parameter[key].reaction(parse_result, value, this.vp, resolve, reject);
+                    return this.skill.required_parameter[key].reaction(parse_result, value, resolve, reject);
                 } else if (!!this.skill["reaction_" + key]){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill["reaction_" + key](parse_result, value, this.vp, resolve, reject);
+                    return this.skill["reaction_" + key](parse_result, value, resolve, reject);
                 } else {
                     // This parameter does not have reaction so do nothing.
                     debug(`We have no reaction to perform.`);
@@ -244,11 +244,11 @@ module.exports = class Flow {
                 if (!!this.skill.optional_parameter[key].reaction){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill.optional_parameter[key].reaction(parse_result, value, this.vp, resolve, reject);
+                    return this.skill.optional_parameter[key].reaction(parse_result, value, resolve, reject);
                 } else if (!!this.skill["reaction_" + key]){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill["reaction_" + key](parse_result, value, this.vp, resolve, reject);
+                    return this.skill["reaction_" + key](parse_result, value, resolve, reject);
                 } else {
                     // This parameter does not have reaction so do nothing.
                     debug(`We have no reaction to perform.`);
