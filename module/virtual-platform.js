@@ -437,13 +437,13 @@ module.exports = class VirtualPlatform {
             throw(`Spedified parameter not found in skill.`);
         }
 
-        if (this.context.confirmed[param_name]){
-            delete this.context.confirmed[param_name];
+        if (this.context.confirmed[param_to_collect.name]){
+            delete this.context.confirmed[param_to_collect.name];
         }
 
-        let index_to_remove = this.context.to_confirm.findIndex(param => param.name === param_name);
+        let index_to_remove = this.context.to_confirm.findIndex(param => param.name === param_to_collect.name);
         if (index_to_remove !== -1){
-            debug(`Removing ${param.name} from to_confirm.`);
+            debug(`Removing ${param_to_collect.name} from to_confirm.`);
             this.context.to_confirm.splice(index_to_remove, 1);
         }
 
@@ -466,13 +466,13 @@ module.exports = class VirtualPlatform {
             reaction: param[Object.keys(param)[0]].reaction
         }
 
-        if (this.context.confirmed[Object.keys(param)[0]]){
-            delete this.context.confirmed[Object.keys(param)[0]];
+        if (this.context.confirmed[param_to_collect.name]){
+            delete this.context.confirmed[param_to_collect.name];
         }
 
-        let index_to_remove = this.context.to_confirm.findIndex(param => param.name === Object.keys(param)[0]);
+        let index_to_remove = this.context.to_confirm.findIndex(param => param.name === param_to_collect.name);
         if (index_to_remove !== -1){
-            debug(`Removing ${param.name} from to_confirm.`);
+            debug(`Removing ${param_to_collect.name} from to_confirm.`);
             this.context.to_confirm.splice(index_to_remove, 1);
         }
 
