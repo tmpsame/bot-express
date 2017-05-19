@@ -22,14 +22,15 @@ module.exports = class SkillFaq {
                         ]
                     }
                 },
-                reaction: (parse_result, value, bot) => {
+                reaction: (parse_result, value, bot, resolve, reject) => {
                     if (parse_result === true){
                         if (value == "解決した"){
-                            return bot.queue({text: "ホッ。"});
+                            bot.queue({text: "ホッ。"});
                         } else if (value == "解決しない"){
-                            return bot.queue({text: "誠に申し訳ありません。"});
+                            bot.queue({text: "誠に申し訳ありません。"});
                         }
                     }
+                    return resolve();
                 }
             }
         }

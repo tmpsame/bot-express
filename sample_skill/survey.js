@@ -20,18 +20,21 @@ module.exports = class SkillSurvey {
                         {content_type:"text", title:"1 低", payload:1},
                     ]
                 },
-                reaction: (result, value, bot) => {
+                reaction: (result, value, bot, resolve, reject) => {
                     if (result === true){
                         let messages = [];
                         if (value == 5){
                             bot.queue([{
                                 text: "うぉー！！よかった！"
                             }]);
-                        } else if (value == 1){
+                            return resolve();
+                        }
+                        if (value == 1){
                             bot.queue([{
                                 text: "なんてこった。。"
                             }]);
                             bot.collect("suggestion");
+                            return resolve();
                         }
                     } else {
                         bot.change_message_to_confirm("satisfaction", {
@@ -44,6 +47,7 @@ module.exports = class SkillSurvey {
                                 {content_type:"text", title:"1 低", payload:1},
                             ]
                         });
+                        return resolve();
                     }
                 }
             }, // End of satisfaction
@@ -74,10 +78,11 @@ module.exports = class SkillSurvey {
                 message_to_confirm: {
                     text: "この勉強会はどのようにすれば改善できると思いますか？"
                 },
-                reaction: (result, value, bot) => {
+                reaction: (result, value, bot, resolve, reject) => {
                     bot.queue([{
                         text: "貴重なご意見、ありがとうございます！"
-                    }])
+                    }]);
+                    return resolve();
                 }
             },
             come_back: {

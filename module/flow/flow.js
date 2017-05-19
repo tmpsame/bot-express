@@ -53,7 +53,7 @@ module.exports = class Flow {
         if (skill == "builtin_default"){
             debug("Use built-in default skill.");
             let skill_class = require("../skill/default");
-            skill_instance = new skill_class();
+            skill_instance = new skill_class(this.vp, this.bot_event, this.context);
         } else {
             debug(`Look for ${skill} skill.`);
             let skill_class;
@@ -64,7 +64,7 @@ module.exports = class Flow {
                 debug("Skill not found.");
                 throw(exception);
             }
-            skill_instance = new skill_class();
+            skill_instance = new skill_class(this.vp, this.bot_event, this.context);
         }
 
         return skill_instance;
@@ -225,35 +225,37 @@ module.exports = class Flow {
     }
 
     react(parse_result, key, value){
-        if (this.skill.required_parameter && this.skill.required_parameter[key]){
-            if (!!this.skill.required_parameter[key].reaction){
-                // This parameter has reaction. So do it and return its promise.
-                debug(`Perform reaction. Param value is ${value}`);
-                return this.skill.required_parameter[key].reaction(parse_result, value, this.vp);
-            } else if (!!this.skill["reaction_" + key]){
-                // This parameter has reaction. So do it and return its promise.
-                debug(`Perform reaction. Param value is ${value}`);
-                return this.skill["reaction_" + key](parse_result, value, this.vp);
-            } else {
-                // This parameter does not have reaction so do nothing.
-                debug(`We have no reaction to perform.`);
-                return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            if (this.skill.required_parameter && this.skill.required_parameter[key]){
+                if (!!this.skill.required_parameter[key].reaction){
+                    // This parameter has reaction. So do it and return its promise.
+                    debug(`Perform reaction. Param value is ${value}`);
+                    return this.skill.required_parameter[key].reaction(parse_result, value, this.vp, resolve, reject);
+                } else if (!!this.skill["reaction_" + key]){
+                    // This parameter has reaction. So do it and return its promise.
+                    debug(`Perform reaction. Param value is ${value}`);
+                    return this.skill["reaction_" + key](parse_result, value, this.vp, resolve, reject);
+                } else {
+                    // This parameter does not have reaction so do nothing.
+                    debug(`We have no reaction to perform.`);
+                    return Promise.resolve();
+                }
+            } else if (this.skill.optional_parameter && this.skill.optional_parameter[key]){
+                if (!!this.skill.optional_parameter[key].reaction){
+                    // This parameter has reaction. So do it and return its promise.
+                    debug(`Perform reaction. Param value is ${value}`);
+                    return this.skill.optional_parameter[key].reaction(parse_result, value, this.vp, resolve, reject);
+                } else if (!!this.skill["reaction_" + key]){
+                    // This parameter has reaction. So do it and return its promise.
+                    debug(`Perform reaction. Param value is ${value}`);
+                    return this.skill["reaction_" + key](parse_result, value, this.vp, resolve, reject);
+                } else {
+                    // This parameter does not have reaction so do nothing.
+                    debug(`We have no reaction to perform.`);
+                    return Promise.resolve();
+                }
             }
-        } else if (this.skill.optional_parameter && this.skill.optional_parameter[key]){
-            if (!!this.skill.optional_parameter[key].reaction){
-                // This parameter has reaction. So do it and return its promise.
-                debug(`Perform reaction. Param value is ${value}`);
-                return this.skill.optional_parameter[key].reaction(parse_result, value, this.vp);
-            } else if (!!this.skill["reaction_" + key]){
-                // This parameter has reaction. So do it and return its promise.
-                debug(`Perform reaction. Param value is ${value}`);
-                return this.skill["reaction_" + key](parse_result, value, this.vp);
-            } else {
-                // This parameter does not have reaction so do nothing.
-                debug(`We have no reaction to perform.`);
-                return Promise.resolve();
-            }
-        }
+        });
     }
 
     ask_retry(message_text){
