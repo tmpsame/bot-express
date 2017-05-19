@@ -27,15 +27,14 @@ module.exports = class SkillSurvey {
                             bot.queue([{
                                 text: "うぉー！！よかった！"
                             }]);
-                            return resolve();
                         }
                         if (value == 1){
                             bot.queue([{
                                 text: "なんてこった。。"
                             }]);
                             bot.collect("suggestion");
-                            return resolve();
                         }
+                        return resolve();
                     } else {
                         bot.change_message_to_confirm("satisfaction", {
                             text: "ん？1が最低、5が最高の5段階評価ですよ。数字で1から5のどれかで教えてくださいね。",
