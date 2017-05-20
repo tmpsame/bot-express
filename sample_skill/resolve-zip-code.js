@@ -1,7 +1,7 @@
 "use strict";
 
 const zip_code = require("../sample_service/zip-code");
-const debug = require("debug")("pizza-bot");
+const debug = require("debug")("bot-express:skill");
 
 module.exports = class SkillResolveZipCode {
 
