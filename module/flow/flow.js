@@ -53,7 +53,7 @@ module.exports = class Flow {
         if (skill == "builtin_default"){
             debug("Use built-in default skill.");
             let skill_class = require("../skill/default");
-            skill_instance = new skill_class(this.vp, this.bot_event, this.context);
+            skill_instance = new skill_class(this.vp, this.bot_event);
         } else {
             debug(`Look for ${skill} skill.`);
             let skill_class;
@@ -64,7 +64,7 @@ module.exports = class Flow {
                 debug("Skill not found.");
                 throw(exception);
             }
-            skill_instance = new skill_class(this.vp, this.bot_event, this.context);
+            skill_instance = new skill_class(this.vp, this.bot_event);
         }
 
         return skill_instance;
@@ -199,7 +199,7 @@ module.exports = class Flow {
                     // Remove item from to_confirm.
                     let index_to_remove = this.context.to_confirm.findIndex(param => param.name === key);
                     if (index_to_remove !== -1){
-                        debug(`Removing ${param.name} from to_confirm.`);
+                        debug(`Removing ${key} from to_confirm.`);
                         this.context.to_confirm.splice(index_to_remove, 1);
                     }
 
@@ -230,11 +230,11 @@ module.exports = class Flow {
                 if (!!this.skill.required_parameter[key].reaction){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill.required_parameter[key].reaction(parse_result, value, resolve, reject);
+                    return this.skill.required_parameter[key].reaction(parse_result, value, this.context, resolve, reject);
                 } else if (!!this.skill["reaction_" + key]){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill["reaction_" + key](parse_result, value, resolve, reject);
+                    return this.skill["reaction_" + key](parse_result, value, this.context, resolve, reject);
                 } else {
                     // This parameter does not have reaction so do nothing.
                     debug(`We have no reaction to perform.`);
@@ -244,11 +244,11 @@ module.exports = class Flow {
                 if (!!this.skill.optional_parameter[key].reaction){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill.optional_parameter[key].reaction(parse_result, value, resolve, reject);
+                    return this.skill.optional_parameter[key].reaction(parse_result, value, this.context, resolve, reject);
                 } else if (!!this.skill["reaction_" + key]){
                     // This parameter has reaction. So do it and return its promise.
                     debug(`Perform reaction. Param value is ${value}`);
-                    return this.skill["reaction_" + key](parse_result, value, resolve, reject);
+                    return this.skill["reaction_" + key](parse_result, value, this.context, resolve, reject);
                 } else {
                     // This parameter does not have reaction so do nothing.
                     debug(`We have no reaction to perform.`);

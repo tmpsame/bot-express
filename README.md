@@ -177,7 +177,7 @@ skillファイルは大きく3つのパートで構成されます。下記に�
 例えば「ライトの色を変更する」というスキルの場合、「色」の指定が不可欠となるので、これをrequired_parameterプロパティにcolorとして登録します。
 
 ```
-constructor(bot, bot_event, context) {
+constructor(bot, bot_event) {
     this.required_parameter = {
         color: {
             message_to_confirm: {
@@ -271,7 +271,7 @@ color: {
         }
     },
     parser: this.parse_color,
-    reaction: (parse_result, parsed_value, resolve, reject) => {
+    reaction: (parse_result, parsed_value, context, resolve, reject) => {
         if (parse_result === true){
             if (parsed_value == "赤"){
                 bot.queue([{
@@ -289,8 +289,9 @@ reactionはパラメータのparse処理が終った後に実行されます。�
 reactionは4つの引数を取ります。
 第一引数にはparse処理が成功したかどうかの結果がtrueまたはfalseでセットされています。
 第二引数にはparse処理された値がセットされています。
-第三引数はreaction成功時のコールバック関数です。
-第四引数はreaction失敗時のコールバック関数です。
+第三引数は文脈情報です。これから確認しなければならないパラメータ、確認済みのパラメータ、確認中のパラメータなどの情報にアクセスできます。
+第四引数はreaction成功時のコールバック関数です。
+第五引数はreaction失敗時のコールバック関数です。
 
 パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。どちらかだけ設定することもできますし、両方同時に設定することもできます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは埋まらない限りユーザーに確認メッセージが送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
 

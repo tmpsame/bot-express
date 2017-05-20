@@ -7,7 +7,7 @@ let is_email = require("isemail");
 
 module.exports = class SkillSurvey {
 
-    constructor(bot, bot_event, context){
+    constructor(bot, bot_event){
         this.required_parameter = {
             satisfaction: {
                 message_to_confirm: {
@@ -20,7 +20,7 @@ module.exports = class SkillSurvey {
                         {content_type:"text", title:"1 低", payload:1},
                     ]
                 },
-                reaction: (result, value, resolve, reject) => {
+                reaction: (result, value, context, resolve, reject) => {
                     if (result === true){
                         let messages = [];
                         if (value == 5){
@@ -77,7 +77,7 @@ module.exports = class SkillSurvey {
                 message_to_confirm: {
                     text: "この勉強会はどのようにすれば改善できると思いますか？"
                 },
-                reaction: (result, value, resolve, reject) => {
+                reaction: (result, value, context, resolve, reject) => {
                     bot.queue([{
                         text: "貴重なご意見、ありがとうございます！"
                     }]);

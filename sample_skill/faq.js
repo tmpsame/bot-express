@@ -7,7 +7,7 @@ let rightnow = require('../sample_service/rightnow');
 
 module.exports = class SkillFaq {
 
-    constructor(bot, bot_event, context){
+    constructor(bot, bot_event){
         this.optional_parameter = {
             rating: {
                 message_to_confirm: {
@@ -22,7 +22,7 @@ module.exports = class SkillFaq {
                         ]
                     }
                 },
-                reaction: (parse_result, value, resolve, reject) => {
+                reaction: (parse_result, value, context, resolve, reject) => {
                     if (parse_result === true){
                         if (value == "解決した"){
                             bot.queue({text: "ホッ。"});

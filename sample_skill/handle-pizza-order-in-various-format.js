@@ -4,7 +4,7 @@ let debug = require("debug")("bot-express:skill");
 
 module.exports = class SkillCompileMessage {
 
-    constructor(bot, bot_event, context) {
+    constructor(bot, bot_event) {
         this.required_parameter = {
             line_text: { // Will be text in facebook.
                 message_to_confirm: {
