@@ -7,6 +7,7 @@ const Promise = require("bluebird");
 module.exports = class ServiceZipCode {
     static search(zip_code){
         return new Promise((resolve, reject) => {
+            zip_code = zip_code.replace('-', '');
             let url = "http://zipcloud.ibsnet.co.jp/api/search?zipcode=" + encodeURIComponent(zip_code);
             request({
                 method: "get",

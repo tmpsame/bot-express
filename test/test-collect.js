@@ -33,7 +33,7 @@ describe("Collect Test", function(){
                     response.to_confirm[0].name.should.equal("zip_code");
                     response.to_confirm[1].name.should.equal("city");
                     response.to_confirm[2].name.should.equal("street");
-                    return webhook.run(Util.create_req(message_platform, "message", user_id, "1070061"));
+                    return webhook.run(Util.create_req(message_platform, "message", user_id, "107-0061"));
                 }
             ).then(
                 function(response){
@@ -41,7 +41,7 @@ describe("Collect Test", function(){
                     response.should.have.property("confirming", "city");
                     response.confirmed.should.deep.equal({
                         zip_code: {
-                            zip_code: "1070061",
+                            zip_code: "107-0061",
                             resolved_address: "東京都港区北青山"
                         }
                     });
@@ -56,7 +56,7 @@ describe("Collect Test", function(){
                     response.should.have.property("confirming", "street");
                     response.confirmed.should.deep.equal({
                         zip_code: {
-                            zip_code: "1070061",
+                            zip_code: "107-0061",
                             resolved_address: "東京都港区北青山"
                         },
                         city: "東京都港区北青山"
@@ -71,7 +71,7 @@ describe("Collect Test", function(){
                     response.should.have.property("confirming", null);
                     response.confirmed.should.deep.equal({
                         zip_code: {
-                            zip_code: "1070061",
+                            zip_code: "107-0061",
                             resolved_address: "東京都港区北青山"
                         },
                         city: "東京都港区北青山",
