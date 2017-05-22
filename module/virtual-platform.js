@@ -357,9 +357,6 @@ module.exports = class VirtualPlatform {
                 }
                 this.context._message_queue = [];
                 return response;
-            },
-            (response) => {
-                return Promise.reject(response);
             }
         );
     }
@@ -386,9 +383,6 @@ module.exports = class VirtualPlatform {
                     });
                 }
                 return response;
-            },
-            (response) => {
-                return Promise.reject(response);
             }
         );
     }

@@ -46,11 +46,6 @@ module.exports = class ChangeIntentFlow extends Flow {
                             debug("Parser rejected the value.");
                             return super.react(error, param_key, this.context.intent.parameters[param_key]);
                         }
-                    ).catch(
-                        (error) => {
-                            debug("Exception thrown in apply_paramter.");
-                            return Promise.reject(error);
-                        }
                     )
                 );
             }
@@ -60,9 +55,6 @@ module.exports = class ChangeIntentFlow extends Flow {
         return Promise.all(all_parameters_processed).then(
             (response) => {
                 return super.finish();
-            },
-            (response) => {
-                return Promise.reject(response);
             }
         );
     } // End of run()

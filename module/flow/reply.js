@@ -49,11 +49,6 @@ module.exports = class ReplyFlow extends Flow {
                 // Run final action.
                 return super.finish();
             }
-        ).catch(
-            (error) => {
-                debug("Exception thrown in apply_paramter.");
-                return Promise.reject(error);
-            }
         );
     }
 }

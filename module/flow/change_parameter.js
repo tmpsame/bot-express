@@ -57,11 +57,6 @@ module.exports = class ChangeParameterFlow extends Flow {
                     ParseError, (error) => {
                         debug(`Does not fit`);
                     }
-                ).catch(
-                    (error) => {
-                        debug(`Exception thrown in change_parameter.`);
-                        return Promise.reject(error);
-                    }
                 )
             );
         }
