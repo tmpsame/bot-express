@@ -1,8 +1,8 @@
 'use strict';
 
-let Apiai = require("apiai");
-let Promise = require("bluebird");
-let debug = require("debug")("bot-express:service");
+const Apiai = require("apiai");
+const Promise = require("bluebird");
+const debug = require("debug")("bot-express:service");
 
 module.exports = class Apiai_promised {
     constructor(client_access_token, language = "ja"){

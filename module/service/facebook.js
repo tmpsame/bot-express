@@ -1,9 +1,11 @@
 'use strict';
 
-let crypto = require('crypto');
-let request = require('request');
 let Promise = require('bluebird');
+let request = require('request');
+let crypto = require('crypto');
 let debug = require("debug")("bot-express:service");
+
+Promise.promisifyAll(request);
 
 module.exports = class ServiceFacebook {
 
@@ -21,7 +23,7 @@ module.exports = class ServiceFacebook {
 
         let page_access_token = this._page_access_token.find(token => token.page_id === page_id).page_access_token;
         if (!page_access_token){
-            return Promise.reject("page access token not found.");
+            return Promise.reject(new Error("page access token not found."));
         }
         debug(`page_id is ${page_id}. Corresponding page_access_token is ${page_access_token}`);
 
@@ -29,49 +31,33 @@ module.exports = class ServiceFacebook {
         let interval = 0;
         let offset = 0;
 
+        let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
+
         // If we have more then 1 message, we set 2000 msec interval to assure the message order.
         for (let message of messages){
+
+            let body = {
+                recipient: recipient,
+                message: message
+            }
+
             if (offset > 0 && interval == 0){
                 interval = 2000;
             }
             offset += 1;
+
             setTimeout(() => {
-                all_sent.push(new Promise((resolve, reject) => {
-                    let headers = {
-                        'Content-Type': 'application/json'
-                    };
-                    let body = {
-                        recipient: recipient,
-                        message: message
-                    }
-                    let url = "https://graph.facebook.com/v2.8/me/messages?access_token=" + page_access_token;
-                    request({
-                        url: url,
-                        method: 'POST',
-                        headers: headers,
-                        body: body,
-                        json: true
-                    }, (error, response, body) => {
-                        if (error){
-                            return reject(error);
-                        }
-                        if (response.statusCode != 200){
-                            debug(body.error.message);
-                            return reject(body.error.message);
-                        }
-                        resolve();
-                    });
+                all_sent.push(request.postAsync({
+                    url: url,
+                    body: body,
+                    json: true
                 }));
             }, interval);
         }
+
         return Promise.all(all_sent).then(
             (response) => {
-                debug("send succeeded");
-                return;
-            },
-            (response) => {
-                debug("send failed");
-                return Promise.reject(response);
+                return response;
             }
         )
     }

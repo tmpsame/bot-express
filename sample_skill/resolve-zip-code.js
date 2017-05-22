@@ -72,16 +72,12 @@ module.exports = class SkillResolveZipCode {
     parse_city(value, resolve, reject){
         if (value == "いいえ"){
             return reject(value);
+        } else if (value == "例外"){
+            // For test purpose ONLY
+            throw(new Error("例外"));
         } else {
             return resolve(value);
         }
-    }
-
-    parse_street(value, resolve, reject){
-        if (value == null || value.trim() == ""){
-            return reject(value);
-        }
-        return resolve(value);
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。

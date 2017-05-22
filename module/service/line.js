@@ -1,9 +1,11 @@
 'use strict';
 
-let crypto = require('crypto');
-let request = require('request');
 let Promise = require('bluebird');
+let request = require('request');
+let crypto = require('crypto');
 let debug = require("debug")("bot-express:service");
+
+Promise.promisifyAll(request);
 
 module.exports = class ServiceLine {
 
@@ -20,34 +22,20 @@ module.exports = class ServiceLine {
             return Promise.resolve();
         }
 
-        return new Promise((resolve, reject) => {
-            let headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this._channel_access_token
-            };
-            let body = {
-                to: to,
-                messages: messages
-            }
-            let url = 'https://api.line.me/v2/bot/message/push';
-            request({
-                url: url,
-                method: 'POST',
-                headers: headers,
-                body: body,
-                json: true
-            }, (error, response, body) => {
-                if (error){
-                    debug(error);
-                    return reject(error);
-                }
-                if (response.statusCode != 200){
-                    debug(body.message);
-                    return reject(body.message || "Failed to send.");
-                }
-                debug("send succeeded");
-                resolve();
-            });
+        let headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this._channel_access_token
+        };
+        let body = {
+            to: to,
+            messages: messages
+        }
+        let url = 'https://api.line.me/v2/bot/message/push';
+        return request.postAsync({
+            url: url,
+            headers: headers,
+            body: body,
+            json: true
         });
     }
 
@@ -58,34 +46,20 @@ module.exports = class ServiceLine {
             return Promise.resolve();
         }
 
-        return new Promise((resolve, reject) => {
-            let headers = {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this._channel_access_token
-            };
-            let body = {
-                replyToken: reply_token,
-                messages: messages
-            }
-            let url = 'https://api.line.me/v2/bot/message/reply';
-            request({
-                url: url,
-                method: 'POST',
-                headers: headers,
-                body: body,
-                json: true
-            }, (error, response, body) => {
-                if (error){
-                    debug(error);
-                    return reject(error);
-                }
-                if (response.statusCode != 200){
-                    debug(body.message);
-                    return reject(body.message || "Failed to reply.");
-                }
-                debug("reply succeeded");
-                resolve();
-            });
+        let headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + this._channel_access_token
+        };
+        let body = {
+            replyToken: reply_token,
+            messages: messages
+        }
+        let url = 'https://api.line.me/v2/bot/message/reply';
+        return request.postAsync({
+            url: url,
+            headers: headers,
+            body: body,
+            json: true
         });
     }
 
