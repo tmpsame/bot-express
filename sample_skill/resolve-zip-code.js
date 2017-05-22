@@ -12,8 +12,8 @@ module.exports = class SkillResolveZipCode {
                     type: "text",
                     text: "お届け先の郵便番号を教えていただけますか？"
                 },
-                reaction: (result, value, context, resolve, reject) => {
-                    if (result === true){
+                reaction: (error, value, context, resolve, reject) => {
+                    if (!error){
                         let message = this.required_parameter.city.message_to_confirm;
                         message.altText = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
                         message.template.text = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
@@ -36,8 +36,8 @@ module.exports = class SkillResolveZipCode {
                         ]
                     }
                 },
-                reaction: (result, value, context, resolve, reject) => {
-                    if (result === false){
+                reaction: (error, value, context, resolve, reject) => {
+                    if (error){
                         bot.collect("zip_code");
                     }
                     return resolve();

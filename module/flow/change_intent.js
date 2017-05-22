@@ -5,6 +5,7 @@
 */
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
+let ParseError = require("../error/parse");
 let Flow = require("./flow");
 
 
@@ -32,12 +33,23 @@ module.exports = class ChangeIntentFlow extends Flow {
             for (let param_key of Object.keys(this.context.intent.parameters)){
                 // Parse and Add parameters using skill specific logic.
                 all_parameters_processed.push(
-                    super.add_parameter(param_key, this.context.intent.parameters[param_key]).then(
-                        (response) => {
-                            return super.react(true, Object.keys(response)[0], response[Object.keys(response)[0]]);
-                        },
-                        (response) => {
-                            return super.react(false, param_key, this.context.intent.parameters[param_key]);
+                    super.apply_parameter(param_key, this.context.intent.parameters[param_key]).then(
+                        (applied_parameter) => {
+                            if (applied_parameter == null){
+                                debug("Parameter was not applicable. We skip reaction and go to finish.");
+                                return;
+                            }
+                            return super.react(null, applied_parameter.key, applied_parameter.value);
+                        }
+                    ).catch(
+                        ParseError, (error) => {
+                            debug("Parser rejected the value.");
+                            return super.react(error, param_key, this.context.intent.parameters[param_key]);
+                        }
+                    ).catch(
+                        (error) => {
+                            debug("Exception thrown in apply_paramter.");
+                            return Promise.reject(error);
                         }
                     )
                 );

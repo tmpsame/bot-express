@@ -22,8 +22,8 @@ module.exports = class SkillFaq {
                         ]
                     }
                 },
-                reaction: (parse_result, value, context, resolve, reject) => {
-                    if (parse_result === true){
+                reaction: (error, value, context, resolve, reject) => {
+                    if (!error){
                         if (value == "解決した"){
                             bot.queue({text: "ホッ。"});
                         } else if (value == "解決しない"){

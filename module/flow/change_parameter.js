@@ -5,6 +5,7 @@
 */
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
+let ParseError = require("../error/parse");
 let Flow = require("./flow");
 
 
@@ -43,13 +44,23 @@ module.exports = class ChangeParameterFlow extends Flow {
             debug(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
             all_parameters_processed.push(
                 super.change_parameter(previously_confirmed_param_key, param_value).then(
-                    (response) => {
+                    (applied_parameter) => {
+                        if (applied_parameter == null){
+                            debug("Parameter was not applicable. We skip reaction.");
+                            return;
+                        }
                         debug(`Great fit!`);
                         is_fit = true;
-                        return super.react(true, Object.keys(response)[0], response[Object.keys(response)[0]]);
-                    },
-                    (response) => {
+                        return super.react(null, applied_parameter.key, applied_parameter.value);
+                    }
+                ).catch(
+                    ParseError, (error) => {
                         debug(`Does not fit`);
+                    }
+                ).catch(
+                    (error) => {
+                        debug(`Exception thrown in change_parameter.`);
+                        return Promise.reject(error);
                     }
                 )
             );

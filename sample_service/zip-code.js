@@ -1,7 +1,7 @@
 "use strict";
 
 const request = require("request");
-const debug = require("debug")("bot-express:skill");
+const debug = require("debug")("bot-express:service");
 const Promise = require("bluebird");
 
 module.exports = class ServiceZipCode {

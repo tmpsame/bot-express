@@ -271,8 +271,8 @@ color: {
         }
     },
     parser: this.parse_color,
-    reaction: (parse_result, parsed_value, context, resolve, reject) => {
-        if (parse_result === true){
+    reaction: (error, parsed_value, context, resolve, reject) => {
+        if (!error){
             if (parsed_value == "赤"){
                 bot.queue([{
                     text: "センスいいですね！"
@@ -286,8 +286,8 @@ color: {
 
 reactionはパラメータのparse処理が終った後に実行されます。上記の例ではユーザーが「赤」と回答した時に「センスいいですね！」という返信を行うように記述しています。 *bot.queue(MESSAGE_OBJECT_ARRAY)は返信するメッセージをキューに入れておくためのメソッドです。finish()でbot.reply()が呼ばれたらキューに入っている全てのメッセージが一括で送信されます。*
 
-reactionは4つの引数を取ります。
-第一引数にはparse処理が成功したかどうかの結果がtrueまたはfalseでセットされています。
+reactionは5つの引数を取ります。
+第一引数にはparse処理が成功した場合はnullが、失敗した場合はエラーオブジェクトが入っています。
 第二引数にはparse処理された値がセットされています。
 第三引数は文脈情報です。これから確認しなければならないパラメータ、確認済みのパラメータ、確認中のパラメータなどの情報にアクセスできます。
 第四引数はreaction成功時のコールバック関数です。

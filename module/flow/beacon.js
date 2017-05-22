@@ -5,6 +5,7 @@
 */
 let Promise = require("bluebird");
 let debug = require("debug")("bot-express:flow");
+let ParseError = require("../error/parse");
 let Flow = require("./flow");
 
 module.exports = class BeaconFlow extends Flow {
