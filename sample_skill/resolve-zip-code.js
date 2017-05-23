@@ -15,9 +15,9 @@ module.exports = class SkillResolveZipCode {
                 reaction: (error, value, context, resolve, reject) => {
                     if (!error){
                         let message_to_confirm = this.required_parameter.city.message_to_confirm;
-                        message.altText = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
-                        message.template.text = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
-                        message.template.actions[0].data = context.confirmed.zip_code.resolved_address;
+                        message_to_confirm.altText = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
+                        message_to_confirm.template.text = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
+                        message_to_confirm.template.actions[0].data = context.confirmed.zip_code.resolved_address;
                         bot.collect({
                             city: {
                                 message_to_confirm: message_to_confirm
