@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const fs = require("fs");
-const readline = require("readline");
-const os = require("os");
-const skill_dir = "../../skill";
-const index_script = "../../index.js";
+var fs = require("fs");
+var readline = require("readline");
+var os = require("os");
+var skill_dir = "../../skill";
+var index_script = "../../index.js";
 
 if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_ENV != "production"){
 
