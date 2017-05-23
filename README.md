@@ -362,6 +362,7 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 - **queue(messages)** : 返信するメッセージをキュー（実行待ち）に入れるためのメソッドです。キューに入れておいたメッセージはreply()が実行された時に一括で送信されます。reply()は一度のイベントで一回しか実行できないため、複数のメッセージを返信する必要がある場合はこのメソッドを利用してください。
 - **change_message_to_confirm(parameter_name, message)** : parameter_nameで指定したパラメーターのmessage_to_confirmを一時的に変更します。これは主にparse処理が失敗した時にユーザーに再入力を促がす際に有用です。
 - **collect(parameter_name)** : 明示的にパラメーターを収集するメソッドです。parameter_nameにはconstructor()に記述したいずれかのoptional_parameterを指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。
+- **collect(parameter)** : 明示的にパラメーターを収集するメソッドです。parameterにはconstructor()に記述するのと同じ形式のパラメーターオブジェクトを指定します。動的にパラメーターを生成し、収集する場合に便利です。
 
 第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
 

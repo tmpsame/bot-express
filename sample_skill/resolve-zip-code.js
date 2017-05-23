@@ -89,9 +89,6 @@ module.exports = class SkillResolveZipCode {
         return bot.reply(messages).then(
             (response) => {
                 return resolve(response);
-            },
-            (response) => {
-                return reject(response);
             }
         )
     }
