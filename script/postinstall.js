@@ -17,7 +17,7 @@ if (!process.env.TRAVIS && process.env.NODE_ENV != "test" && process.env.NODE_EN
                         output: process.stdout
                     });
 
-                    rl.question('May I create skill directory and index.js for you? (y/n): ', (answer) => {
+                    rl.question('May I create skill directory and index.js for you? (y/n): ', function(answer){
                         if (answer == "y"){
                             create_skill_dir();
                             create_indexjs();
