@@ -280,10 +280,6 @@ module.exports = class Flow {
                     this.context = null;
                 }
                 return response;
-            },
-            (response) => {
-                debug("Final action failed.");
-                return Promise.reject(response);
             }
         );
     }

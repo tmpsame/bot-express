@@ -158,9 +158,6 @@ module.exports = class SkillSurvey {
         }]).then(
             (response) => {
                 return resolve(response);
-            },
-            (response) => {
-                return reject(response);
             }
         );
     }

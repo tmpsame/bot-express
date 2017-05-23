@@ -60,6 +60,9 @@ module.exports = class SkillResolveZipCode {
                     zip_code: value,
                     resolved_address: address
                 });
+            },
+            (response) => {
+                return reject(response);
             }
         );
     }

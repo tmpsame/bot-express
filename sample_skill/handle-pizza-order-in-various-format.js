@@ -266,9 +266,6 @@ module.exports = class SkillCompileMessage {
         return bot.reply(messages).then(
             (response) => {
                 return resolve(response);
-            },
-            (response) => {
-                return reject(response);
             }
         );
     }

@@ -70,10 +70,6 @@ module.exports = class SkillChangeLightColor {
             (response) => {
                 return resolve(response);
             }
-        ).catch(
-            (exception) => {
-                return reject(exception);
-            }
         );
     }
 };

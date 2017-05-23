@@ -41,9 +41,6 @@ module.exports = class SkillFaq {
             return bot.reply().then(
                 (response) => {
                     return resolve(response);
-                },
-                (response) => {
-                    return reject(response);
                 }
             )
         }
@@ -66,10 +63,6 @@ module.exports = class SkillFaq {
         ).then(
             (response) => {
                 return resolve(response);
-            }
-        ).catch(
-            (exception) => {
-                return reject(exception);
             }
         );
     }

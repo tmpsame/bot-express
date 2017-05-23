@@ -77,17 +77,10 @@ finish(bot, bot_event, context, resolve, reject){
             }];
             // 送信元のメッセージプラットフォームを通じてメッセージが送信される。
             return bot.reply(messages);
-        },
-        (response) => {
-            return Promise.reject("Failed to change light color.");
         }
     ).then(
         (response) => {
             return resolve(response);
-        }
-    ).catch(
-        (response) => {
-            return reject(response);
         }
     );
 }
@@ -345,10 +338,6 @@ finish(bot, bot_event, context, resolve, reject){
     ).then(
         (response) => {
             return resolve(response);
-        }
-    ).catch(
-        (response) => {
-            return reject(response);
         }
     );
 }

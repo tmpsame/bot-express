@@ -145,9 +145,6 @@ module.exports = class SkillHandlePizzaOrder {
         return bot.reply(messages).then(
             (response) => {
                 return resolve(response);
-            },
-            (response) => {
-                return reject(response);
             }
         );
     }

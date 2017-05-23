@@ -14,10 +14,7 @@ module.exports = class SkillSimpleResponse {
         return bot.reply(messages).then(
             (response) => {
                 return resolve(response);
-            },
-            (response) => {
-                return reject(response);
             }
-        )
+        );
     }
 };
