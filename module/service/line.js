@@ -40,6 +40,8 @@ module.exports = class ServiceLine {
     }
 
     reply(reply_token, messages){
+        throw new Error("HOGEHOGEHOGE");
+        
         // If this is test, we will not actually issue call out.
         if (process.env.BOT_EXPRESS_ENV == "test"){
             debug("This is test so we skip the actual call out.");
