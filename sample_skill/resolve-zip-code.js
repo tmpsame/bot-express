@@ -18,7 +18,7 @@ module.exports = class SkillResolveZipCode {
                         message.altText = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
                         message.template.text = "住所は「" + context.confirmed.zip_code.resolved_address + "」でよろしいでしょうか？";
                         message.template.actions[0].data = context.confirmed.zip_code.resolved_address;
-                        bot.collect("city", message);
+                        bot.collect({city: message});
                     }
                     return resolve();
                 }
@@ -55,7 +55,6 @@ module.exports = class SkillResolveZipCode {
     parse_zip_code(value, resolve, reject){
         return zip_code.search(value).then(
             (response) => {
-                debug(response);
                 let address = response.address1 + response.address2 + response.address3;
                 return resolve({
                     zip_code: value,
@@ -63,7 +62,6 @@ module.exports = class SkillResolveZipCode {
                 });
             },
             (response) => {
-                debug(response);
                 return reject(response);
             }
         );

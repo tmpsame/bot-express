@@ -15,8 +15,6 @@ module.exports = class ServiceZipCode {
             json: true
         }).then(
             (response) => {
-                debug("search() succeeded. Resposne follows.");
-                debug(response);
                 if (response.body.results === null){
                     return Promise.reject(new Error("Address not found."));
                 }
