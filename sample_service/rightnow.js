@@ -1,201 +1,233 @@
 'use strict';
 
-//let soap = require("strong-soap").soap;
+let Promise = require("bluebird");
 let soap = require("soap");
 let memory = require("memory-cache");
 let request = require('request');
-let debug = require("debug")("service");
-let Promise = require("bluebird");
+let debug = require("debug")("bot-express:service");
+let app_env = require("../environment_variables");
 
-const RN_USER = process.env.RN_USER;
-const RN_PASSWORD = process.env.RN_PASSWORD;
-const RN_HOSTNAME = process.env.RN_HOSTNAME;
-const RN_WSDL = process.env.RN_WSDL;
+const RN_USER = app_env.RN_USER;
+const RN_PASSWORD = app_env.RN_PASSWORD;
+const RN_HOSTNAME = app_env.RN_HOSTNAME;
+const RN_WSDL = app_env.RN_WSDL;
 const SOAP_WSS_SECURITY = new soap.WSSecurity(RN_USER, RN_PASSWORD, {hasTimeStamp: false, hasTokenCreated: false});
 const APP_API_ID = 'bot-express';
 const APP_IP_ADDRESS = '10.0.0.0';
 
+Promise.promisifyAll(soap);
+Promise.promisifyAll(request);
+
 module.exports = class RightNow {
-    static search_answer(question, product = null, category = null){
-        return new Promise((resolve, reject) => {
 
-            let client = memory.get("rn_soap_client");
-            let client_created;
-            if (client){
-                debug("Rightnow soap client found.");
-                client_created = Promise.resolve(client);
-            } else {
-                debug("Going to create Rightnow soap client.");
-                client_created = new Promise((resolve, reject) => {
-                    soap.createClient(RN_WSDL, function(err, client) {
-                        if (err || !client){
-                            debug("Failed to create soap client.");
-                            return reject("Failed to create soap client.");
-                        }
-                        debug("Rightnow soap client created.");
+    static bot_rate_answer(interaction_id, content_id, rate, scale){
+        debug("bot_rate_answer() started.");
 
-                        client.setSecurity(SOAP_WSS_SECURITY);
-                        client.addSoapHeader(
-                            {
-                                ClientInfoHeader: {
-                                    AppID : APP_API_ID
-                                }
-                            },         //soapHeader Object({rootName: {name: "value"}}) or strict xml-string
-                            '',         //name Unknown parameter (it could just a empty string)
-                            'rnm_v1',   //namespace prefix of xml namespace
-                            ''          //xmlns URI
-                        );
-                        memory.put("rn_soap_client", client);
-                        resolve(client);
-                    });
-                });
+        return RightNow.get_client().then(
+            // Rate the content.
+            (client) => {
+                return RightNow.rate_content(client, interaction_id, content_id, rate, scale);
             }
+        );
+    }
 
-            client_created.then(
-                (response) => {
-                    let client = response;
-                    let options = {};
-                    let session_token;
-                    client.StartInteraction({
-                        AppIdentifier: APP_API_ID,
-                        UserIPAddress: APP_IP_ADDRESS
-                    }, function(err, result){
-                        if (err) {
-                            debug("Failed to start interaction.");
-                            return reject("Failed to start interaction.");
-                        }
-                        debug("Interaction started.");
-                        session_token = result.SessionToken;
-                        debug(`Interaction Id: ${session_token}`);
+    // Should be moved to another service.
+    static bot_search_answer(question, product = null, category = null){
+        debug("bot_search_answer() started.");
 
-                        let smart_assistant_search_msg = {
-                            SessionToken: session_token,
-                            Body: question,
-                            Subject: question
-                        }
+        let client;
+        let interaction_id;
 
-                        /*
-                           If user specify product or category, we set corresponding filter.
-                           BUT!!! At present, it seems this content filter is not working. So we filter the result after GetContent().
-                        */
-                        if (product || category){
-                            smart_assistant_search_msg.ContentSearch = {
-                                "$xml":""
-                            };
-                        }
-                        if (product){
-                            smart_assistant_search_msg.ContentSearch["$xml"] = `
-                                <Filters xmlns="urn:knowledge.ws.rightnow.com/v1">
-                                    <ContentFilterList xsi:type="ServiceProductContentFilter">
-                                        <ServiceProduct>
-                                            <Name xmlns="urn:base.ws.rightnow.com/v1">${product}</Name>
-                                        </ServiceProduct>
-                                    </ContentFilterList>
-                                </Filters>`;
-                        }
-                        if (category){
-                            smart_assistant_search_msg.ContentSearch["$xml"] += `
-                                <Filters xmlns="urn:knowledge.ws.rightnow.com/v1">
-                                    <ContentFilterList xsi:type="ServiceCategoryContentFilter">
-                                        <ServiceCategory>
-                                            <Name xmlns="urn:base.ws.rightnow.com/v1">${category}</Name>
-                                        </ServiceCategory>
-                                    </ContentFilterList>
-                                </Filters>`;
-                        }
-                        smart_assistant_search_msg.Limit = 1;
+        return RightNow.get_client().then(
+            // Start Interaction
+            (response) => {
+                client = response;
+                return RightNow.start_interaction(client, APP_API_ID, APP_IP_ADDRESS);
+            }
+        ).then(
+            // Search Contents using GetSmartAssistantSearch.
+            (interaction) => {
+                interaction_id = interaction.SessionToken;
+                return RightNow.get_smart_assistnat_search(client, interaction_id, question, product, category);
+            }
+        ).then(
+            // Get Full Content.
+            (response) => {
+                if (response.ContentListResponse.SummaryContents && response.ContentListResponse.SummaryContents.SummaryContentList){
+                    debug("Got contents.");
 
-                        debug("Going to perform GetSmartAssistantSearch. smart_assistant_search_msg is following.");
-                        debug(smart_assistant_search_msg);
-                        client.GetSmartAssistantSearch(smart_assistant_search_msg, function(err, result){
-                            if (err){
-                                debug("Failed to serach.");
-                                debug(err);
-                                return reject(err);
-                            }
-
-                            if (result.ContentListResponse.SummaryContents && result.ContentListResponse.SummaryContents.SummaryContentList){
-                                debug("Got contents.");
-
-                                // FOR TEST
-                                //return resolve(result.ContentListResponse);
-
-                                let content_id;
-                                if(result.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
-                                    content_id = result.ContentListResponse.SummaryContents.SummaryContentList[0].ID.attributes.id;
-                                } else {
-                                    content_id = result.ContentListResponse.SummaryContents.SummaryContentList.ID.attributes.id;
-                                }
-
-                                let content_msg = {
-                                    "$xml": `
-                                        <SessionToken>${session_token}</SessionToken>
-                                        <ContentTemplate xmlns:q1="urn:knowledge.ws.rightnow.com/v1" xsi:type="q1:AnswerContent">
-                                            <ID xmlns="urn:base.ws.rightnow.com/v1" id="${content_id}"/>
-                                            <q1:Categories xsi:nil="true"/>
-                                            <q1:CommonAttachments xsi:nil="true"/>
-                                            <q1:FileAttachments xsi:nil="true"/>
-                                            <q1:Keywords xsi:nil="true"/>
-                                            <q1:Products xsi:nil="true"/>
-                                            <q1:Question xsi:nil="true"/>
-                                            <q1:Solution xsi:nil="true"/>
-                                            <q1:ValidNullFields xsi:nil="true"/>
-                                        </ContentTemplate>`
-                                }
-
-                                debug("Getting full content.");
-                                client.GetContent(content_msg, function(err, result){
-                                    if (err){
-                                        debug("Failed to get content.");
-                                        debug(err);
-                                        return reject(err);
-                                    }
-                                    let content;
-                                    if (result.Content){
-                                        debug("Got following full content.");
-                                        debug(result.Content);
-                                        content = result.Content;
-                                    }
-                                    if (product){
-                                        let found = false;
-                                        for (let NamedIDHierarchy of content.Products.NamedIDHierarchyList){
-                                            if (NamedIDHierarchy.Name == product){
-                                                found = true;
-                                            }
-                                        }
-                                        if (!found){
-                                            debug(`Got full content but product does not match.`);
-                                            content = null;
-                                        }
-                                    }
-                                    if (category){
-                                        let found = false;
-                                        for (let NamedIDHierarchy of content.Categories.NamedIDHierarchyList){
-                                            if (NamedIDHierarchy.Name == category){
-                                                found = true;
-                                            }
-                                        }
-                                        if (!found){
-                                            debug(`Got full content but category does not match.`);
-                                            content = null;
-                                        }
-                                    }
-                                    return resolve(content);
-                                });
-                            } else {
-                                // Contents not found.
-                                debug("Contents not found.");
-                                resolve();
-                            }
-                        }, options);
-                    },
-                    options);
-                },
-                (response) => {
-                    debug("Failed to create soap client.");
-                    reject("Failed to create soap client.");
+                    let content_id;
+                    if(response.ContentListResponse.SummaryContents.SummaryContentList.length > 0){
+                        content_id = response.ContentListResponse.SummaryContents.SummaryContentList[0].ID.attributes.id;
+                    } else {
+                        content_id = response.ContentListResponse.SummaryContents.SummaryContentList.ID.attributes.id;
+                    }
+                    return RightNow.get_content(client, interaction_id, content_id);
+                } else {
+                    debug("No Hit");
+                    return null;
                 }
-            );
+            }
+        ).then(
+            // Return Content
+            (result) => {
+                return {
+                    interaction_id: interaction_id,
+                    result: result.Content
+                };
+            }
+        );
+    }
+
+    static create_answer(answer){
+        debug("create_answer() started.");
+        let url = "https://" + app_env.RN_USER + ":" + app_env.RN_PASSWORD + "@" + app_env.RN_HOSTNAME + "/services/rest/connect/v1.3/answers";
+        let headers = {
+            "Content-Type": "application/json"
+        };
+        return request.postAsync({
+            url: url,
+            headers: headers,
+            body: answer,
+            json: true
         });
     }
+
+    static rate_content(client, interaction_id, content_id, rate, scale){
+        debug("rate_content() started.");
+
+        let msg = {
+            "$xml": `
+            <SessionToken>${interaction_id}</SessionToken>
+            <Content xmlns:q1="urn:knowledge.ws.rightnow.com/v1" xsi:type="q1:AnswerContent">
+                <ID xmlns="urn:base.ws.rightnow.com/v1" id="${content_id}"/>
+                <q1:Categories xsi:nil="true"/>
+                <q1:CommonAttachments xsi:nil="true"/>
+                <q1:FileAttachments xsi:nil="true"/>
+                <q1:Keywords xsi:nil="true"/>
+                <q1:Products xsi:nil="true"/>
+                <q1:Question xsi:nil="true"/>
+                <q1:Solution xsi:nil="true"/>
+                <q1:ValidNullFields xsi:nil="true"/>
+            </Content>
+            <Rate>
+                <ID xmlns="urn:base.ws.rightnow.com/v1" id="${rate}"/>
+            </Rate>
+            <Scale>
+                <ID xmlns="urn:base.ws.rightnow.com/v1" id="${scale}"/>
+            </Scale>`
+        }
+        return client.RateContentAsync(msg);
+    }
+
+    static get_content(client, interaction_id, content_id){
+        debug("get_content() started.");
+
+        let content_msg = {
+            "$xml": `
+                <SessionToken>${interaction_id}</SessionToken>
+                <ContentTemplate xmlns:q1="urn:knowledge.ws.rightnow.com/v1" xsi:type="q1:AnswerContent">
+                    <ID xmlns="urn:base.ws.rightnow.com/v1" id="${content_id}"/>
+                    <q1:Categories xsi:nil="true"/>
+                    <q1:CommonAttachments xsi:nil="true"/>
+                    <q1:FileAttachments xsi:nil="true"/>
+                    <q1:Keywords xsi:nil="true"/>
+                    <q1:Products xsi:nil="true"/>
+                    <q1:Question xsi:nil="true"/>
+                    <q1:Solution xsi:nil="true"/>
+                    <q1:ValidNullFields xsi:nil="true"/>
+                </ContentTemplate>`
+        }
+        return client.GetContentAsync(content_msg);
+    }
+
+    static get_smart_assistnat_search(client, interaction_id, question, product, category){
+        debug("get_smart_assistant_search() started.");
+
+        let smart_assistant_search_msg = {
+            SessionToken: interaction_id,
+            Body: question,
+            Subject: "bot-express" // This is supposed not to match any content to improve accuracy of SA result.
+        }
+        // If user specify product or category, we set corresponding filter.
+        if (product || category){
+            smart_assistant_search_msg.ContentSearch = {
+                "$xml":""
+            };
+        }
+        if (product){
+            smart_assistant_search_msg.ContentSearch["$xml"] = `
+                <Filters xmlns="urn:knowledge.ws.rightnow.com/v1">
+                    <ContentFilterList xsi:type="ServiceProductContentFilter">
+                        <ServiceProduct>
+                            <Name xmlns="urn:base.ws.rightnow.com/v1">${product}</Name>
+                        </ServiceProduct>
+                    </ContentFilterList>
+                </Filters>`;
+        }
+        if (category){
+            smart_assistant_search_msg.ContentSearch["$xml"] += `
+                <Filters xmlns="urn:knowledge.ws.rightnow.com/v1">
+                    <ContentFilterList xsi:type="ServiceCategoryContentFilter">
+                        <ServiceCategory>
+                            <Name xmlns="urn:base.ws.rightnow.com/v1">${category}</Name>
+                        </ServiceCategory>
+                    </ContentFilterList>
+                </Filters>`;
+        }
+        smart_assistant_search_msg.Limit = 1;
+
+        return client.GetSmartAssistantSearchAsync(smart_assistant_search_msg);
+    }
+
+    static start_interaction(client, app_api_id, app_ip_addr){
+        debug("start_interaction() started.");
+        return client.StartInteractionAsync({
+            AppIdentifier: app_api_id,
+            UserIPAddress: app_ip_addr
+        });
+    }
+
+    static get_client(){
+        debug("get_client() started.");
+
+        let client = memory.get("rn_soap_client");
+        let client_created;
+        if (client){
+            debug("Rightnow soap client found.");
+            return Promise.resolve(client);
+        } else {
+            debug("Rightnow soap client NOT found.");
+            return RightNow.create_client(RN_WSDL, SOAP_WSS_SECURITY, APP_API_ID).then(
+                (client) => {
+                    Promise.promisifyAll(client);
+                    memory.put("rn_soap_client", client);
+                    return client;
+                }
+            )
+        }
+    }
+
+    static create_client(wsdl, wss_security, app_id){
+        debug("create_client() started.");
+
+        return soap.createClientAsync(wsdl).then(
+            (client) => {
+                debug("Rightnow soap client created.");
+                client.setSecurity(wss_security);
+                client.addSoapHeader(
+                    {
+                        ClientInfoHeader: {
+                            AppID : app_id
+                        }
+                    },         //soapHeader Object({rootName: {name: "value"}}) or strict xml-string
+                    '',         //name Unknown parameter (it could just a empty string)
+                    'rnm_v1',   //namespace prefix of xml namespace
+                    ''          //xmlns URI
+                );
+                return client;
+            }
+        )
+    }
+
 }

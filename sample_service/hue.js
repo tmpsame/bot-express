@@ -1,10 +1,12 @@
 'use strict';
 
-let request = require('request');
 let Promise = require('bluebird');
-let debug = require("debug")("service");
+let request = require('request');
+let debug = require("debug")("bot-express:service");
 const MAKER_URL_PREFIX = 'https://maker.ifttt.com/trigger/';
 const MAKER_KEY = process.env.MAKER_KEY;
+
+Promise.promisifyAll(request);
 
 module.exports = class Hue {
     static change_color(color){
@@ -15,17 +17,13 @@ module.exports = class Hue {
         }
 
         debug("Going to change the color.");
-        return new Promise((resolve, reject) => {
-            let url = MAKER_URL_PREFIX + 'wfc_change_light_color/with/key/' + MAKER_KEY;
-            let body = {value1: color};
-            request({
-                method: "POST",
-                url: url,
-                body: body,
-                json: true
-            }, (error, response, body) => {
-                (error) ? reject(error) : resolve(body);
-            });
+
+        let url = MAKER_URL_PREFIX + 'wfc_change_light_color/with/key/' + MAKER_KEY;
+        let body = {value1: color};
+        return request.postAsync({
+            url: url,
+            body: body,
+            json: true
         });
     }
 
@@ -37,15 +35,11 @@ module.exports = class Hue {
         }
 
         debug("Going to turn on the light.");
-        return new Promise((resolve, reject) => {
-            let url = MAKER_URL_PREFIX + 'wfc_turn_on_light/with/key/' + MAKER_KEY;
-            request({
-                method: "POST",
-                url: url,
-                json: true
-            }, (error, response, body) => {
-                (error) ? reject(error) : resolve(body);
-            });
+
+        let url = MAKER_URL_PREFIX + 'wfc_turn_on_light/with/key/' + MAKER_KEY;
+        return request.postAsync({
+            url: url,
+            json: true
         });
     }
 
@@ -57,15 +51,11 @@ module.exports = class Hue {
         }
 
         debug("Going to turn off the light.");
-        return new Promise((resolve, reject) => {
-            let url = MAKER_URL_PREFIX + 'wfc_turn_off_light/with/key/' + MAKER_KEY;
-            request({
-                method: "POST",
-                url: url,
-                json: true
-            }, (error, response, body) => {
-                (error) ? reject(error) : resolve(body);
-            });
+
+        let url = MAKER_URL_PREFIX + 'wfc_turn_off_light/with/key/' + MAKER_KEY;
+        return request.postAsync({
+            url: url,
+            json: true
         });
     }
 }
