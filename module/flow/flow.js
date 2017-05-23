@@ -146,10 +146,6 @@ module.exports = class Flow {
                     value: parsed_value
                 }
             }
-        ).catch(
-            (error) => {
-                return Promise.reject(error);
-            }
         );
     }
 
