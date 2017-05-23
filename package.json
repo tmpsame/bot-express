@@ -2,7 +2,7 @@
   "description": "Chat Bot builder framework based on flow and skill model.",
   "main": "index.js",
   "name": "bot-express",
-  "version": "0.0.85",
+  "version": "0.0.86",
   "private": false,
   "repository": {
     "type": "git",
@@ -31,7 +31,6 @@
     "crypto": "0.0.3",
     "debug": "^2.6.1",
     "express": "~4.15.2",
-    "filecopy": "^3.0.1",
     "memory-cache": "^0.1.6",
     "morgan": "^1.8.1",
     "request": "^2.79.0"
