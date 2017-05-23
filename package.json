@@ -38,6 +38,7 @@
     "isemail": "*",
     "mecabaas-client": "^1.0.2",
     "mocha": "*",
-    "moji": "*"
+    "moji": "*",
+    "striptags": "*"
   }
 }
