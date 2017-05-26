@@ -9,7 +9,8 @@ module.exports = class SkillSimpleResponse {
     finish(bot, bot_event, context, resolve, reject){
         debug(`Going to reply "${context.intent.fulfillment.speech}".`);
         let messages = [{
-            text: context.intent.fulfillment.speech
+            //text: context.intent.fulfillment.speech
+            text: undefined
         }];
         return bot.reply(messages).then(
             (response) => {
