@@ -67,7 +67,7 @@ module.exports = class SkillFaq {
         this.clear_context_on_finish = true;
     }
 
-    parse_rating(value, resolve, reject){
+    parse_rating(value, context, resolve, reject){
         debug(`Parsing rating.`);
         let parsed_value;
 

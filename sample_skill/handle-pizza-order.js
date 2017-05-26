@@ -52,7 +52,7 @@ module.exports = class SkillHandlePizzaOrder {
         };
     }
 
-    parse_pizza(value, resolve, reject){
+    parse_pizza(value, context, resolve, reject){
         let parsed_value;
         if (value.match(/マルゲリータ/)){
             parsed_value = "マルゲリータ";
@@ -64,7 +64,7 @@ module.exports = class SkillHandlePizzaOrder {
         return resolve(parsed_value);
     }
 
-    parse_size(value, resolve, reject){
+    parse_size(value, context, resolve, reject){
         let parsed_value;
         if (value.match(/[sS]/) || value.match(/小/)){
             parsed_value = "S";
@@ -78,7 +78,7 @@ module.exports = class SkillHandlePizzaOrder {
         return resolve(parsed_value);
     }
 
-    parse_address(value, resolve, reject){
+    parse_address(value, context, resolve, reject){
         let parsed_value;
         if (typeof value == "string"){
             parsed_value = {
@@ -114,7 +114,7 @@ module.exports = class SkillHandlePizzaOrder {
         return resolve(parsed_value);
     }
 
-    parse_name(value, resolve, reject){
+    parse_name(value, context, resolve, reject){
         let lastname, firstname, fullname;
         return mecab.parse(value).then(
             (response) => {

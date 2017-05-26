@@ -52,7 +52,7 @@ module.exports = class SkillResolveZipCode {
         };
     }
 
-    parse_zip_code(value, resolve, reject){
+    parse_zip_code(value, context, resolve, reject){
         return zip_code.search(value).then(
             (response) => {
                 let address = response.address1 + response.address2 + response.address3;
@@ -67,7 +67,7 @@ module.exports = class SkillResolveZipCode {
         );
     }
 
-    parse_city(value, resolve, reject){
+    parse_city(value, context, resolve, reject){
         if (value == "いいえ"){
             return reject(value);
         } else if (value == "例外"){

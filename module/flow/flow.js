@@ -169,13 +169,13 @@ module.exports = class Flow {
 
             if (!!this.skill[type][key].parser){
                 debug("Parse method found in parameter definition.");
-                return this.skill[type][key].parser(value, resolve, parse_reject);
+                return this.skill[type][key].parser(value, this.context, resolve, parse_reject);
             } else if (!!this.skill["parse_" + key]){
                 debug("Parse method found in default parser function name.");
-                return this.skill["parse_" + key](value, resolve, parse_reject);
+                return this.skill["parse_" + key](value, this.context, resolve, parse_reject);
             } else {
                 debug("Parse method NOT found. We use the value as it is as long as the value is set.");
-                if (value === null || value.trim() === ""){
+                if (value === null || value == ""){
                     return parse_reject("Value not set");
                 } else {
                     return resolve(value);

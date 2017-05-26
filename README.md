@@ -76,7 +76,7 @@ finish(bot, bot_event, context, resolve, reject){
                 text: "了解しましたー。"
             }];
             // 送信元のメッセージプラットフォームを通じてメッセージが送信される。
-            return bot.reply(messages);
+            return bot.reply(messages).then;
         }
     ).then(
         (response) => {
@@ -290,14 +290,14 @@ reactionは5つの引数を取ります。
 
 いずれのパラメータも特定されればcontext.confirmedに登録され、後述のfinish()の中で参照することができます。
 
-**parse_パラメータ(value, resolve, reject)**
+**parse_パラメータ(value, context, resolve, reject)**
 
 ユーザーが発したメッセージからパラメータを特定、変換する処理をパラメータごとに記述します。
 
 例えば、ユーザーが「ライトの色を変えてください」というメッセージを送信すると、Botはcolorパラメータが埋まっていないことに気付き、「何色にしますか？」と質問します。それに対しユーザーが「赤色」と返信したとします。Botはこの時、このメッセージにサポートする色が指定されているかどうか、また、最終的にライトの色を変更するために色をカラーコードに変換する必要があります。この判定処理、および変換処理を必要に応じてparse_パラメータ()に記述します。
 
 ```
-parse_color(value, resolve, reject){
+parse_color(value, context, resolve, reject){
     if (value === null || value == ""){
         return reject();
     }

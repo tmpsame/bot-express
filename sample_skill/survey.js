@@ -96,7 +96,7 @@ module.exports = class SkillSurvey {
         }
     }
 
-    parse_satisfaction(value, resolve, reject){
+    parse_satisfaction(value, context, resolve, reject){
         debug(`Parsing satisfaction.`);
         let parsed_value;
         try {
@@ -112,7 +112,7 @@ module.exports = class SkillSurvey {
         return resolve(parsed_value);
     }
 
-    parse_difficulty(value, resolve, reject){
+    parse_difficulty(value, context, resolve, reject){
         debug(`Parsing difficulty.`);
         let parsed_value;
         if (value.match(/難/) || value.match(/むずかし/) || value.match(/むずい/) || value.match(/げきむず/) || value.match(/ゲキムズ/) || value.match(/激ムズ/)){
@@ -128,14 +128,14 @@ module.exports = class SkillSurvey {
         return resolve(parsed_value);
     }
 
-    parse_free_comment(value, resolve, reject){
+    parse_free_comment(value, context, resolve, reject){
         debug(`Parsing free_comment.`);
         let parsed_value = value;
         debug(`Parsed value is ${parsed_value}.`);
         return resolve(parsed_value);
     }
 
-    parse_mail(value, resolve, reject){
+    parse_mail(value, context, resolve, reject){
         debug(`Parsing mail.`);
         let parsed_value;
         if (is_email.validate(value)){

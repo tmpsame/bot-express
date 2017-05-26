@@ -37,7 +37,7 @@ module.exports = class SkillChangeLightColor {
     }
 
     // サポートする色かどうかを判別しカラーコードに変化する
-    parse_color(value, resolve, reject){
+    parse_color(value, context, resolve, reject){
         if (value === null || value == ""){
             return reject();
         }
