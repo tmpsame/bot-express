@@ -509,11 +509,6 @@ module.exports = class VirtualPlatform {
         debug(`Compiled message is following.`);
         debug(compiled_message);
 
-        // Just for debug
-        if (compiled_message.template && compiled_message.template.actions){
-            debug(compiled_message.template.actions);
-        }
-
         return compiled_message;
     }
 

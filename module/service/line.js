@@ -31,8 +31,6 @@ module.exports = class ServiceLine {
             messages: messages
         }
         let url = 'https://api.line.me/v2/bot/message/push';
-        debug("going to send follwing messages");
-        debug(body.messages);
         return request.postAsync({
             url: url,
             headers: headers,
@@ -77,8 +75,6 @@ module.exports = class ServiceLine {
             messages: messages
         }
         let url = 'https://api.line.me/v2/bot/message/reply';
-        debug("going to send follwing messages");
-        debug(body.messages);
         return request.postAsync({
             url: url,
             headers: headers,
