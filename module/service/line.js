@@ -62,10 +62,20 @@ module.exports = class ServiceLine {
             json: true
         }).then(
             (response) => {
-                debug(response);
+                if (response.statusCode != 200){
+                    debug("line.reply() failed");
+                    if (response.body && response.body.message){
+                        return Promise.reject(new Error(response.body.message));
+                    } else if (response.statusMessage){
+                        return Promise.reject(new Error(response.statusMessage));
+                    } else {
+                        return Promise.reject(new Error("line.reply() failed."));
+                    }
+                }
                 return;
             },
             (response) => {
+                debug("line.reply() failed");
                 return Promise.reject(response);
             }
         );
