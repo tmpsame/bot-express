@@ -60,7 +60,15 @@ module.exports = class ServiceLine {
             headers: headers,
             body: body,
             json: true
-        });
+        }).then(
+            (response) => {
+                debug(response);
+                return;
+            },
+            (response) => {
+                return Promise.reject(response);
+            }
+        );
     }
 
     validate_signature(signature, raw_body){
