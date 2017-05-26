@@ -9,8 +9,16 @@ module.exports = class SkillSimpleResponse {
     finish(bot, bot_event, context, resolve, reject){
         debug(`Going to reply "${context.intent.fulfillment.speech}".`);
         let messages = [{
-            type: "text",
-            text: undefined
+            type: "template",
+            altText: "hoge",
+            template: {
+                text: "hoge",
+                actions: [{
+                    type: "text",
+                    label: "hoge1",
+                    text: "hoge1"
+                }]
+            }
         }]
         /*
         let messages = [{
