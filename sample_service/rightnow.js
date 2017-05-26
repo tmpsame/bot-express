@@ -12,7 +12,7 @@ const RN_PASSWORD = app_env.RN_PASSWORD;
 const RN_HOSTNAME = app_env.RN_HOSTNAME;
 const RN_WSDL = app_env.RN_WSDL;
 const SOAP_WSS_SECURITY = new soap.WSSecurity(RN_USER, RN_PASSWORD, {hasTimeStamp: false, hasTokenCreated: false});
-const APP_API_ID = 'bot-express';
+const APP_API_ID = 'kobaton';
 const APP_IP_ADDRESS = '10.0.0.0';
 
 Promise.promisifyAll(soap);
@@ -70,10 +70,17 @@ module.exports = class RightNow {
             }
         ).then(
             // Return Content
-            (result) => {
+            (response) => {
+                let result;
+                if (response == null){
+                    result = null;
+                } else {
+                    debug("Got full content.");
+                    result = response.Content;
+                }
                 return {
                     interaction_id: interaction_id,
-                    result: result.Content
+                    result: result
                 };
             }
         );
