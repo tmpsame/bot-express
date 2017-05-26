@@ -53,7 +53,14 @@ module.exports = class ServiceFacebook {
                     json: true
                 }).then(
                     (response) => {
-                        debug(response);
+                        if (response.statusCode != 200){
+                            debug("facebook.send() failed.");
+                            if (response.body && response.body.error && response.body.error.message){
+                                return Promise.reject(new Error(response.body.error.message));
+                            } else if (response.statusMessage){
+                                return Promise.reject(new Error(response.statusMessage));
+                            }
+                        }
                         return response;
                     }
                 ));
