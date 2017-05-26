@@ -42,6 +42,7 @@
     "mecabaas-client": "^1.0.2",
     "mocha": "*",
     "moji": "*",
-    "striptags": "*"
+    "striptags": "*",
+    "soap": "*"
   }
 }
