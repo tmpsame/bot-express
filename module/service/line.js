@@ -36,7 +36,21 @@ module.exports = class ServiceLine {
             headers: headers,
             body: body,
             json: true
-        });
+        }).then(
+            (response) => {
+                if (response.statusCode != 200){
+                    debug("line.send() failed");
+                    if (response.body && response.body.message){
+                        return Promise.reject(new Error(response.body.message));
+                    } else if (response.statusMessage){
+                        return Promise.reject(new Error(response.statusMessage));
+                    } else {
+                        return Promise.reject(new Error("line.reply() failed."));
+                    }
+                }
+                return response;
+            }
+        );
     }
 
     reply(reply_token, messages){
@@ -72,11 +86,7 @@ module.exports = class ServiceLine {
                         return Promise.reject(new Error("line.reply() failed."));
                     }
                 }
-                return;
-            },
-            (response) => {
-                debug("line.reply() failed");
-                return Promise.reject(response);
+                return response;
             }
         );
     }

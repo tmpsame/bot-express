@@ -51,7 +51,12 @@ module.exports = class ServiceFacebook {
                     url: url,
                     body: body,
                     json: true
-                }));
+                }).then(
+                    (response) => {
+                        debug(response);
+                        return response;
+                    }
+                ));
             }, interval);
         }
 
