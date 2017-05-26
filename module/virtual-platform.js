@@ -508,6 +508,12 @@ module.exports = class VirtualPlatform {
         let compiled_message = this[`_${this.type}_compile_message`](format, message);
         debug(`Compiled message is following.`);
         debug(compiled_message);
+
+        // Just for debug
+        if (compiled_message.template && compiled_message.template.actions){
+            debug(compiled_message.template.actions);
+        }
+
         return compiled_message;
     }
 
