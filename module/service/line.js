@@ -41,9 +41,9 @@ module.exports = class ServiceLine {
                 if (response.statusCode != 200){
                     debug("line.send() failed");
                     if (response.body && response.body.message && response.body.details && response.body.details.length > 0){
-                        let error_message = response.body.message;
+                        let error_message = "Error code is " + response.statusCode + ". " + response.body.message;
                         for (let detail of response.body.details){
-                            error_message += detail.message;
+                            error_message += " " + detail.message;
                         }
                         return Promise.reject(new Error(error_message));
                     } else if (response.body && response.body.message){
@@ -85,9 +85,9 @@ module.exports = class ServiceLine {
                 if (response.statusCode != 200){
                     debug("line.reply() failed");
                     if (response.body && response.body.message && response.body.details && response.body.details.length > 0){
-                        let error_message = response.body.message;
+                        let error_message = "Error code is " + response.statusCode + ". " + response.body.message;
                         for (let detail of response.body.details){
-                            error_message += detail.message;
+                            error_message += " " + detail.message;
                         }
                         return Promise.reject(new Error(error_message));
                     } else if (response.body && response.body.message){
