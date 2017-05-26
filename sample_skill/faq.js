@@ -3,11 +3,151 @@
 let Promise = require('bluebird');
 let striptags = require('striptags');
 let debug = require('debug')('bot-express:skill');
-let rightnow = require('../service/rightnow');
+let rightnow = require('../sample_service/rightnow');
+let process.env = require("../environment_variables");
 
 module.exports = class SkillFaq {
 
     constructor(bot, bot_event){
+        this.required_parameter = {
+            question: {
+                message_to_confirm: {
+                    type: "text",
+                    text: "どうぞ。"
+                },
+                reaction: (error, value, context, resolve, reject) => {
+                    if (error){
+                        bot.change_message_to_confirm("question", {
+                            type: "text",
+                            text: "質問をどうぞ。"
+                        });
+                        return resolve();
+                    }
+
+                    if (process.env.FAQ_MODE == "human"){ // This is Human Only Mode.
+                        debug("Human mode reaction.");
+
+                        let tasks = [];
+
+                        // ### Task Overview ###
+                        // -> Send pending to user.
+                        // -> Send help to administrator.
+
+                        // -> Send pending to user.
+                        tasks.push(bot.reply([{text: "ちょっと調べてみますね。少々お待ちを。"}]));
+
+                        // -> Send help to administrator.
+                        tasks.push(this.need_help(bot, "ユーザーから質問です。", bot.extract_memory_id(), value));
+
+                        return Promise.all(tasks).then(
+                            (response) => {
+                                return resolve();
+                            }
+                        );
+                    } else if (process.env.FAQ_MODE == "hybrid"){ // This is Hybrid Mode by Robot and Human.
+                        debug("Hybrid mode reaction.");
+                        return rightnow.bot_search_answer(value, process.env.RN_PRODUCT).then(
+                            (response) => {
+                                // Save interacion id for later rating.
+                                context.confirmed.interaction_id = response.interaction_id;
+
+                                // Extract and save message_id to context.
+                                if (bot.type == "line"){
+                                    context.confirmed.message_id = bot_event.message.id;
+                                } else if (bot.type == "facebook"){
+                                    context.confirmed.message_id = bot_event.message.mid;
+                                }
+
+                                // Save asnwer to context.
+                                if (!response.result || !response.result.Solution){
+                                    context.confirmed.answer = "ちょっと調べてみますね。少々お待ちを。";
+                                } else {
+                                    context.confirmed.answer = striptags(response.result.Solution);
+                                    context.confirmed.answer_id = response.result.ID.attributes.id;
+                                    context.confirmed.answer_summary = response.result.Summary;
+                                }
+
+                                let tasks = [];
+
+                                if (!response.result || !response.result.Solution){
+                                    // ### Task Overview in case we have NO answer ###
+                                    // -> Send pending to user.
+                                    // -> Send help to administrator.
+
+                                    // -> Send pending to user.
+                                    tasks.push(bot.reply([{text: context.confirmed.answer}]));
+
+                                    // -> Send help to administrator.
+                                    if ((!!process.env.LINE_ADMIN_USER_ID && bot.type == "line") || (!!process.env.FACEBOOK_ADMIN_USER_ID && bot.type == "facebook")){
+                                        tasks.push(this.need_help(bot, "わからないこと聞かれました。", bot.extract_memory_id(), context.confirmed.question));
+                                    }
+                                } else {
+                                    // ### Task Overview in case we have answer ###
+                                    // -> Send answer to user.
+                                    // -> Collect rating.
+
+                                    // -> Send answer to user.
+                                    bot.queue({text: context.confirmed.answer});
+
+                                    // -> Collect rating.
+                                    bot.collect("rating");
+                                }
+
+                                return Promise.all(tasks).then(
+                                    (response) => {
+                                        return resolve();
+                                    }
+                                )
+                            }
+                        );
+                    } else if (process.env.FAQ_MODE == "robot"){ // This is Robot Only Mode.
+                        debug("Robot mode reaction.");
+                        return rightnow.bot_search_answer(value, process.env.RN_PRODUCT).then(
+                            (response) => {
+                                // Save interacion id for later rating.
+                                context.confirmed.interaction_id = response.interaction_id;
+
+                                // Extract and save message_id to context.
+                                if (bot.type == "line"){
+                                    context.confirmed.message_id = bot_event.message.id;
+                                } else if (bot.type == "facebook"){
+                                    context.confirmed.message_id = bot_event.message.mid;
+                                }
+
+                                // Save asnwer to context.
+                                if (!response.result || !response.result.Solution){
+                                    context.confirmed.answer = "ごめんなさい、わかりませんでした。";
+                                } else {
+                                    context.confirmed.answer = striptags(response.result.Solution);
+                                    context.confirmed.answer_id = response.result.ID.attributes.id;
+                                    context.confirmed.answer_summary = response.result.Summary;
+                                }
+
+                                let tasks = [];
+
+                                // ### Task Overview ###
+                                // -> Send answer to user.
+                                // -> Collect rating if we have an answer.
+
+                                // -> Send answer to user.
+                                bot.queue({text: context.confirmed.answer});
+
+                                // -> Collect rating if we have an answer.
+                                if (!!response.result && !!response.result.Solution){
+                                    bot.collect("rating");
+                                }
+
+                                return Promise.all(tasks).then(
+                                    (response) => {
+                                        return resolve();
+                                    }
+                                );
+                            }
+                        );
+                    }
+                }
+            }
+        },
         this.optional_parameter = {
             rating: {
                 message_to_confirm: {
@@ -30,6 +170,7 @@ module.exports = class SkillFaq {
                         // ### Tasks Overview ###
                         // -> Rate content in FAQ database.
                         // -> Reply message depending on the rating.
+                        // -> Send Help to administrator if user says answer is not useful. (Hybrid Mode Only)
 
                         // Rate Content in FAQ database.
                         tasks.push(rightnow.bot_rate_answer(context.confirmed.interaction_id, context.confirmed.answer_id, value, 3));
@@ -39,6 +180,20 @@ module.exports = class SkillFaq {
                             bot.queue({text: "ホッ。"});
                         } else if (value == 1){
                             bot.queue({text: "ガッビーン。"});
+                        }
+
+                        // Send Help to administrator if user says answer is not useful.
+                        if (value == 1 && process.env.FAQ_MODE == "hybrid"){
+                            if ((!!process.env.LINE_ADMIN_USER_ID && bot.type == "line") || (!!process.env.FACEBOOK_ADMIN_USER_ID && bot.type == "facebook")){
+                                // Extract user_id.
+                                let user_id;
+                                if (bot.type == "line"){
+                                    user_id = bot_event.source.userId;
+                                } else if (bot.type == "facebook"){
+                                    user_id = bot_event.sender.id;
+                                }
+                                tasks.push(this.need_help(bot, "私の回答、微妙とのこと。", user_id, context.confirmed.question, context.confirmed.answer));
+                            }
                         }
 
                         return Promise.all(tasks).then(
@@ -83,58 +238,45 @@ module.exports = class SkillFaq {
     }
 
     finish(bot, bot_event, context, resolve, reject){
-        // If rating is set, it means we've answered and this event is rating to that answer. So we just reply.
-        if (typeof context.confirmed.rating != "undefined"){
-            return bot.reply().then(
-                (response) => {
-                    return resolve();
-                }
-            );
-        }
-
-        context.confirmed.question = bot.extract_message_text();
-
-        // If this is not the message we should handle, we skip this event. Maybe user tap confirm button twice.
-        if (context.confirmed.question.match(/役立った/) || context.confirmed.question.match(/微妙/)){
-            return resolve();
-        }
-
-        return rightnow.bot_search_answer(context.confirmed.question, process.env.RN_PRODUCT).then(
-            (response) => {
-                // Save interacion id for later rating.
-                context.confirmed.interaction_id = response.interaction_id;
-
-                // Save asnwer to context.
-                if (!response.result || !response.result.Solution){
-                    context.confirmed.answer = "ごめんなさい、ちょっと分かりませんでした。";
-                } else {
-                    context.confirmed.answer = striptags(response.result.Solution);
-                    context.confirmed.answer_id = response.result.ID.attributes.id;
-                }
-
-                // Promise List.
-                let tasks = [];
-
-                // In case We do not have answer...
-                // -> Reply apologies.
-                if (!response.result || !response.result.Solution){
-                    tasks.push(bot.reply([{text: context.confirmed.answer}]));
-                }
-
-                // In case We have an answer...
-                // -> Reply answer.
-                // -> Collect rating.
-                if (response.result && response.result.Solution){
-                    bot.queue({text: context.confirmed.answer});
-                    bot.collect("rating");
-                }
-
-                return Promise.all(tasks);
-            }
-        ).then(
+        return bot.reply().then(
             (response) => {
                 return resolve();
             }
         );
+    }
+
+    need_help(bot, status, sender_user_id, question, answer = null){
+        let admin_user_id;
+        if (bot.type == "line"){
+            admin_user_id = process.env.LINE_ADMIN_USER_ID;
+        } else if (bot.type == "facebook"){
+            admin_user_id = process.env.FACEBOOK_ADMIN_USER_ID;
+        }
+        debug("Going to send help message to admin.");
+        let message_text;
+        if (answer == null){
+            message_text = `${status}\n「${question}」`;
+        } else {
+            message_text = `${status}\n「${question}」=>「${answer}」`;
+        }
+        message_text.replace("&nbsp;", "");
+        if (bot.type == "line" && message_text.length > 160){
+            message_text = message_text.substr(0, 160);
+        }
+        if (bot.type == "facebook" && message_text.length > 1000){
+            message_text = message_text.substr(0, 1000);
+        }
+        return bot.send(admin_user_id, [{
+            attachment: {
+                type: "template",
+                payload: {
+                    template_type: "button",
+                    text: message_text,
+                    buttons: [
+                        {type: "postback", title: "回答する", payload: `ユーザーからの質問に回答します。 $$ ${sender_user_id} $$ ${question}`}
+                    ]
+                }
+            }
+        }]);
     }
 };

@@ -80,7 +80,7 @@ finish(bot, bot_event, context, resolve, reject){
         }
     ).then(
         (response) => {
-            return resolve(response);
+            return resolve();
         }
     );
 }
@@ -337,7 +337,7 @@ finish(bot, bot_event, context, resolve, reject){
         }
     ).then(
         (response) => {
-            return resolve(response);
+            return resolve();
         }
     );
 }
