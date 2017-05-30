@@ -138,7 +138,7 @@ module.exports = class webhook {
                 promise_flow_completed = flow.run();
                 // End of Start Conversation Flow.
             } else {
-                if (!!context.confirming){
+                if (context.confirming){
                     /*
                     ** Reply Flow
                     */

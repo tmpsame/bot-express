@@ -544,8 +544,6 @@ module.exports = class VirtualPlatform {
                     source_texts.push(action.label);
                     if (action.type == "message"){
                         source_texts.push(action.text);
-                    } else if (action.type == "postback"){
-                        source_texts.push(action.data);
                     }
                 }
                 debug(source_texts);
@@ -561,9 +559,6 @@ module.exports = class VirtualPlatform {
                             offset++;
                             if (action.type == "message"){
                                 action.text = response[0][offset];
-                                offset++;
-                            } else if (action.type == "postback"){
-                                action.data = response[0][offset];
                                 offset++;
                             }
                         }
