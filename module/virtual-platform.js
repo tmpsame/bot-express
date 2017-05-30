@@ -542,8 +542,8 @@ module.exports = class VirtualPlatform {
                 return this.translater.translate([message.altText, message.template.text], sender_language).then(
                     (response) => {
                         debug(response);
-                        message.altText = response[0];
-                        message.template.text = response[1];
+                        message.altText = response[0][0];
+                        message.template.text = response[0][1];
                         return message;
                     }
                 );
@@ -551,8 +551,8 @@ module.exports = class VirtualPlatform {
             case "confirm_template": {
                 return this.translater.translate([message.altText, message.template.text], sender_language).then(
                     (response) => {
-                        message.altText = response[0];
-                        message.template.text = response[1];
+                        message.altText = response[0][0];
+                        message.template.text = response[0][1];
                         return message;
                     }
                 );
