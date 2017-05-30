@@ -539,11 +539,32 @@ module.exports = class VirtualPlatform {
                 );
             }
             case "buttons_template": {
-                return this.translater.translate([message.altText, message.template.text], sender_language).then(
+                let source_texts = [message.altText, message.template.text];
+                for (let action of message.template.actions){
+                    source_texts.push(action.label);
+                    if (action.type == "message"){
+                        source_texts.push(action.text);
+                    } else if (action.type == "postback"){
+                        source_texts.push(action.data);
+                    }
+                }
+                return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
                         debug(response);
                         message.altText = response[0][0];
                         message.template.text = response[0][1];
+                        let offset = 2;
+                        for (let action of message.template.actions){
+                            action.label = response[0][offset];
+                            offset++;
+                            if (action.type == "message"){
+                                action.text = response[0][offset];
+                                offset++;
+                            } else if (action.type == "postback"){
+                                action.data = response[0][offset];
+                                offset++;
+                            }
+                        }
                         return message;
                     }
                 );
