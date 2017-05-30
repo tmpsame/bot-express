@@ -172,7 +172,9 @@ module.exports = class webhook {
                             translated = Promise.resolve(message_text);
                         } else {
                             // If sender language is different from bot language, we translate message into bot language.
+                            debug(`Bot language is ${this.options.language} and sender language is ${context.sender_language}`);
                             if (this.options.language === context.sender_language){
+                                debug("We do not translate message text.");
                                 translated = Promise.resolve(message_text);
                             } else {
                                 debug("Translating message text...");

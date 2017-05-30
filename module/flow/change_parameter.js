@@ -51,7 +51,9 @@ module.exports = class ChangeParameterFlow extends Flow {
             translated = Promise.resolve(param_value);
         } else {
             // If sender language is different from bot language, we translate message into bot language.
+            debug(`Bot language is ${this.options.language} and sender language is ${this.context.sender_language}`);
             if (this.options.language === this.context.sender_language){
+                debug("We do not translate param value.");
                 translated = Promise.resolve(param_value);
             } else {
                 debug("Translating param value...");

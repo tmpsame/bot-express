@@ -55,10 +55,11 @@ module.exports = class StartConversationFlow extends Flow {
             translated = this.vp.translater.detect(message_text).then(
                 (response) => {
                     this.context.sender_language = response[0].language;
-                    debug("sender language is " + this.context.sender_language);
+                    debug(`Bot language is ${this.options.language} and sender language is ${this.context.sender_language}`);
 
                     // If sender language is different from bot language, we translate message into bot language.
                     if (this.options.language === this.context.sender_language){
+                        debug("We do not translate message text.");
                         return [message_text];
                     } else {
                         debug("Translating message text...");
