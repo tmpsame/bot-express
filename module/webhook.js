@@ -221,7 +221,7 @@ module.exports = class webhook {
                                     ** Restart Conversation Flow
                                     */
                                     try {
-                                        flow = new restart_conversation_flow(vp, bot_event, response.intent, this.options);
+                                        flow = new restart_conversation_flow(vp, bot_event, response.intent, context, this.options);
                                     } catch(err) {
                                         return Promise.reject(err);
                                     }
