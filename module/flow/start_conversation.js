@@ -42,7 +42,8 @@ module.exports = class StartConversationFlow extends Flow {
 
         // Check if this event type is supported in this flow.
         if (!this.vp.check_supported_event_type("start_conversation")){
-            return Promise.resolve(`Unsupported event for start conversation flow so we skip this event.`);
+            debug(`This is unsupported event type in this flow so skip processing.`);
+            return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
 
         let message_text = this.vp.extract_message_text();

@@ -551,7 +551,6 @@ module.exports = class VirtualPlatform {
                 debug(source_texts);
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
-                        debug(response);
                         message.altText = response[0][0];
                         message.template.text = response[0][1];
                         let offset = 2;
@@ -584,7 +583,6 @@ module.exports = class VirtualPlatform {
                 }
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
-                        debug(response);
                         message.altText = response[0][0];
                         message.template.text = response[0][1];
                         let offset = 2;
@@ -626,7 +624,6 @@ module.exports = class VirtualPlatform {
                 }
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
-                        debug(response);
                         message.text = response[0][0];
                         let offset = 1;
                         for (let quick_reply of message.quick_replies){

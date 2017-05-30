@@ -141,13 +141,6 @@ module.exports = class webhook {
                     /*
                     ** Reply Flow
                     */
-
-                    // Check if this event type is supported in this flow.
-                    if (!vp.check_supported_event_type("reply")){
-                        debug(`This is unsupported event type in this flow so skip processing.`)
-                        return Promise.resolve(`unsupported event for reply flow`);
-                    }
-
                     try {
                         flow = new reply_flow(vp, bot_event, context, this.options);
                     } catch(err){
