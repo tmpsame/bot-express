@@ -548,6 +548,7 @@ module.exports = class VirtualPlatform {
                         source_texts.push(action.data);
                     }
                 }
+                debug(source_texts);
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
                         debug(response);
