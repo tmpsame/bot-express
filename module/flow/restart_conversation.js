@@ -16,7 +16,7 @@ module.exports = class RestartConversationFlow extends Flow {
     */
 
     constructor(vp, bot_event, intent, options) {
-        context = {
+        let context = {
             _flow: "restart_conversation",
             intent: intent,
             confirmed: {},
