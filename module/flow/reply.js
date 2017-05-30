@@ -54,6 +54,8 @@ module.exports = class ReplyFlow extends Flow {
                 debug("Translating param value...");
                 translated = this.vp.translater.translate(param_value, this.options.language).then(
                     (response) => {
+                        debug("Translater response follows.");
+                        debug(response);
                         return response[0];
                     }
                 );
@@ -62,6 +64,7 @@ module.exports = class ReplyFlow extends Flow {
 
         return translated.then(
             (param_value) => {
+                debug(param_value);
                 return super.apply_parameter(this.context.confirming, param_value);
             }
         ).then(
