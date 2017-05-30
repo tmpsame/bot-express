@@ -54,7 +54,7 @@ module.exports = class SkillHandlePizzaOrder {
 
     parse_pizza(value, context, resolve, reject){
         let parsed_value;
-        /*
+        debug(value);
         if (value.match(/マルゲリータ/)){
             parsed_value = "マルゲリータ";
         } else if (value.match(/マリナーラ/)){
@@ -62,8 +62,6 @@ module.exports = class SkillHandlePizzaOrder {
         } else {
             return reject();
         }
-        */
-        return reject();
         return resolve(parsed_value);
     }
 
