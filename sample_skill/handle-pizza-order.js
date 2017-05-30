@@ -59,7 +59,6 @@ module.exports = class SkillHandlePizzaOrder {
         } else if (value.match(/マリナーラ/)){
             parsed_value = "マリナーラ";
         } else {
-            console.log(reject);
             return reject();
         }
         return resolve(parsed_value);
