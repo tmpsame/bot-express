@@ -322,6 +322,7 @@ module.exports = class VirtualPlatform {
     }
 
     // Deprecated. DO NOT USE this method anymore. Use compile_message() instead.
+    /*
     create_text_message(text_message){
         let message_to_compile = {
             type: "text",
@@ -330,6 +331,7 @@ module.exports = class VirtualPlatform {
         let compiled_message = this.compile_message(message_to_compile);
         return compiled_message;
     }
+    */
 
     change_message_to_confirm(param_name, message){
         let param_index = this.context.to_confirm.findIndex(param => param.name === param_name);
@@ -351,11 +353,17 @@ module.exports = class VirtualPlatform {
         if (messages){
             this.queue(messages);
         }
-        let compiled_messages = [];
+        let messages_compiled = [];
         for (let message of this.context._message_queue){
-            compiled_messages.push(this.compile_message(message));
+            messages_compiled.push(this.compile_message(message));
         }
-        return this[`_${this.type}_reply`](this.bot_event, compiled_messages).then(
+        let compiled_messages;
+        return Promise.all(messages_compiled).then(
+            (response) => {
+                compiled_messages = response;
+                return this[`_${this.type}_reply`](this.bot_event, compiled_messages);
+            }
+        ).then(
             (response) => {
                 for (let compiled_message of compiled_messages){
                     this.context.previous.message.unshift({
@@ -378,11 +386,20 @@ module.exports = class VirtualPlatform {
     }
 
     send(recipient_id, messages){
-        let compiled_messages = [];
-        for (let message of messages){
-            compiled_messages.push(this.compile_message(message));
+        if (messages){
+            this.queue(messages);
         }
-        return this[`_${this.type}_send`](recipient_id, compiled_messages).then(
+        let messages_compiled = [];
+        for (let message of this.context._message_queue){
+            messages_compiled.push(this.compile_message(message));
+        }
+        let compiled_messages;
+        return Promise.all(messages_compiled).then(
+            (response) => {
+                compiled_messages = response;
+                return this[`_${this.type}_send`](recipient_id, compiled_messages);
+            }
+        ).then(
             (response) => {
                 for (let compiled_message of compiled_messages){
                     this.context.previous.message.unshift({
@@ -390,6 +407,7 @@ module.exports = class VirtualPlatform {
                         message: compiled_message
                     });
                 }
+                this.context._message_queue = [];
                 return response;
             }
         );
@@ -501,13 +519,74 @@ module.exports = class VirtualPlatform {
             let bot_language = this.options.language;
             if (sender_language && (sender_language != bot_language)){
                 debug(`Translating message...`);
-                compiled_message = this[`_${this.type}_translate_message`](compiled_message, sender_language);
-                debug(`Translated message is following`);
-                debug(compiled_message);
+                return this[`_${this.type}_translate_message`](compiled_message, sender_language);
             }
         }
+        return Promise.resolve(compiled_message);
+    }
 
-        return compiled_message;
+    _line_translate_message(message, sender_language){
+        let message_type = this._line_identify_message_type(message);
+        switch(message_type){
+            case "text": {
+                return this.translater.translate(message.text, sender_language).then(
+                    (response) => {
+                        message.text = response[0];
+                        debug("Translated message follows.");
+                        debug(message);
+                        return message;
+                    }
+                );
+            }
+            case "buttons_template": {
+                return this.translater.translate([message.altText, message.template.text], sender_language).then(
+                    (response) => {
+                        message.altText = response[0];
+                        message.template.text = response[1];
+                        return message;
+                    }
+                );
+            }
+            case "confirm_template": {
+                return this.translater.translate([message.altText, message.template.text], sender_language).then(
+                    (response) => {
+                        message.altText = response[0];
+                        message.template.text = response[1];
+                        return message;
+                    }
+                );
+            }
+            case "carousel_template": {
+                return this.translater.translate(message.altText, sender_language).then(
+                    (response) => {
+                        message.altText = response[0];
+                        return message;
+                    }
+                );
+            }
+            default: {
+                return Promise.resolve(message);
+            }
+        }
+    }
+
+    _facebook_translate_message(message, sender_language){
+        let message_type = this._facebook_identify_message_type(message);
+        switch(message_type){
+            case "text": {
+                return this.translater.translate(message.text, sender_language).then(
+                    (response) => {
+                        message.text = response[0];
+                        debug("Translated message follows.");
+                        debug(message);
+                        return message;
+                    }
+                );
+            }
+            default: {
+                return Promise.resolve(message);
+            }
+        }
     }
 
     _identify_message_format(message){

@@ -77,10 +77,6 @@ module.exports = class webhook {
         // Set Events.
         let bot_events = vp.extract_events(req.body);
 
-        // Instantiate api.ai instance
-        let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
-        debug("api.ai instantiated.");
-
         for (let bot_event of bot_events){
             debug(`Processing following event.`);
             debug(bot_event);
@@ -176,6 +172,9 @@ module.exports = class webhook {
                         let session_id = vp.extract_session_id();
                         let text = vp.extract_message_text();
 
+                        // Instantiate api.ai instance
+                        let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
+                        debug("api.ai instantiated.");
                         promise_is_change_intent_flow = apiai.identify_intent(session_id, text).then(
                             (response) => {
                                 if (response.result.action != this.options.default_intent){
