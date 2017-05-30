@@ -50,8 +50,6 @@ module.exports = class SkillHandlePizzaOrder {
                 }
             }
         }
-
-        this.clear_context_on_finish = true;
     }
 
     parse_pizza(value, context, resolve, reject){
