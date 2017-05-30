@@ -28,7 +28,10 @@ app.use('/webhook', bot_express({
     beacon_skill: {
         enter: "survey",
         leave: "bye"
-    }
+    },
+    google_project_id: process.env.GOOGLE_PROJECT_ID,
+    google_application_credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    auto_translation: process.env.AUTO_TRANSLATION
 }));
 
 module.exports = app;

@@ -71,7 +71,8 @@ for (let message_platform of message_platform_list){
                     }
                 ).then(
                     function(response){
-                        response.should.equal("unsupported event for start conversation flow");
+                        response._flow.should.equal("start_conversation");
+                        response.should.have.property("intent").and.equal(null);
                     }
                 );
             });

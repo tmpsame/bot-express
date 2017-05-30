@@ -485,7 +485,7 @@ describe("compile-message-test - from facebook", function(){
                     });
                     response.previous.message[0].from.should.equal("bot");
                     response.previous.message[0].message.should.deep.equal({
-                        text: "ご注文のピザをお選びください。 *Original Message had unsupported information"
+                        text: "ご注文のピザをお選びください。 *Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message."
                     });
                     return webhook.run(Util.create_req(message_platform, "message", user_id, "マルゲリータ"));
                 }

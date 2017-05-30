@@ -133,44 +133,12 @@ module.exports = class webhook {
                 /*
                 ** Start Conversation Flow.
                 */
-
-                // Check if this event type is supported in this flow.
-                if (!vp.check_supported_event_type("start_conversation")){
-                    return Promise.resolve(`unsupported event for start conversation flow`);
+                try {
+                    flow = new start_conversation_flow(vp, bot_event, this.options);
+                } catch(err) {
+                    return Promise.reject(err);
                 }
-
-                // Set session id for api.ai and text to identify intent.
-                let session_id = vp.extract_session_id();
-                let text = vp.extract_message_text();
-
-                promise_flow_completed = apiai.identify_intent(session_id, text).then(
-                    (response) => {
-                        debug(`Intent is ${response.result.action}`);
-
-                        // Instantiate the conversation object. This will be saved as Bot Memory.
-                        context = {
-                            intent: response.result,
-                            confirmed: {},
-                            to_confirm: [],
-                            confirming: null,
-                            previous: {
-                                confirmed: [],
-                                message: []
-                            }
-                        };
-                        vp.context = context;
-                        try {
-                            flow = new start_conversation_flow(vp, bot_event, context, this.options);
-                        } catch(err) {
-                            return Promise.reject(err);
-                        }
-                        return flow.run();
-                    },
-                    (response) => {
-                        debug("Failed to identify intent.");
-                        return Promise.reject(response);
-                    }
-                );
+                promise_flow_completed = flow.run();
                 // End of Start Conversation Flow.
             } else {
                 if (!!context.confirming){
@@ -224,10 +192,6 @@ module.exports = class webhook {
                                         intent: response.result
                                     }
                                 }
-                            },
-                            (response) => {
-                                // Failed to identify intent.
-                                return Promise.reject(response);
                             }
                         );
                     }
@@ -322,10 +286,6 @@ module.exports = class webhook {
                                     }
                                 );
                             }
-                        },
-                        (response) => {
-                            // This is exception. Stop processing webhook and reject.
-                            return Promise.reject(response);
                         }
                     );
                 }

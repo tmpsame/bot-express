@@ -5,7 +5,7 @@ let Promise = require("bluebird");
 let debug = require("debug")("bot-express:service");
 
 module.exports = class Apiai_promised {
-    constructor(client_access_token, language = "ja"){
+    constructor(client_access_token, language){
         this._client_access_token = client_access_token;
         this._language = language;
     }

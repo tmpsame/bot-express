@@ -9,33 +9,27 @@ module.exports = class Flow {
     constructor(vp, bot_event, context, options){
         this.vp = vp;
         this.bot_event = bot_event;
+        this.options = options;
         this.context = context;
-        this.default_intent = options.default_intent;
-        this.default_skill = options.default_skill;
-        this.skill_path = options.skill_path;
-        this.skill = this._instantiate_skill(this.context.intent.action);
-        this.vp.skill = this.skill;
-
-        if (!!this.skill.required_parameter && typeof this.skill.required_parameter == "object"){
-            debug(`This skill requires ${Object.keys(this.skill.required_parameter).length} parameters.`);
-        } else {
-            debug(`This skill requires 0 parameters.`);
-        }
-
-        // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
-        // After that, we depend on context.to_confirm to identify to_confirm parameters.
-        if (this.context.to_confirm.length == 0){
-            this.context.to_confirm = this._identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
-        }
-        debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
-
         this.context.previous.message.unshift({
             from: "user",
             message: vp.extract_message()
         });
+
+        if (this.context.intent){
+            this.skill = this.instantiate_skill(this.context.intent.action);
+            this.vp.skill = this.skill;
+
+            // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
+            // After that, we depend on context.to_confirm to identify to_confirm parameters.
+            if (this.context.to_confirm.length == 0){
+                this.context.to_confirm = this.identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
+            }
+            debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
+        }
     }
 
-    _instantiate_skill(intent){
+    instantiate_skill(intent){
         if (!intent){
             debug("Intent should have been set but not.");
             return;
@@ -43,8 +37,8 @@ module.exports = class Flow {
 
         let skill;
         // If the intent is not identified, we use default_skill.
-        if (intent == this.default_intent){
-            skill = this.default_skill;
+        if (intent == this.options.default_intent){
+            skill = this.options.default_skill;
         } else {
             skill = intent;
         }
@@ -59,7 +53,7 @@ module.exports = class Flow {
             debug(`Look for ${skill} skill.`);
             let skill_class;
             try {
-                skill_class = require(`${this.skill_path}${skill}`);
+                skill_class = require(`${this.options.skill_path}${skill}`);
                 debug("Skill found.")
             } catch(exception){
                 debug("Skill not found.");
@@ -71,7 +65,7 @@ module.exports = class Flow {
         return skill_instance;
     }
 
-    _identify_to_confirm_parameter(required_parameter, confirmed){
+    identify_to_confirm_parameter(required_parameter, confirmed){
         let to_confirm = [];
 
         // If there is no required_parameter, we just return empty object as confirmed.

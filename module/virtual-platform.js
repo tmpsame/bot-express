@@ -3,6 +3,7 @@
 let Line = require("./service/line");
 let Facebook = require("./service/facebook");
 let debug = require("debug")("bot-express:vp");
+let google_translate = require('@google-cloud/translate');
 
 module.exports = class VirtualPlatform {
     constructor(options, bot_event){
@@ -12,6 +13,13 @@ module.exports = class VirtualPlatform {
         this.context = null; // Will be set later in webhook
         this.bot_event = bot_event;
         this.skill = null; // Will be set in flow constructor
+
+        // Instantiates a translater
+        if (this.options.google_project_id && this.options.google_application_credentials && this.options.auto_translation == "enable"){
+            this.translater = google_translate({
+                projectId: this.options.google_project_id
+            });
+        }
     }
 
     instantiate_service(){
@@ -475,58 +483,150 @@ module.exports = class VirtualPlatform {
     }
 
     compile_message(message){
-        // Identify the message format and type.
-        let format = {
-            provider: null, // line | facebook
-            type: null // text | image | video | audio | location | sticker | imagemap | template | file | quick_reply
-        }
-        if (!!message.type){
-            // Provider is line. Type is text or image or video or audio or location or sticker or imagemap or template.
-            format.provider = "line";
-            format.type = message.type; // text | image | video | audio | location | sticker | imagemap | template
+        let message_format = this._identify_message_format(message);
+        debug(`Identified message format is ${message_format}.`);
+
+        let compiled_message;
+        if (this.type != message_format){
+            debug(`Compiling message from ${message_format} to ${this.type}...`);
+            compiled_message = this[`_${this.type}_compile_message_from_${message_format}_format`](message);
+            debug(`Compiled message is following.`);
+            debug(compiled_message);
         } else {
-            let message_keys = Object.keys(message).sort();
-            if (!!message.quick_replies && !!message.text){
-                // Provider is facebook. Type is quick reply.
-                format.provider = "facebook";
-                format.type = "quick_reply";
-            } else if (!!message.text){
-                // Provider is facebook. Type is text.
-                format.provider = "facebook";
-                format.type = "text";
-            } else if (!!message.attachment && !!message.attachment.type){
-                // Provider is facebook.
-                format.provider = "facebook";
-                format.type = message.attachment.type; // image | audio | video | file | template
+            compiled_message = message;
+        }
+
+        if (this.translater){
+            let sender_language = this.context.sender_language;
+            let bot_language = this.options.language;
+            if (sender_language && (sender_language != bot_language)){
+                debug(`Translating message...`);
+                compiled_message = this[`_${this.type}_translate_message`](compiled_message, sender_language);
+                debug(`Translated message is following`);
+                debug(compiled_message);
             }
         }
-        if (!format.provider || !format.type){
-            // We could not identify the format of this message object.
-            throw(`We can not identify the format for this message object.`);
-        }
-        debug(`Identified message format is ${format.provider}, message type is ${format.type}.`);
-        let compiled_message = this[`_${this.type}_compile_message`](format, message);
-        debug(`Compiled message is following.`);
-        debug(compiled_message);
 
         return compiled_message;
     }
 
-    _line_compile_message(format, message){
+    _identify_message_format(message){
+        let message_format;
+        if (!!message.type){
+            message_format = "line";
+        } else {
+            let message_keys = Object.keys(message).sort();
+            if (!!message.quick_replies || !!message.attachment || !!message.text){
+                // Provider is facebook. Type is quick reply.
+                message_format = "facebook";
+            }
+        }
+        if (!message_format){
+            // We could not identify the format of this message object.
+            throw new Error(`We can not identify the format of this message object.`);
+        }
+        return message_format;
+    }
+
+    _line_identify_message_type(message){
+        let message_type;
+        if (["text", "image", "audio", "video", "file", "location", "sticker", "imagemap"].indexOf(message.type) !== -1){
+            message_type = message.type;
+        } else if (message.type == "template"){
+            if (["buttons", "confirm", "carousel"].indexOf(message.template.type) !== -1){
+                message_type = message.template.type + "_template";
+            } else {
+                // This is not LINE format.
+                throw new Error("This is not correct LINE format.");
+            }
+        } else {
+            // This is not LINE format.
+            throw new Error("This is not correct LINE format.");
+        }
+        return message_type;
+    }
+
+    _facebook_identify_message_type(message){
+        let message_type;
+        if (message.text){
+            // Type is text.
+            message_type = "text";
+        } else if (message.attachment){
+            if (["image", "audio", "video", "file"].indexOf(message.attachment.type) !== -1){
+                // Type is image, audio, video or file.
+                message_type = message.attachment.type;
+            } else if (message.attachment.type == "template"){
+                if (["button", "generic", "list", "open_graph", "receipt", "airline_boardingpass", "airline_checkin", "airline_itinerary", "airline_update"].indexOf(message.attachment.payload.template_type) !== -1){
+                    message_type = message.attachment.payload.template_type + "_template";
+                }
+            } else {
+                // This is not Facebook format.
+                throw new Error("This is not correct Facebook format.");
+            }
+        } else {
+            // This is not Facebook format.
+            throw new Error("This is not correct Facebook format.");
+        }
+        return message_type;
+    }
+
+    _line_compile_message_from_facebook_format(message){
+        // LINE format has Text, Audio, File, Image, Video, Button Template, Confirm Template, Carousel Template, Location, Sticker and Imagemap.
+
+        // ### Threshold for Text ###
+        // -> text has to be up to 2000 chars.
+
+        // ### Threshold for Button Template ###
+        // -> altText has to be up to 400 chars.
+        // -> title has to be up to 40 chars.
+        // -> text has to be 160 chars. In case we have title or thumbnailImageUrl, it has to be up to 60 chars.
+        // -> acitons has to be up to 4.
+        // -> each button must follow button threshold.
+
+        // ### Threshold for Confirm Template ###
+        // -> altText has to be up to 400 chars.
+        // -> text has to be 240 chars.
+        // -> acitons has to be 2.
+        // -> each button must follow button threshold.
+
+        // ### Threshold for Carousel Template ###
+        // -> altText has to be up to 400 chars.
+        // -> columns has to be up to 5.
+        // -> column title has to be up to 40 chars.
+        // -> column text has to be up to 120 chars. In case we have title or thumbnailImageUrl, it has to be up to 60 chars.
+        // -> acitons has to be 3.
+        // -> each button must follow button threshold.
+
+        // ### Compile Rule Overview ###
+        // => text: to text
+        // => audio: to audio
+        // => image: to image
+        // => video: to video
+        // => file: to unsupported text
+        // => button template: to button template
+        // => generic tempalte: to carousel template
+        // => list Template: to carousel template
+        // => open graph template: to unsupported text
+        // => receipt template: to unsupported text
+        // => airline boarding ticket template: to unsupported text
+        // => airline checkin template: to unsupported text
+        // => airline itinerary tempalte: to unsupported text
+        // => airline fight update template: to unsupported text
+
         let compiled_message;
-        if (format.provider == "line"){
-            // This message is formatted in line format so we don't have to do anything.
-            compiled_message = message;
-        } else if (format.provider == "facebook"){
-            switch(format.type){
-                case "text":
+        let message_type = this._facebook_identify_message_type(message);
+        debug(`message type is ${message_type}`);
+
+        switch(message_type){
+            case "text":
+                if (!message.quick_replies){
+                    // This is the most pure text message.
                     compiled_message = {
                         type: "text",
                         text: message.text
                     }
-                break;
-                case "quick_reply":
-                    // If the number of quick replies is less than or equal to 4, we try to compile to template message. Otherwise, we just compile it to text message.
+                } else {
+                    // If the number of quick replies is less than or equal to 4, we try to compile to button template. Otherwise, we just compile it to text message.
                     if (message.quick_replies.length <= 4){
                         compiled_message = {
                             type: "template",
@@ -554,325 +654,556 @@ module.exports = class VirtualPlatform {
                             }
                         }
                     } else {
+                        // Elements of quick reply is more the 4. It's not supported in LINE so we send just text.
+                        debug("Quick replies were omitted since it exceeds max elements threshold.");
                         compiled_message = {
                             type: "text",
                             text: message.text
                         }
                     }
+                }
                 break;
-                case "image":
-                    // Limited support since facebook does not have property corresponding to previewImageUrl.
-                    compiled_message = {
-                        type: "image",
-                        originalContentUrl: message.attachment.payload.url,
-                        previewImageUrl: message.attachment.payload.url
-                    }
+            case "audio":
+                // Not Supported since facebook does not have property corresponding to "duration".
+                debug(`Compiling ${message_type} message from facebook format to line format is not supported since facebook does not have the property corresponding to "duration". Supported types are text(may includes quick replies), image and template.`);
+                compiled_message = {
+                    type: text,
+                    text: `*Message type is audio and it was made in facebook format. It lacks required "duration" property so we could not compile.`
+                }
                 break;
-                case "audio":
-                    // Not Supported since facebook does not have property corresponding to "duration".
-                    /*
-                    compiled_message = {
-                        type: "audio",
-                        originalContentUrl: message.attachment.payload.url,
-                        duration: undefined
-                    }
-                    */
-                    debug(`Compiling ${format.type} message from facebook format to line format is not supported since facebook does not have the property corresponding to "duration". Supported types are text(may includes quick replies), image and template.`);
-                    compiled_message = {
-                        type: text,
-                        text: `*Message type is audio and it was made in facebook format. It lacks required "duration" property so we could not translate.`
-                    }
+            case "image":
+                // Limited support since facebook does not have property corresponding to previewImageUrl.
+                compiled_message = {
+                    type: "image",
+                    originalContentUrl: message.attachment.payload.url,
+                    previewImageUrl: message.attachment.payload.url
+                }
+                if (message.quick_replies){
+                    debug("Quick replies were omitted since it is not supported in LINE's image message.");
+                }
                 break;
-                case "video":
-                    // Not supported since facebook does not have property corresponding to "previewImageUrl".
-                    /*
-                    compiled_message = {
-                        type: "image",
-                        originalContentUrl: message.attachment.payload.url,
-                        previewImageUrl: undefined
-                    }
-                    */
-                    debug(`Compiling ${format.type} message from facebook format to line format is not supported since facebook does not have property corresponding to "previewImageUrl". Supported types are text(may includes quick replies), image and template.`);
-                    compiled_message = {
-                        type: text,
-                        text: `*Message type is video and it was made in facebook format. It lacks required "previewImageUrl" property so we could not translate.`
-                    }
+            case "video":
+                // Not supported since facebook does not have property corresponding to "previewImageUrl".
+                debug(`Compiling ${message_type} message from facebook format to line format is not supported since facebook does not have property corresponding to "previewImageUrl". Supported types are text(may includes quick replies), image and template.`);
+                compiled_message = {
+                    type: text,
+                    text: `*Message type is video and it was made in facebook format. It lacks required "previewImageUrl" property so we could not compile.`
+                }
+                if (message.quick_replies){
+                    debug("Quick replies were omitted since it is not supported in LINE's video message.");
+                }
                 break;
-                case "file":
-                    // Not supported since line does not have corresponding message object.
-                    debug(`Compiling ${format.type} message from facebook format to line format is not supported since line does not have corresponding message object. Supported types are text(may includes quick replies), image and template.`);
-                    compiled_message = {
-                        type: text,
-                        text: `*Message type is file and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
-                    }
+            case "file":
+                // Not supported since LINE has its original content storage.
+                debug(`Compiling ${message_type} message from facebook format to line format is not supported since LINE has its original content storage.`);
+                compiled_message = {
+                    type: text,
+                    text: `*Compiling ${message_type} message from facebook format to line format is not supported since LINE has its original content storage.`
+                }
                 break;
-                case "template":
-                    if (message.attachment.payload.template_type == "button"){
-                        compiled_message = {
-                            type: "template",
-                            altText: message.attachment.payload.text,
-                            template: {
-                                type: "buttons",
-                                text: message.attachment.payload.text,
-                                actions: []
-                            }
-                        }
-                        for (let button of message.attachment.payload.buttons){
-                            // Upper threshold of buttons is 3 in facebook and 4 in line. So compiling facebook buttons to line button is safe.
-                            if (button.type == "postback"){
-                                compiled_message.template.actions.push({
-                                    type: "postback",
-                                    label: button.title,
-                                    data: button.payload
-                                });
-                            } else if (button.type == "web_url"){
-                                compiled_message.template.actions.push({
-                                    type: "uri",
-                                    label: button.title,
-                                    uri: button.url
-                                });
-                            } else {
-                                // Not supported since line does not have corresponding template.
-                                debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`);
-                                compiled_message = {
-                                    type: "text",
-                                    text: `*Message type is template and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
-                                }
-                            }
-                        }
-                    } else if (message.attachment.payload.template_type == "generic"){
-                        compiled_message = {
-                            type: "template",
-                            altText: "Carousel Template", // This is a dummy text since facebook does not have corresponiding property.
-                            template: {
-                                type: "carousel",
-                                columns: []
-                            }
-                        }
-                        for (let element of message.attachment.payload.elements){
-                            let column = {
-                                text: element.title,
-                                thumbnailImageUrl: element.image_url,
-                                actions: []
-                            }
-                            for (let button of element.buttons){
-                                // Upper threshold of buttons is 3 in facebook and 3 in line. So compiling facebook buttons to line button is safe.
-                                if (button.type == "postback"){
-                                    column.actions.push({
-                                        type: "postback",
-                                        label: button.title,
-                                        data: button.payload
-                                    });
-                                } else if (button.type == "web_url"){
-                                    column.actions.push({
-                                        type: "uri",
-                                        label: button.title,
-                                        uri: button.url
-                                    });
-                                } else {
-                                    // Not supported since line does not have corresponding template.
-                                    debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`);
-                                    compiled_message = {
-                                        type: "text",
-                                        text: `*Message type is template and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
-                                    }
-                                }
-                            }
-                            compiled_message.template.columns.push(column);
-                        }
+            case "button_template":
+                compiled_message = {
+                    type: "template",
+                    altText: message.attachment.payload.text,
+                    template: {
+                        type: "buttons",
+                        text: message.attachment.payload.text,
+                        actions: []
+                    }
+                }
+                for (let button of message.attachment.payload.buttons){
+                    // Upper threshold of buttons is 3 in facebook and 4 in line. So compiling facebook buttons to line button is safe.
+                    if (button.type == "postback"){
+                        compiled_message.template.actions.push({
+                            type: "postback",
+                            label: button.title,
+                            data: button.payload
+                        });
+                    } else if (button.type == "web_url"){
+                        compiled_message.template.actions.push({
+                            type: "uri",
+                            label: button.title,
+                            uri: button.url
+                        });
                     } else {
-                        // Not supported since line does not have corresponiding template.
-                        debug(`Compiling template messege of ${message.attachment.payload.template_type} from facebook format to line format is not supported. Supported type of template are button and generic.`);
+                        // Not supported since line does not have corresponding template.
+                        debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`);
                         compiled_message = {
                             type: "text",
-                            text: `*Message type is template of ${message.attachment.payload.template_type} and it was made in facebook format. LINE does not have corresponding message so we could not translate.`
+                            text: `*Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`
+                        }
+                        break;
+                    }
+                }
+                break;
+            case "generic_template": // -> to carousel template
+                // Upper threshold of generic template elements is 10 and 5 in line. So we have to care about it.
+                compiled_message = {
+                    type: "template",
+                    altText: "Carousel Template", // This is a dummy text since facebook does not have corresponiding property.
+                    template: {
+                        type: "carousel",
+                        columns: []
+                    }
+                }
+                if (message.attachment.payload.elements.length > 5){
+                     compiled_message = {
+                        type: "text",
+                        text: `*Message type is facebook's generic template. It exceeds the LINE's max elements threshold of 5.`
+                    }
+                    break;
+                }
+                for (let element of message.attachment.payload.elements){
+                    let column = {
+                        text: element.title,
+                        thumbnailImageUrl: element.image_url,
+                        actions: []
+                    }
+                    for (let button of element.buttons){
+                        // Upper threshold of buttons is 3 in facebook and 3 in line. So compiling facebook buttons to line button is safe.
+                        if (button.type == "postback"){
+                            column.actions.push({
+                                type: "postback",
+                                label: button.title,
+                                data: button.payload
+                            });
+                        } else if (button.type == "web_url"){
+                            column.actions.push({
+                                type: "uri",
+                                label: button.title,
+                                uri: button.url
+                            });
+                        } else {
+                            // Not supported since line does not have corresponding template.
+                            debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding button.`);
+                            return compiled_message = {
+                                type: "text",
+                                text: `*Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding button.`
+                            }
                         }
                     }
+                    compiled_message.template.columns.push(column);
+                }
                 break;
-                default:
-                    debug(`Compiling ${format.type} message from facebook format to line format is not supported. Supported types are text(may includes quick replies), image and template.`);
-                    compiled_message = {
-                        type: "text",
-                        text: "*Original Message had unsupported information"
+            case "list_template": // -> to carousel template
+                // Upper threshold of list template elements is 4 and 5 in line. This is safe.
+                compiled_message = {
+                    type: "template",
+                    altText: "Carousel Template", // This is a dummy text since facebook does not have corresponiding property.
+                    template: {
+                        type: "carousel",
+                        columns: []
                     }
+                }
+                if (message.attachment.payload.buttons){
+                    debug(`Message type is facebook's list template. It has List button but LINE's carousel message does not support it`);
+                    compiled_message = {
+                       type: "text",
+                       text: `*Message type is facebook's ${message_type}. It has List button but LINE's carousel message does not support it.`
+                    }
+                    break;
+                }
+                for (let element of message.attachment.payload.elements){
+                    let column = {
+                        text: element.title,
+                        thumbnailImageUrl: element.image_url,
+                        actions: []
+                    }
+                    for (let button of element.buttons){
+                        // Upper threshold of buttons is 3 in facebook and 3 in line. So compiling facebook buttons to line button is safe.
+                        if (button.type == "postback"){
+                            column.actions.push({
+                                type: "postback",
+                                label: button.title,
+                                data: button.payload
+                            });
+                        } else if (button.type == "web_url"){
+                            column.actions.push({
+                                type: "uri",
+                                label: button.title,
+                                uri: button.url
+                            });
+                        } else {
+                            // Not supported since line does not have corresponding template.
+                            debug(`Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`);
+                            return compiled_message = {
+                                type: "text",
+                                text: `*Compiling template messege including ${button.type} button from facebook format to line format is not supported since line does not have corresponding template.`
+                            }
+                        }
+                    }
+                    compiled_message.template.columns.push(column);
+                }
                 break;
-            } // End of switch(format.type)
-        } // End of if (format.provider == "facebook")
+            case "open_graph":
+                debug(`*Message type is facebook's ${message_type} and it is not supported in LINE.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is facebook's ${message_type} and it is not supported in LINE.`
+                }
+                break;
+            case "airline_boardingpass":
+                debug(`*Message type is facebook's ${message_type} and it is not supported in LINE.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is facebook's ${message_type} and it is not supported in LINE.`
+                }
+                break;
+            case "airline_itinerary":
+                debug(`*Message type is facebook's ${message_type} and it is not supported in LINE.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is facebook's ${message_type} and it is not supported in LINE.`
+                }
+                break;
+            case "airline_update":
+                debug(`*Message type is facebook's ${message_type} and it is not supported in LINE.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is facebook's ${message_type} and it is not supported in LINE.`
+                }
+                break;
+            default:
+                debug(`*Message type is facebook's ${message_type} and it is not supported in LINE.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is facebook's ${message_type} and it is not supported in LINE.`
+                }
+                break;
+        }
         return compiled_message;
     }
 
-    _facebook_compile_message(format, message){
-        let compiled_message;
-        if (format.provider == "facebook"){
-            // This message is formatted in facebook format so we don't have to do anything.
-            compiled_message = message;
-        } else if (format.provider == "line"){
-            switch(format.type){ // text | image | video | audio | location(unsupported) | sticker(unsupported) | imagemap(unsupported) | template
-                case "text":
-                    compiled_message = {
-                        text: message.text
-                    }
-                break;
-                case "image":
-                    compiled_message = {
-                        attachment: {
-                            type: "image",
-                            payload: {
-                                url: message.originalContentUrl
-                            }
-                        }
-                    }
-                break;
-                case "video":
-                    compiled_message = {
-                        attachment: {
-                            type: "video",
-                            payload: {
-                                url: message.originalContentUrl
-                            }
-                        }
-                    }
-                break;
-                case "audio":
-                    compiled_message = {
-                        attachment: {
-                            type: "audio",
-                            payload: {
-                                url: message.originalContentUrl
-                            }
-                        }
-                    }
-                break;
-                case "template":
-                    if (message.template.type == "buttons" || message.template.type == "confirm"){
-                        let uri_included = false;
-                        for (let action of message.template.actions){
-                            if (action.type == "uri"){
-                                uri_included = true;
-                            }
-                        }
-                        if (uri_included){
-                            // This template message include uri button so we use template message in facebook as well.
-                            if (message.template.actions.length > 3){
-                                // Not supported since facebook does not allow template message including more than 3 buttons. The threshold of action of line template button is 4.
-                                debug(`Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message.`);
-                                compiled_message = {
-                                    text: message.altText + " *Original Message had unsupported information"
-                                }
-                            } else {
-                                compiled_message = {
-                                    attachment: {
-                                        type: "template",
-                                        payload: {
-                                            template_type: "button",
-                                            text: message.template.text,
-                                            buttons: []
-                                        }
-                                    }
-                                }
-                                for (let action of message.template.actions){
-                                    if (action.type == "uri"){
-                                        compiled_message.attachment.payload.buttons.push({
-                                            type: "web_url",
-                                            url: action.uri,
-                                            title: action.label
-                                        });
-                                    } else {
-                                        compiled_message.attachment.payload.buttons.push({
-                                            type: "postback",
-                                            title: action.label,
-                                            payload: action.data
-                                        });
-                                    }
+    _facebook_compile_message_from_line_format(message){
+        // Facebook format has Text, Audio, Image, Video, File, Button Template, Generic Template, List Template, Open Graph Template, Receipt Template, Airline Boarding Ticket Template, Airline Checkin Template, Airline Itinerary Tempalte, Airline Fight Update Template.
+        // quick_replies may be included in any Content-Type.
+        // buttons may be included in Templates.
 
-                                }
-                            }
-                        } else {
-                            // This template message does not include uri. Can be postback or message so we use quick reply.
-                            compiled_message = {
-                                text: message.template.text,
-                                quick_replies: []
-                            }
-                            for (let action of message.template.actions){
-                                if (action.type == "postback"){
-                                    compiled_message.quick_replies.push({
-                                        content_type: "text",
-                                        title: action.label,
-                                        payload: action.data
-                                    });
-                                } else if (action.type == "message"){
-                                    compiled_message.quick_replies.push({
-                                        content_type: "text",
-                                        title: action.label,
-                                        payload: action.text
-                                    });
-                                }
+        // ### Threshold for quick_replies
+        // -> elements of quick_replies has to be up to 11.
+        // -> title in each element has to be up to 20 chars.
+        // -> payload in each element has to be 1000 chars.
+
+        // ### Threshold for Text ###
+        // -> text has to be up to 640 chars.
+
+        // ### Threshold for Button Template ###
+        // -> text has to be up to 640 chars.
+        // -> buttons has to be up to 3.
+        // -> each button must follow button threshold.
+
+        // ### Threshold for Generic Template ###
+        // -> elements has to be up to 10.
+        // -> title in each elements has to be up to 80 chars.
+        // -> subtitle in each elements has to be up to 80 chars.
+        // -> buttons in each elements has to be up to 3.
+        // -> each button must follow button threshold.
+
+        // ### Threshold for List Template ###
+        // -> elements has to be from 2 to 4.
+        // -> global button has to be up to 1.
+        // -> title in each elements has to be up to 80 chars.
+        // -> subtitle in each elements has to be up to 80 chars.
+        // -> button in each elements has to be up to 1.
+        // -> each button must follow button threshold.
+
+        // ### Compile Rule Overview
+        // -> text: to text
+        // -> image: to image
+        // -> video: to video
+        // -> audio: to audio
+        // -> file: to unsupported text
+        // -> location: to location *NEED TEST
+        // -> sticker: to unsupported text
+        // -> imagemap: to unsupported text
+        // -> buttons template: to text(w quick reply) or button tempalte
+        // -> confirm template: to text(w quick reply) or button template
+        // -> carousel template: to generic template
+
+        let compiled_message;
+        let message_type = this._line_identify_message_type(message);
+        debug(`message type is ${message_type}`);
+
+        switch(message_type){
+            case "text": {// -> to text
+                compiled_message = {
+                    text: message.text
+                }
+                break;
+            }
+            case "image": {// -> to image
+                compiled_message = {
+                    attachment: {
+                        type: "image",
+                        payload: {
+                            url: message.originalContentUrl
+                        }
+                    }
+                }
+                break;
+            }
+            case "video": {// -> to video
+                compiled_message = {
+                    attachment: {
+                        type: "video",
+                        payload: {
+                            url: message.originalContentUrl
+                        }
+                    }
+                }
+                break;
+            }
+            case "audio": {// -> to audio
+                compiled_message = {
+                    attachment: {
+                        type: "audio",
+                        payload: {
+                            url: message.originalContentUrl
+                        }
+                    }
+                }
+                break;
+            }
+            case "file": {// -> unsupported text
+                debug(`*Message type is LINE's ${message_type} and it is not supported in Facebook.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is LINE's ${message_type} and it is not supported in Facebook.`
+                }
+                break;
+            }
+            case "location": {// to location *NEED TEST
+                compiled_message = {
+                    attachment: {
+                        type: "location",
+                        title: message.title,
+                        payload: {
+                            coordinates: {
+                                lat: message.latitude,
+                                long: message.longitude
                             }
                         }
-                    } else if (message.template.type == "carousel"){
+
+                    }
+                }
+                break;
+            }
+            case "sticker": {// -> to unsupported text
+                debug(`*Message type is LINE's ${message_type} and it is not supported in Facebook.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is LINE's ${message_type} and it is not supported in Facebook.`
+                }
+                break;
+            }
+            case "imagemap": {// -> to unsupported text
+                debug(`*Message type is LINE's ${message_type} and it is not supported in Facebook.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is LINE's ${message_type} and it is not supported in Facebook.`
+                }
+                break;
+            }
+            case "buttons_template": {// -> to text(w quick reply) or button tempalte
+                let uri_included = false;
+                for (let action of message.template.actions){
+                    if (action.type == "uri"){
+                        uri_included = true;
+                    }
+                }
+                if (uri_included){
+                    // This template message include uri button so we use template message in facebook as well.
+                    if (message.template.actions.length > 3){
+                        // Not supported since facebook does not allow template message including more than 3 buttons. The threshold of action of line template button is 4.
+                        debug(`Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message.`);
                         compiled_message = {
-                            attachment: {
-                                type: "template",
-                                payload: {
-                                    template_type: "generic",
-                                    elements: []
-                                }
-                            }
+                            text: message.altText + " *Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message."
                         }
-                        for (let column of message.template.columns){
-                            let element = {
-                                title: column.text,
-                                image_url: column.thumbnailImageUrl,
+                        break;
+                    }
+                    compiled_message = {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "button",
+                                text: message.template.text,
                                 buttons: []
                             }
-                            let uri_included = false;
-                            for (let action of column.actions){
-                                if (action.type == "uri"){
-                                    uri_included = true;
-                                }
-                            }
-                            if (uri_included){
-                                if (column.actions.length > 3){
-                                    // Not supported since facebook does not allow template message including more than 3 buttons. line's threshold is 3, too.
-                                    debug(`Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported.`);
-                                    compiled_message = {
-                                        text: message.altText + " *Original Message had unsupported information"
-                                    }
-                                }
-                            }
-                            for (let action of column.actions){
-                                if (action.type == "postback"){
-                                    element.buttons.push({
-                                        type: "postback",
-                                        title: action.label,
-                                        payload: action.data
-                                    });
-                                } else if (action.type == "message"){
-                                    element.buttons.push({
-                                        type: "postback",
-                                        title: action.label,
-                                        payload: action.text
-                                    });
-                                } else if (action.type == "uri"){
-                                    element.buttons.push({
-                                        type: "web_url",
-                                        url: action.uri,
-                                        title: action.label
-                                    });
-                                }
-                            }
-                            compiled_message.attachment.payload.elements.push(element);
-                        } // End of for (let column of message.template.columns)
+                        }
                     }
-                break;
-                default:
-                    debug(`Compiling ${format.type} message from line format to facebook format is not supported. Supported types are text, image, video, audio and template.`);
+                    for (let action of message.template.actions){
+                        if (action.type == "uri"){
+                            compiled_message.attachment.payload.buttons.push({
+                                type: "web_url",
+                                url: action.uri,
+                                title: action.label
+                            });
+                        } else {
+                            compiled_message.attachment.payload.buttons.push({
+                                type: "postback",
+                                title: action.label,
+                                payload: action.data
+                            });
+                        }
+
+                    }
+                } else {
+                    // This template message does not include uri. Can be postback or message so we use quick reply.
                     compiled_message = {
-                        text: "*Original Message had unsupported information"
+                        text: message.template.text,
+                        quick_replies: []
                     }
+                    for (let action of message.template.actions){
+                        if (action.type == "postback"){
+                            compiled_message.quick_replies.push({
+                                content_type: "text",
+                                title: action.label,
+                                payload: action.data
+                            });
+                        } else if (action.type == "message"){
+                            compiled_message.quick_replies.push({
+                                content_type: "text",
+                                title: action.label,
+                                payload: action.text
+                            });
+                        }
+                    }
+                }
                 break;
-            } // End of switch(format.type)
-        } // End of if (format.provider == "line")
-        return compiled_message;
+            }
+            case "confirm_template": {// -> to text(w quick reply) or button tempalte
+                let uri_included = false;
+                for (let action of message.template.actions){
+                    if (action.type == "uri"){
+                        uri_included = true;
+                    }
+                }
+                if (uri_included){
+                    // This template message include uri button so we use template message in facebook as well.
+                    if (message.template.actions.length > 3){
+                        // Not supported since facebook does not allow template message including more than 3 buttons. The threshold of action of line template button is 4.
+                        debug(`Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message.`);
+                        compiled_message = {
+                            text: message.altText + " *Compiling template message including more than 3 buttons including uri button from line format to facebook format is not supported. So we compile it to text message."
+                        }
+                        break;
+                    }
+                    compiled_message = {
+                        attachment: {
+                            type: "template",
+                            payload: {
+                                template_type: "button",
+                                text: message.template.text,
+                                buttons: []
+                            }
+                        }
+                    }
+                    for (let action of message.template.actions){
+                        if (action.type == "uri"){
+                            compiled_message.attachment.payload.buttons.push({
+                                type: "web_url",
+                                url: action.uri,
+                                title: action.label
+                            });
+                        } else {
+                            compiled_message.attachment.payload.buttons.push({
+                                type: "postback",
+                                title: action.label,
+                                payload: action.data
+                            });
+                        }
+
+                    }
+                } else {
+                    // This template message does not include uri. Can be postback or message so we use quick reply.
+                    compiled_message = {
+                        text: message.template.text,
+                        quick_replies: []
+                    }
+                    for (let action of message.template.actions){
+                        if (action.type == "postback"){
+                            compiled_message.quick_replies.push({
+                                content_type: "text",
+                                title: action.label,
+                                payload: action.data
+                            });
+                        } else if (action.type == "message"){
+                            compiled_message.quick_replies.push({
+                                content_type: "text",
+                                title: action.label,
+                                payload: action.text
+                            });
+                        }
+                    }
+                }
+                break;
+            }
+            case "carousel_template": {// -> generic template
+                compiled_message = {
+                    attachment: {
+                        type: "template",
+                        payload: {
+                            template_type: "generic",
+                            elements: []
+                        }
+                    }
+                }
+                for (let column of message.template.columns){
+                    let element = {
+                        title: column.text,
+                        image_url: column.thumbnailImageUrl,
+                        buttons: []
+                    }
+                    let uri_included = false;
+                    for (let action of column.actions){
+                        if (action.type == "uri"){
+                            uri_included = true;
+                        }
+                    }
+                    if (uri_included){
+                        if (column.actions.length > 3){
+                            // Not supported since facebook does not allow template message including more than 3 buttons. line's threshold is 3, too.
+                            debug(`Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported.`);
+                            compiled_message = {
+                                text: message.altText + " *Compiling template messege including more than 3 buttons including uri button from line format to facebook format is not supported."
+                            }
+                            break;
+                        }
+                    }
+                    for (let action of column.actions){
+                        if (action.type == "postback"){
+                            element.buttons.push({
+                                type: "postback",
+                                title: action.label,
+                                payload: action.data
+                            });
+                        } else if (action.type == "message"){
+                            element.buttons.push({
+                                type: "postback",
+                                title: action.label,
+                                payload: action.text
+                            });
+                        } else if (action.type == "uri"){
+                            element.buttons.push({
+                                type: "web_url",
+                                url: action.uri,
+                                title: action.label
+                            });
+                        }
+                    }
+                    compiled_message.attachment.payload.elements.push(element);
+                }
+                break;
+            }
+            default: {
+                debug(`Message type is LINE's ${message_type} and it is not supported in Facebook.`);
+                compiled_message = {
+                   type: "text",
+                   text: `*Message type is LINE's ${message_type} and it is not supported in Facebook.`
+                }
+                break;
+            }
+        }
+        return compiled_message
     }
 }
