@@ -511,7 +511,7 @@ module.exports = class VirtualPlatform {
             debug(`Compiled message is following.`);
             debug(compiled_message);
         } else {
-            compiled_message = message;
+            compiled_message = JSON.parse(JSON.stringify(message));
         }
 
         if (this.translater){
