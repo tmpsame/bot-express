@@ -93,7 +93,9 @@ for (let message_platform of message_platform_list){
                     }
                 ).then(
                     function(response){
-                        response.should.equal("unsupported event for reply flow");
+                        response._flow.should.equal("reply");
+                        response.confirming.should.equal("color");
+                        response.confirmed.should.deep.equal({});
                     }
                 );
             });

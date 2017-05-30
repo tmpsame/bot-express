@@ -12,9 +12,8 @@ let Flow = require("./flow");
 module.exports = class ChangeIntentFlow extends Flow {
     /*
     ** ### Change Intent Flow ###
-    ** - Check if the event is supported one in this flow.
-    ** - If we find some parameters from message, add them to the conversation.
-    ** - Run final action.
+    ** -> If we find some parameters from message, add them to the conversation.
+    ** -> Run final action.
     */
 
     constructor(vp, bot_event, context, options) {

@@ -49,7 +49,9 @@ module.exports = class StartConversationFlow extends Flow {
         let message_text = this.vp.extract_message_text();
 
         let translated;
-        if (this.vp.translater){
+        if (!this.vp.translater){
+            translated = Promise.resolve(message_text);
+        } else {
             translated = this.vp.translater.detect(message_text).then(
                 (response) => {
                     this.context.sender_language = response[0].language;
@@ -68,8 +70,6 @@ module.exports = class StartConversationFlow extends Flow {
                     return response[0];
                 }
             );
-        } else {
-            translated = Promise.resolve(message_text);
         }
 
         return translated.then(

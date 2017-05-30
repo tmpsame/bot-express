@@ -8,28 +8,41 @@ let debug = require("debug")("bot-express:flow");
 let ParseError = require("../error/parse");
 let Flow = require("./flow");
 
-module.exports = class StartConversationFlow extends Flow {
+module.exports = class RestartConversationFlow extends Flow {
     /*
-    ** ### Start Conversation Flow ###
-    ** - Check if the event is supported one in this flow.
-    ** - If we find some parameter from initial message, add them to the conversation.
-    ** - Run final action.
+    ** ### Retart Conversation Flow ###
+    ** -> Process parameters.
+    ** -> Run final action.
     */
 
-    constructor(vp, bot_event, context, options) {
+    constructor(vp, bot_event, intent, options) {
+        context = {
+            _flow: "restart_conversation",
+            intent: intent,
+            confirmed: {},
+            to_confirm: [],
+            confirming: null,
+            previous: {
+                confirmed: [],
+                message: []
+            },
+            _message_queue: [],
+            sender_language: null
+        };
+        vp.context = context;
         super(vp, bot_event, context, options);
-        this.context._flow = "start_conversation";
     }
 
     run(){
-        debug("### This is Start Conversation Flow. ###");
+        debug("### This is Retart Conversation Flow. ###");
 
+        // ### Process Parameters ###
         // If we find some parameters from initial message, add them to the conversation.
-        let all_parameters_processed = [];
+        let parameters_processed = [];
         if (this.context.intent.parameters && Object.keys(this.context.intent.parameters).length > 0){
             for (let param_key of Object.keys(this.context.intent.parameters)){
                 // Parse and Add parameters using skill specific logic.
-                all_parameters_processed.push(
+                parameters_processed.push(
                     super.apply_parameter(param_key, this.context.intent.parameters[param_key]).then(
                         (applied_parameter) => {
                             if (applied_parameter == null){
@@ -47,10 +60,9 @@ module.exports = class StartConversationFlow extends Flow {
                 );
             }
         }
-
-        // Run final action.
-        return Promise.all(all_parameters_processed).then(
+        return Promise.all(parameters_processed).then(
             (response) => {
+                // ### Run Final Action ###
                 return super.finish();
             }
         );

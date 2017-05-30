@@ -23,7 +23,7 @@ describe("Reaction Test", function(){
             let webhook = new Webhook(options);
             return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                 function(response){
-                    return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
+                    return webhook.run(Util.create_req(message_platform, event_type, user_id, "アンケートテスト"));
                 }
             ).then(
                 function(response){
@@ -62,7 +62,7 @@ describe("Reaction Test", function(){
             let webhook = new Webhook(options);
             return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                 function(response){
-                    return webhook.run(Util.create_req(message_platform, event_type, user_id, "survey test"));
+                    return webhook.run(Util.create_req(message_platform, event_type, user_id, "アンケートテスト"));
                 }
             ).then(
                 function(response){

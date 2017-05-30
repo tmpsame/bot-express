@@ -13,6 +13,7 @@ let debug = require("debug")("bot-express:webhook");
 // Import Flows
 let beacon_flow = require('./flow/beacon');
 let start_conversation_flow = require('./flow/start_conversation');
+let restart_conversation_flow = require('./flow/restart_conversation');
 let reply_flow = require('./flow/reply');
 let change_intent_flow = require('./flow/change_intent');
 let change_parameter_flow = require('./flow/change_parameter');
@@ -163,12 +164,34 @@ module.exports = class webhook {
                     } else {
                         // Set session id for api.ai and text to identify intent.
                         let session_id = vp.extract_session_id();
-                        let text = vp.extract_message_text();
+                        let message_text = vp.extract_message_text();
 
-                        // Instantiate api.ai instance
-                        let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
-                        debug("api.ai instantiated.");
-                        promise_is_change_intent_flow = apiai.identify_intent(session_id, text).then(
+                        // Translation
+                        let translated;
+                        if (!vp.translater){
+                            translated = Promise.resolve(message_text);
+                        } else {
+                            // If sender language is different from bot language, we translate message into bot language.
+                            if (this.options.language === context.sender_language){
+                                translated = Promise.resolve(message_text);
+                            } else {
+                                debug("Translating message text...");
+                                translated = vp.translater.translate(message_text, this.options.language).then(
+                                    (response) => {
+                                        return response[0];
+                                    }
+                                );
+                            }
+                        }
+
+                        promise_is_change_intent_flow = translated.then(
+                            (message_text) => {
+                                // Instantiate api.ai instance
+                                let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
+                                debug("api.ai instantiated.");
+                                return apiai.identify_intent(session_id, message_text);
+                            }
+                        ).then(
                             (response) => {
                                 if (response.result.action != this.options.default_intent){
                                     // This is change intent flow or restart intent flow.
@@ -193,27 +216,15 @@ module.exports = class webhook {
                             if (response.result){
                                 if (response.intent.action == context.intent.action){
                                     /*
-                                    ** Restart Intent Flow (= Start Conversation Flow)
+                                    ** Restart Conversation Flow
                                     */
-                                    // Instantiate the conversation object. This will be saved as Bot Memory.
-                                    context = {
-                                        intent: response.intent,
-                                        confirmed: {},
-                                        to_confirm: [],
-                                        confirming: null,
-                                        previous: {
-                                            confirmed: [],
-                                            message: []
-                                        }
-                                    };
-                                    vp.context = context;
                                     try {
-                                        flow = new start_conversation_flow(vp, bot_event, context, this.options);
+                                        flow = new restart_conversation_flow(vp, bot_event, response.intent, this.options);
                                     } catch(err) {
                                         return Promise.reject(err);
                                     }
                                     return flow.run();
-                                    // End of Restart Intent Flow
+                                    // End of Restart Conversation Flow
                                 } else {
                                     /*
                                     ** Change Intent Flow
@@ -271,10 +282,6 @@ module.exports = class webhook {
                                             return Promise.reject(err);
                                         }
                                         return flow.run();
-                                    },
-                                    (response) => {
-                                        // This is exception. Stop processing webhook and reject.
-                                        return Promise.reject(response);
                                     }
                                 );
                             }
