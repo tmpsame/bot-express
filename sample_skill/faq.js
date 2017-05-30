@@ -147,7 +147,8 @@ module.exports = class SkillFaq {
                     }
                 }
             }
-        },
+        }
+        
         this.optional_parameter = {
             rating: {
                 message_to_confirm: {
@@ -218,7 +219,8 @@ module.exports = class SkillFaq {
                     }
                 }
             }
-        },
+        }
+
         this.clear_context_on_finish = true;
     }
 
