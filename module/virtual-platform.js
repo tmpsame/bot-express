@@ -541,6 +541,7 @@ module.exports = class VirtualPlatform {
             case "buttons_template": {
                 return this.translater.translate([message.altText, message.template.text], sender_language).then(
                     (response) => {
+                        debug(response);
                         message.altText = response[0];
                         message.template.text = response[1];
                         return message;
