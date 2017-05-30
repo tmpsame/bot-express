@@ -68,7 +68,7 @@ module.exports = class ReplyFlow extends Flow {
         return translated.then(
             (param_value) => {
                 return super.apply_parameter(this.context.confirming, param_value);
-            },
+            }
         ).then(
             (applied_parameter) => {
                 if (applied_parameter == null){
