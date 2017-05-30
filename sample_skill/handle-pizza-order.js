@@ -49,7 +49,9 @@ module.exports = class SkillHandlePizzaOrder {
                     text: "最後に、お客様のお名前を教えていただけますか？"
                 }
             }
-        };
+        }
+
+        this.clear_context_on_finish = true;
     }
 
     parse_pizza(value, context, resolve, reject){

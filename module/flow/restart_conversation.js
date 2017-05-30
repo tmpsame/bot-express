@@ -34,7 +34,7 @@ module.exports = class RestartConversationFlow extends Flow {
     }
 
     run(){
-        debug("### This is Retart Conversation Flow. ###");
+        debug("### This is Restart Conversation Flow. ###");
 
         // ### Process Parameters ###
         // If we find some parameters from initial message, add them to the conversation.
