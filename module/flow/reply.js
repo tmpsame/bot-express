@@ -45,24 +45,17 @@ module.exports = class ReplyFlow extends Flow {
         if (!this.vp.translater || is_postback){
             translated = Promise.resolve(param_value);
         } else {
-            translated = this.vp.translater.detect(param_value).then(
-                (response) => {
-                    this.context.sender_language = response[0].language;
-                    debug("sender language is " + this.context.sender_language);
-
-                    // If sender language is different from bot language, we translate message into bot language.
-                    if (this.options.language === this.context.sender_language){
-                        return [param_value];
-                    } else {
-                        debug("Translating param value...");
-                        return this.vp.translater.translate(param_value, this.options.language)
+            // If sender language is different from bot language, we translate message into bot language.
+            if (this.options.language === this.context.sender_language){
+                translated = Promise.resolve(param_value);
+            } else {
+                debug("Translating param value...");
+                translated = this.vp.translater.translate(param_value, this.options.language).then(
+                    (response) => {
+                        return response[0];
                     }
-                }
-            ).then(
-                (response) => {
-                    return response[0];
-                }
-            );
+                );
+            }
         }
 
         return translated.then(
