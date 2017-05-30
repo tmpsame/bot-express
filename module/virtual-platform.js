@@ -565,23 +565,41 @@ module.exports = class VirtualPlatform {
                                 offset++;
                             }
                         }
+                        debug("Translated message follows.");
+                        debug(message);
                         return message;
                     }
                 );
             }
             case "confirm_template": {
-                return this.translater.translate([message.altText, message.template.text], sender_language).then(
+                let source_texts = [message.altText, message.template.text];
+                for (let action of message.template.actions){
+                    source_texts.push(action.label);
+                    if (action.type == "message"){
+                        source_texts.push(action.text);
+                    } else if (action.type == "postback"){
+                        source_texts.push(action.data);
+                    }
+                }
+                return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
+                        debug(response);
                         message.altText = response[0][0];
                         message.template.text = response[0][1];
-                        return message;
-                    }
-                );
-            }
-            case "carousel_template": {
-                return this.translater.translate(message.altText, sender_language).then(
-                    (response) => {
-                        message.altText = response[0];
+                        let offset = 2;
+                        for (let action of message.template.actions){
+                            action.label = response[0][offset];
+                            offset++;
+                            if (action.type == "message"){
+                                action.text = response[0][offset];
+                                offset++;
+                            } else if (action.type == "postback"){
+                                action.data = response[0][offset];
+                                offset++;
+                            }
+                        }
+                        debug("Translated message follows.");
+                        debug(message);
                         return message;
                     }
                 );
@@ -596,9 +614,27 @@ module.exports = class VirtualPlatform {
         let message_type = this._facebook_identify_message_type(message);
         switch(message_type){
             case "text": {
-                return this.translater.translate(message.text, sender_language).then(
+                let source_texts = [message.text];
+                if (message.quick_replies){
+                    for (let quick_reply of message.quick_replies){
+                        if (quick_reply.content_type == "text"){
+                            source_texts.push(quick_reply.title);
+                            source_texts.push(quick_reply.payload);
+                        }
+                    }
+                }
+                return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
-                        message.text = response[0];
+                        message.text = response[0][0];
+                        let offset = 1;
+                        for (let quick_reply of message.quick_replies){
+                            if (quick_reply.content_type == "text"){
+                                quick_reply.title = response[0][offset];
+                                offset++;
+                                quick_reply.payload = response[0][offset];
+                                offset++;
+                            }
+                        }
                         debug("Translated message follows.");
                         debug(message);
                         return message;
