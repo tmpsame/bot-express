@@ -1,8 +1,8 @@
 "use strict";
 
-module.exports = class ParseError extends Error {
+module.exports = class BotExpressParseError extends Error {
     constructor(message){
         super(message);
-        this.name = "ParseError";
+        this.name = "BotExpressParseError";
     }
 }

@@ -68,6 +68,8 @@ module.exports = class StartConversationFlow extends Flow {
                 }
             ).then(
                 (response) => {
+                    debug("Translater response follows.");
+                    debug(response);
                     return response[0];
                 }
             );

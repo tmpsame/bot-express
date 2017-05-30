@@ -42,7 +42,7 @@ module.exports = class ReplyFlow extends Flow {
         }
 
         let translated;
-        if (!this.vp.translater || is_postback || true){
+        if (!this.vp.translater || is_postback){
             translated = Promise.resolve(param_value);
         } else {
             // If sender language is different from bot language, we translate message into bot language.

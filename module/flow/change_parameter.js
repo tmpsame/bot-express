@@ -59,6 +59,8 @@ module.exports = class ChangeParameterFlow extends Flow {
                 debug("Translating param value...");
                 translated = this.vp.translater.translate(param_value, this.options.language).then(
                     (response) => {
+                        debug("Translater response follows.");
+                        debug(response);
                         return response[0];
                     }
                 );
