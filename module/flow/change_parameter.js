@@ -5,7 +5,6 @@
 */
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
-let ParseError = require("../error/parse");
 let Flow = require("./flow");
 
 
@@ -88,8 +87,12 @@ module.exports = class ChangeParameterFlow extends Flow {
                         return super.react(null, applied_parameter.key, applied_parameter.value);
                     }
                 ).catch(
-                    ParseError, (error) => {
-                        debug(`Does not fit`);
+                    (error) => {
+                        if (error.name == "BotExpressParseError"){
+                            debug("Does not fit.");
+                        } else {
+                            return Promise.reject(error);
+                        }
                     }
                 )
             );

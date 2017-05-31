@@ -5,7 +5,6 @@
 */
 let Promise = require("bluebird");
 let debug = require("debug")("bot-express:flow");
-let ParseError = require("../error/parse");
 let Flow = require("./flow");
 let Apiai = require("../service/apiai");
 
@@ -114,9 +113,13 @@ module.exports = class StartConversationFlow extends Flow {
                                     return super.react(null, applied_parameter.key, applied_parameter.value);
                                 }
                             ).catch(
-                                ParseError, (error) => {
-                                    debug("Parser rejected the value.");
-                                    return super.react(error, param_key, this.context.intent.parameters[param_key]);
+                                (error) => {
+                                    if (error.name == "BotExpressParseError"){
+                                        debug("Parser rejected the value.");
+                                        return super.react(error, param_key, this.context.intent.parameters[param_key]);
+                                    } else {
+                                        return Promise.reject(error);
+                                    }
                                 }
                             )
                         );

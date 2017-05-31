@@ -2,7 +2,7 @@
 
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
-let ParseError = require("../error/parse");
+let BotExpressParseError = require("../error/parse");
 let apiai = require('apiai');
 
 module.exports = class Flow {
@@ -158,7 +158,7 @@ module.exports = class Flow {
 
             // We define new reject just for parse.
             let parse_reject = (message) => {
-                reject(new ParseError(message));
+                return reject(new BotExpressParseError(message));
             }
 
             if (!!this.skill[type][key].parser){

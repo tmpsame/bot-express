@@ -14,8 +14,8 @@ for (let message_platform of message_platform_list){
     describe("handle-pizza-order skill test - from " + message_platform, function(){
         let user_id = "handle-pizza-order";
         let event_type = "message";
-        describe("ピザを注文したいのですが", function(){
-            it("goes start conversation flow and confirm the pizza type.", function(){
+        describe("#ピザを注文したいのですが", function(){
+            it("will be recognized and bot asks pizza type.", function(){
                 this.timeout(8000);
 
                 let options = Util.create_options();
@@ -34,12 +34,34 @@ for (let message_platform of message_platform_list){
                         response.to_confirm[2].should.have.property("name").and.equal("address");
                         response.to_confirm[3].should.have.property("name").and.equal("name");
                         response.previous.confirmed.should.deep.equal([]);
+                        response.previous.message.should.have.lengthOf(2);
                     }
                 );
             });
         });
-        describe("マルゲリータで。", function(){
-            it("goes reply flow and pizza is set to マルゲリータ.", function(){
+        describe("ジェノベーゼで。", function(){
+            it("will be rejected by parser and bot asks same question once again.", function(){
+                this.timeout(8000);
+
+                let options = Util.create_options();
+                let webhook = new Webhook(options);
+                return webhook.run(Util.create_req(message_platform, event_type, user_id, "ジェノベーゼで。")).then(
+                    function(response){
+                        response.should.have.property("confirmed").and.deep.equal({});
+                        response.should.have.property("confirming", "pizza");
+                        response.should.have.property("to_confirm").have.lengthOf(4);
+                        response.to_confirm[0].should.have.property("name").and.equal("pizza");
+                        response.to_confirm[1].should.have.property("name").and.equal("size");
+                        response.to_confirm[2].should.have.property("name").and.equal("address");
+                        response.to_confirm[3].should.have.property("name").and.equal("name");
+                        response.previous.confirmed.should.deep.equal([]);
+                        response.previous.message.should.have.lengthOf(4);
+                    }
+                );
+            });
+        });
+        describe("じゃ、マルゲリータで。", function(){
+            it("will be accepted and bot set pizza マルゲリータ and asks pizza size.", function(){
                 this.timeout(8000);
 
                 let options = Util.create_options();
@@ -53,6 +75,7 @@ for (let message_platform of message_platform_list){
                         response.to_confirm[1].should.have.property("name").and.equal("address");
                         response.to_confirm[2].should.have.property("name").and.equal("name");
                         response.previous.confirmed.should.deep.equal(["pizza"]);
+                        response.previous.message.should.have.lengthOf(6);
                     }
                 );
             });

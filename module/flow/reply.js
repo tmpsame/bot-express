@@ -5,7 +5,6 @@
 */
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
-let ParseError = require("../error/parse");
 let Flow = require("./flow");
 
 
@@ -49,7 +48,7 @@ module.exports = class ReplyFlow extends Flow {
             debug(`Bot language is ${this.options.language} and sender language is ${this.context.sender_language}`);
             if (this.options.language === this.context.sender_language){
                 debug("We do not translate param value.");
-                translated = Promise.resolve(param_value);
+                return Promise.resolve(param_value);
             } else {
                 debug("Translating param value...");
                 translated = this.vp.translater.translate(param_value, this.options.language).then(
@@ -77,9 +76,13 @@ module.exports = class ReplyFlow extends Flow {
                 return super.react(null, applied_parameter.key, applied_parameter.value);
             }
         ).catch(
-            ParseError, (error) => {
-                debug("Parser rejected the value.");
-                return super.react(error, this.context.confirming, param_value);
+            (error) => {
+                if (error.name == "BotExpressParseError"){
+                    debug("Parser rejected the value");
+                    return super.react(error, this.context.confirming, param_value);
+                } else {
+                    return Promise.reject(error);
+                }
             }
         ).then(
             (response) => {

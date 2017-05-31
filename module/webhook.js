@@ -172,18 +172,27 @@ module.exports = class webhook {
                             translated = Promise.resolve(message_text);
                         } else {
                             // If sender language is different from bot language, we translate message into bot language.
-                            debug(`Bot language is ${this.options.language} and sender language is ${context.sender_language}`);
-                            if (this.options.language === context.sender_language){
-                                debug("We do not translate message text.");
-                                translated = Promise.resolve(message_text);
-                            } else {
-                                debug("Translating message text...");
-                                translated = vp.translater.translate(message_text, this.options.language).then(
-                                    (response) => {
-                                        return response[0];
+                            translated = vp.translater.detect(message_text).then(
+                                (response) => {
+                                    context.sender_language = response[0].language;
+                                    debug(`Bot language is ${this.options.language} and sender language is ${context.sender_language}`);
+
+                                    // If sender language is different from bot language, we translate message into bot language.
+                                    if (this.options.language === context.sender_language){
+                                        debug("We do not translate message text.");
+                                        return [message_text];
+                                    } else {
+                                        debug("Translating message text...");
+                                        return vp.translater.translate(message_text, this.options.language)
                                     }
-                                );
-                            }
+                                }
+                            ).then(
+                                (response) => {
+                                    debug("Translater response follows.");
+                                    debug(response);
+                                    return response[0];
+                                }
+                            );
                         }
 
                         promise_is_change_intent_flow = translated.then(
