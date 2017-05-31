@@ -386,11 +386,8 @@ module.exports = class VirtualPlatform {
     }
 
     send(recipient_id, messages){
-        if (messages){
-            this.queue(messages);
-        }
         let messages_compiled = [];
-        for (let message of this.context._message_queue){
+        for (let message of messages){
             messages_compiled.push(this.compile_message(message));
         }
         let compiled_messages;
@@ -407,7 +404,6 @@ module.exports = class VirtualPlatform {
                         message: compiled_message
                     });
                 }
-                this.context._message_queue = [];
                 return response;
             }
         );
