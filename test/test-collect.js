@@ -22,7 +22,7 @@ describe("Collect Test", function(){
             let webhook = new Webhook(options);
             return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                 function(response){
-                    return webhook.run(Util.create_req(message_platform, "message", user_id, "collect test"));
+                    return webhook.run(Util.create_req(message_platform, "message", user_id, "コレクトテスト"));
                 }
             ).then(
                 function(response){
@@ -90,7 +90,7 @@ describe("Collect Test", function(){
             let webhook = new Webhook(options);
             return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                 function(response){
-                    return webhook.run(Util.create_req(message_platform, "message", user_id, "collect test"));
+                    return webhook.run(Util.create_req(message_platform, "message", user_id, "コレクトテスト"));
                 }
             ).then(
                 function(response){

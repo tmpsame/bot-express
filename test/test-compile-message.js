@@ -13,7 +13,7 @@ chai.should();
 describe("compile-message-test - from line", function(){
     let message_platform = "line";
     let user_id = "compile-message-test";
-    describe("message compile test", function(){
+    describe("コンパイルメッセージテスト", function(){
         it("start asking pizza type in various format.", function(){
             this.timeout(8000);
 
@@ -21,7 +21,7 @@ describe("compile-message-test - from line", function(){
             let webhook = new Webhook(options);
             return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                 function(response){
-                    return webhook.run(Util.create_req(message_platform, "message", user_id, "message compile test"));
+                    return webhook.run(Util.create_req(message_platform, "message", user_id, "コンパイルメッセージテスト"));
                 }
             ).then(
                 function(response){
@@ -393,7 +393,7 @@ describe("compile-message-test - from line", function(){
 describe("compile-message-test - from facebook", function(){
     let message_platform = "facebook";
     let user_id = "compile-message-test";
-    describe("message compile test", function(){
+    describe("コンパイルメッセージテスト", function(){
         it("start asking pizza type in various format.", function(){
             this.timeout(8000);
 
@@ -401,7 +401,7 @@ describe("compile-message-test - from facebook", function(){
             let webhook = new Webhook(options);
             return webhook.run(Util["create_req_to_clear_memory"](user_id)).then(
                 function(response){
-                    return webhook.run(Util.create_req(message_platform, "message", user_id, "message compile test"));
+                    return webhook.run(Util.create_req(message_platform, "message", user_id, "コンパイルメッセージテスト"));
                 }
             ).then(
                 function(response){

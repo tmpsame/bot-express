@@ -538,7 +538,8 @@ module.exports = class VirtualPlatform {
                     }
                 );
             }
-            case "buttons_template": {
+            case "buttons_template":
+            case "confirm_template": {
                 let source_texts = [message.altText, message.template.text];
                 for (let action of message.template.actions){
                     source_texts.push(action.label);
@@ -546,11 +547,8 @@ module.exports = class VirtualPlatform {
                         source_texts.push(action.text);
                     }
                 }
-                debug(source_texts);
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
-                        debug("Translater response follows.");
-                        debug(response);
                         message.altText = response[0][0];
                         message.template.text = response[0][1];
                         let offset = 2;
@@ -568,30 +566,39 @@ module.exports = class VirtualPlatform {
                     }
                 );
             }
-            case "confirm_template": {
-                let source_texts = [message.altText, message.template.text];
-                for (let action of message.template.actions){
-                    source_texts.push(action.label);
-                    if (action.type == "message"){
-                        source_texts.push(action.text);
-                    } else if (action.type == "postback"){
-                        source_texts.push(action.data);
+            case "carousel_template": {
+                let source_texts = [message.altText];
+                for (let column of message.template.columns){
+                    if (column.title) source_texts.push(column.title);
+                    source_texts.push(column.text);
+
+                    for (let action of column.actions){
+                        source_texts.push(action.label);
+                        if (action.type == "message"){
+                            source_texts.push(action.text);
+                        }
                     }
                 }
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
                         message.altText = response[0][0];
-                        message.template.text = response[0][1];
-                        let offset = 2;
-                        for (let action of message.template.actions){
-                            action.label = response[0][offset];
+
+                        let offset = 1;
+                        for (let column of message.template.columns){
+                            if (column.title){
+                                column.title = response[0][offset];
+                                offset++;
+                            }
+                            column.text = response[0][offset];
                             offset++;
-                            if (action.type == "message"){
-                                action.text = response[0][offset];
+
+                            for (let action of column.actions){
+                                action.label = response[0][offset];
                                 offset++;
-                            } else if (action.type == "postback"){
-                                action.data = response[0][offset];
-                                offset++;
+                                if (action.type == "message"){
+                                    action.text = response[0][offset];
+                                    offset++;
+                                }
                             }
                         }
                         debug("Translated message follows.");
