@@ -48,7 +48,7 @@ module.exports = class ReplyFlow extends Flow {
             debug(`Bot language is ${this.options.language} and sender language is ${this.context.sender_language}`);
             if (this.options.language === this.context.sender_language){
                 debug("We do not translate param value.");
-                return Promise.resolve(param_value);
+                translated = Promise.resolve(param_value);
             } else {
                 debug("Translating param value...");
                 translated = this.vp.translater.translate(param_value, this.options.language).then(

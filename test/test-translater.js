@@ -154,7 +154,6 @@ describe("Traslater Test", function(){
                     response.should.have.property("confirmed").and.deep.equal({color: "FF7B7B"});
                     response.should.have.property("confirming", null);
                     response.should.have.property("to_confirm").have.lengthOf(0);
-                    console.log(response.previous.message);
                     response.previous.message.should.have.lengthOf(6);
                 }
             );

@@ -11,10 +11,6 @@ module.exports = class Flow {
         this.bot_event = bot_event;
         this.options = options;
         this.context = context;
-        this.context.previous.message.unshift({
-            from: "user",
-            message: vp.extract_message()
-        });
 
         if (this.context.intent){
             this.skill = this.instantiate_skill(this.context.intent.action);
@@ -247,6 +243,11 @@ module.exports = class Flow {
     }
 
     finish(){
+        this.context.previous.message.unshift({
+            from: "user",
+            message: this.vp.extract_message()
+        });
+
         // If we still have parameters to confirm, we collect them.
         if (this.context.to_confirm.length > 0){
             debug("Going to collect parameter.");
