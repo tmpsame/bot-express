@@ -514,7 +514,8 @@ module.exports = class VirtualPlatform {
             let sender_language = this.context.sender_language;
             let bot_language = this.options.language;
             if (sender_language && (sender_language != bot_language)){
-                debug(`Translating message...`);
+                debug(`Translating following message...`);
+                debug(compiled_message);
                 return this[`_${this.type}_translate_message`](compiled_message, sender_language);
             }
         }
@@ -533,6 +534,7 @@ module.exports = class VirtualPlatform {
                         return message;
                     }
                 );
+                break;
             }
             case "buttons_template":
             case "confirm_template": {
@@ -561,6 +563,7 @@ module.exports = class VirtualPlatform {
                         return message;
                     }
                 );
+                break;
             }
             case "carousel_template": {
                 let source_texts = [message.altText];
@@ -602,9 +605,11 @@ module.exports = class VirtualPlatform {
                         return message;
                     }
                 );
+                break;
             }
             default: {
                 return Promise.resolve(message);
+                break;
             }
         }
     }
@@ -624,13 +629,44 @@ module.exports = class VirtualPlatform {
                 }
                 return this.translater.translate(source_texts, sender_language).then(
                     (response) => {
-                        message.text = response[0][0];
+                        if (source_texts.length == 1){
+                            message.text = response[0];
+                        } else {
+                            message.text = response[0][0];
+
+                            let offset = 1;
+                            if (message.quick_replies){
+                                for (let quick_reply of message.quick_replies){
+                                    if (quick_reply.content_type == "text"){
+                                        quick_reply.title = response[0][offset];
+                                        offset++;
+                                        quick_reply.payload = response[0][offset];
+                                        offset++;
+                                    }
+                                }
+                            }
+                        }
+                        debug("Translated message follows.");
+                        debug(message);
+                        return message;
+                    }
+                );
+                break;
+            }
+            case "button_template":{
+                let source_texts = [message.attachment.payload.text];
+                for (let button of message.attachment.payload.buttons){
+                    if (button.type == "web_url" || button.type == "postback" || button.type == "phone_number" || button.type == "payment"){
+                        source_texts.push(button.title);
+                    }
+                }
+                return this.translater.translate(source_texts, sender_language).then(
+                    (response) => {
+                        message.attachment.payload.text = response[0][0];
                         let offset = 1;
-                        for (let quick_reply of message.quick_replies){
-                            if (quick_reply.content_type == "text"){
-                                quick_reply.title = response[0][offset];
-                                offset++;
-                                quick_reply.payload = response[0][offset];
+                        for (let button of message.attachment.payload.buttons){
+                            if (button.type == "web_url" || button.type == "postback" || button.type == "phone_number" || button.type == "payment"){
+                                button.title = response[0][offset];
                                 offset++;
                             }
                         }
@@ -639,9 +675,47 @@ module.exports = class VirtualPlatform {
                         return message;
                     }
                 );
+                break;
+            }
+            case "generic_template":
+            case "list_template": {
+                let source_texts = [];
+                for (let element of message.attachment.payload.elements){
+                    source_texts.push(element.title);
+                    if (element.subtitle) source_texts.push(element.subtitle);
+                    for (let button of element.buttons){
+                        if (button.type == "web_url" || button.type == "postback" || button.type == "phone_number" || button.type == "payment"){
+                            source_texts.push(button.title);
+                        }
+                    }
+                }
+                return this.translater.translate(source_texts, sender_language).then(
+                    (response) => {
+                        let offset = 0;
+                        for (let element of message.attachment.payload.elements){
+                            element.title = response[0][offset];
+                            offset++;
+                            if (element.subtitle){
+                                element.subtitle = response[0][offset];
+                                offset++;
+                            }
+                            for (let button of element.buttons){
+                                if (button.type == "web_url" || button.type == "postback" || button.type == "phone_number" || button.type == "payment"){
+                                    button.title = response[0][offset];
+                                    offset++;
+                                }
+                            }
+                        }
+                        debug("Translated message follows.");
+                        debug(message);
+                        return message;
+                    }
+                );
+                break;
             }
             default: {
                 return Promise.resolve(message);
+                break;
             }
         }
     }
