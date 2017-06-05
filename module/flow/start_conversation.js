@@ -18,7 +18,7 @@ module.exports = class StartConversationFlow extends Flow {
     ** -> Run final action.
     */
 
-    constructor(vp, bot_event, options) {
+    constructor(messenger, bot_event, options) {
         let context = {
             _flow: "start_conversation",
             intent: null,
@@ -32,26 +32,26 @@ module.exports = class StartConversationFlow extends Flow {
             _message_queue: [],
             sender_language: null
         };
-        vp.context = context;
-        super(vp, bot_event, context, options);
+        messenger.context = context;
+        super(messenger, bot_event, context, options);
     }
 
     run(){
         debug("### This is Start Conversation Flow. ###");
 
         // Check if this event type is supported in this flow.
-        if (!this.vp.check_supported_event_type("start_conversation")){
+        if (!this.messenger.check_supported_event_type("start_conversation")){
             debug(`This is unsupported event type in this flow so skip processing.`);
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
 
-        let message_text = this.vp.extract_message_text();
+        let message_text = this.messenger.extract_message_text();
 
         let translated;
-        if (!this.vp.translater){
+        if (!this.messenger.translater){
             translated = Promise.resolve(message_text);
         } else {
-            translated = this.vp.translater.detect(message_text).then(
+            translated = this.messenger.translater.detect(message_text).then(
                 (response) => {
                     this.context.sender_language = response[0].language;
                     debug(`Bot language is ${this.options.nlp_options.language} and sender language is ${this.context.sender_language}`);
@@ -62,7 +62,7 @@ module.exports = class StartConversationFlow extends Flow {
                         return [message_text];
                     } else {
                         debug("Translating message text...");
-                        return this.vp.translater.translate(message_text, this.options.nlp_options.language)
+                        return this.messenger.translater.translate(message_text, this.options.nlp_options.language)
                     }
                 }
             ).then(
@@ -78,9 +78,9 @@ module.exports = class StartConversationFlow extends Flow {
             (message_text) => {
                 // ### Identify Intent ###
                 let nlp = new Nlp(this.options.nlp, this.options.nlp_options);
-                debug("nlp instantiated.");
+                debug("NLP Abstraction instantiated.");
                 return nlp.identify_intent(message_text, {
-                    session_id: this.vp.extract_session_id()
+                    session_id: this.messenger.extract_sender_id()
                 });
             }
         ).then(
@@ -88,7 +88,7 @@ module.exports = class StartConversationFlow extends Flow {
                 // ### Instantiate Skill ###
                 this.context.intent = intent;
                 this.skill = super.instantiate_skill(this.context.intent.name);
-                this.vp.skill = this.skill;
+                this.messenger.skill = this.skill;
 
                 // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
                 // After that, we depend on context.to_confirm to identify to_confirm parameters.

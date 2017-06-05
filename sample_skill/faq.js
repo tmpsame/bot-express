@@ -37,7 +37,7 @@ module.exports = class SkillFaq {
                         tasks.push(bot.queue([{text: "ちょっと調べてみますね。少々お待ちを。"}]));
 
                         // -> Send help to administrator.
-                        tasks.push(this.need_help(bot, "ユーザーから質問です。", bot.extract_memory_id(), value));
+                        tasks.push(this.need_help(bot, "ユーザーから質問です。", bot.extract_sender_id(), value));
 
                         return Promise.all(tasks).then(
                             (response) => {
@@ -79,7 +79,7 @@ module.exports = class SkillFaq {
 
                                     // -> Send help to administrator.
                                     if ((!!app_env.LINE_ADMIN_USER_ID && bot.type == "line") || (!!app_env.FACEBOOK_ADMIN_USER_ID && bot.type == "facebook")){
-                                        tasks.push(this.need_help(bot, "わからないこと聞かれました。", bot.extract_memory_id(), context.confirmed.question));
+                                        tasks.push(this.need_help(bot, "わからないこと聞かれました。", bot.extract_sender_id(), context.confirmed.question));
                                     }
                                 } else {
                                     // ### Task Overview in case we have answer ###
@@ -148,7 +148,7 @@ module.exports = class SkillFaq {
                 }
             }
         }
-        
+
         this.optional_parameter = {
             rating: {
                 message_to_confirm: {

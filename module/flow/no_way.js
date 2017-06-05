@@ -14,8 +14,8 @@ module.exports = class NoWayFlow extends Flow {
     ** This flow is selected when context exists, cannot identify intent and cannot extract parameter.
     */
 
-    constructor(vp, bot_event, context, options) {
-        super(vp, bot_event, context, options);
+    constructor(messenger, bot_event, context, options) {
+        super(messenger, bot_event, context, options);
         this.context.intent.action = options.default_intent;
         this.context._flow = "no_way";
     }
@@ -24,7 +24,7 @@ module.exports = class NoWayFlow extends Flow {
         debug("### This is No Way Flow. ###");
 
         // Check if the event is supported one in this flow.
-        if (!this.vp.check_supported_event_type("no_way")){
+        if (!this.messenger.check_supported_event_type("no_way")){
             debug(`This is unsupported event type in this flow so skip processing.`)
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }

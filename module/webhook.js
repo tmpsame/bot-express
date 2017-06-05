@@ -19,11 +19,11 @@ let change_intent_flow = require('./flow/change_intent');
 let change_parameter_flow = require('./flow/change_parameter');
 let no_way_flow = require('./flow/no_way');
 
-// Import NLP.
+// Import NLP Abstraction.
 let Nlp = require("./nlp");
 
-// Import Platform Abstraction.
-let Virtual_platform = require("./virtual-platform");
+// Import Messenger Abstraction.
+let Messenger = require("./messenger");
 
 module.exports = class webhook {
     constructor(options){
@@ -65,39 +65,39 @@ module.exports = class webhook {
         debug("Message Platform specific required options all set.");
 
         // Instantiate Message Platform.
-        let vp = new Virtual_platform(this.options);
-        debug("Virtual Message Platform instantiated.");
+        let messenger = new Messenger(this.options);
+        debug("Messenger Abstraction instantiated.");
 
         // Signature Validation.
-        if (!vp.validate_signature(req)){
+        if (!messenger.validate_signature(req)){
             return Promise.reject("Signature Validation failed.");
         }
         debug("Signature Validation suceeded.");
 
         // Set Events.
-        let bot_events = vp.extract_events(req.body);
+        let bot_events = messenger.extract_events(req.body);
 
         for (let bot_event of bot_events){
             debug(`Processing following event.`);
             debug(bot_event);
 
-            vp.bot_event = bot_event;
+            messenger.bot_event = bot_event;
 
             // Recall Memory
-            let memory_id = vp.extract_memory_id();
+            let memory_id = messenger.extract_sender_id();
             debug(`memory id is ${memory_id}.`);
 
             let context = memory.get(memory_id);
-            vp.context = context;
+            messenger.context = context;
 
             let promise_flow_completed;
             let flow;
 
-            if (vp.extract_event_type() == "beacon"){
+            if (messenger.extract_event_type() == "beacon"){
                 /*
                 ** Beacon Flow
                 */
-                let beacon_event_type = vp.extract_beacon_event_type();
+                let beacon_event_type = messenger.extract_beacon_event_type();
 
                 if (!beacon_event_type){
                     return Promise.resolve("Unsupported beacon event.");
@@ -118,9 +118,9 @@ module.exports = class webhook {
                         message: []
                     }
                 };
-                vp.context = context;
+                messenger.context = context;
                 try {
-                    flow = new beacon_flow(vp, bot_event, context, this.options);
+                    flow = new beacon_flow(messenger, bot_event, context, this.options);
                 } catch(err) {
                     return Promise.reject(err);
                 }
@@ -130,7 +130,7 @@ module.exports = class webhook {
                 ** Start Conversation Flow.
                 */
                 try {
-                    flow = new start_conversation_flow(vp, bot_event, this.options);
+                    flow = new start_conversation_flow(messenger, bot_event, this.options);
                 } catch(err) {
                     return Promise.reject(err);
                 }
@@ -142,7 +142,7 @@ module.exports = class webhook {
                     ** Reply Flow
                     */
                     try {
-                        flow = new reply_flow(vp, bot_event, context, this.options);
+                        flow = new reply_flow(messenger, bot_event, context, this.options);
                     } catch(err){
                         return Promise.reject(err);
                     }
@@ -152,7 +152,7 @@ module.exports = class webhook {
                     // Check if this is Change Intent Flow.
                     let promise_is_change_intent_flow;
 
-                    if (!vp.check_supported_event_type("change_intent")){
+                    if (!messenger.check_supported_event_type("change_intent")){
                         promise_is_change_intent_flow = new Promise((resolve, reject) => {
                             resolve({
                                 result: false,
@@ -162,16 +162,16 @@ module.exports = class webhook {
                         });
                     } else {
                         // Set session id for api.ai and text to identify intent.
-                        let session_id = vp.extract_session_id();
-                        let message_text = vp.extract_message_text();
+                        let session_id = messenger.extract_sender_id();
+                        let message_text = messenger.extract_message_text();
 
                         // Translation
                         let translated;
-                        if (!vp.translater){
+                        if (!messenger.translater){
                             translated = Promise.resolve(message_text);
                         } else {
                             // If sender language is different from bot language, we translate message into bot language.
-                            translated = vp.translater.detect(message_text).then(
+                            translated = messenger.translater.detect(message_text).then(
                                 (response) => {
                                     context.sender_language = response[0].language;
                                     debug(`Bot language is ${this.options.nlp_options.language} and sender language is ${context.sender_language}`);
@@ -182,7 +182,7 @@ module.exports = class webhook {
                                         return [message_text];
                                     } else {
                                         debug("Translating message text...");
-                                        return vp.translater.translate(message_text, this.options.nlp_options.language)
+                                        return messenger.translater.translate(message_text, this.options.nlp_options.language)
                                     }
                                 }
                             ).then(
@@ -198,7 +198,7 @@ module.exports = class webhook {
                             (message_text) => {
                                 // ### Identify Intent ###
                                 let nlp = new Nlp(this.options.nlp, this.options.nlp_options);
-                                debug("nlp instantiated.");
+                                debug("NLP Abstraction instantiated.");
                                 return nlp.identify_intent(message_text, {
                                     session_id: session_id
                                 });
@@ -231,7 +231,7 @@ module.exports = class webhook {
                                     ** Restart Conversation Flow
                                     */
                                     try {
-                                        flow = new restart_conversation_flow(vp, bot_event, response.intent, context, this.options);
+                                        flow = new restart_conversation_flow(messenger, bot_event, response.intent, context, this.options);
                                     } catch(err) {
                                         return Promise.reject(err);
                                     }
@@ -244,7 +244,7 @@ module.exports = class webhook {
                                     // Set new intent while keeping other data.
                                     context.intent = response.intent;
                                     try {
-                                        flow = new change_intent_flow(vp, bot_event, context, this.options);
+                                        flow = new change_intent_flow(messenger, bot_event, context, this.options);
                                     } catch(err){
                                         return Promise.reject(err);
                                     }
@@ -267,7 +267,7 @@ module.exports = class webhook {
                                 } else {
                                     // Assume this is Change Parameter Flow.
                                     try {
-                                        flow = new change_parameter_flow(vp, bot_event, context, this.options);
+                                        flow = new change_parameter_flow(messenger, bot_event, context, this.options);
                                     } catch(err){
                                         return Promise.reject(err);
                                     }
@@ -289,7 +289,7 @@ module.exports = class webhook {
                                         */
                                         context.intent = identified_intent;
                                         try {
-                                            flow = new no_way_flow(vp, bot_event, context, this.options);
+                                            flow = new no_way_flow(messenger, bot_event, context, this.options);
                                         } catch(err){
                                             return Promise.reject(err);
                                         }

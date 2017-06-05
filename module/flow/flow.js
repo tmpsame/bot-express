@@ -5,15 +5,15 @@ let debug = require("debug")("bot-express:flow");
 let BotExpressParseError = require("../error/parse");
 
 module.exports = class Flow {
-    constructor(vp, bot_event, context, options){
-        this.vp = vp;
+    constructor(messenger, bot_event, context, options){
+        this.messenger = messenger;
         this.bot_event = bot_event;
         this.options = options;
         this.context = context;
 
         if (this.context.intent){
             this.skill = this.instantiate_skill(this.context.intent.name);
-            this.vp.skill = this.skill;
+            this.messenger.skill = this.skill;
 
             // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
             // After that, we depend on context.to_confirm to identify to_confirm parameters.
@@ -43,7 +43,7 @@ module.exports = class Flow {
         if (skill == "builtin_default"){
             debug("Use built-in default skill.");
             let skill_class = require("../skill/default");
-            skill_instance = new skill_class(this.vp, this.bot_event);
+            skill_instance = new skill_class(this.messenger, this.bot_event);
         } else {
             debug(`Look for ${skill} skill.`);
             let skill_class;
@@ -54,7 +54,7 @@ module.exports = class Flow {
                 debug("Skill not found.");
                 throw(exception);
             }
-            skill_instance = new skill_class(this.vp, this.bot_event);
+            skill_instance = new skill_class(this.messenger, this.bot_event);
         }
 
         return skill_instance;
@@ -90,10 +90,10 @@ module.exports = class Flow {
         }
         let message;
 
-        if (!!this.context.to_confirm[0].message_to_confirm[this.vp.type]){
+        if (!!this.context.to_confirm[0].message_to_confirm[this.messenger.type]){
             // Found message platform specific message object.
             debug("Found message platform specific message object.");
-            message = this.context.to_confirm[0].message_to_confirm[this.vp.type];
+            message = this.context.to_confirm[0].message_to_confirm[this.messenger.type];
         } else if (!!this.context.to_confirm[0].message_to_confirm){
             // Found common message object. We compile this message object to get message platform specific message object.
             debug("Found common message object.");
@@ -108,7 +108,7 @@ module.exports = class Flow {
         this.context.confirming = this.context.to_confirm[0].name;
 
         // Send question to the user.
-        return this.vp.reply([message]);
+        return this.messenger.reply([message]);
     }
 
     change_parameter(key, value){
@@ -237,14 +237,14 @@ module.exports = class Flow {
     }
 
     ask_retry(message_text){
-        let messages = [this.vp.create_text_message(message_text)];
-        return this.vp.reply(messages);
+        let messages = [this.messenger.create_text_message(message_text)];
+        return this.messenger.reply(messages);
     }
 
     finish(){
         this.context.previous.message.unshift({
             from: "user",
-            message: this.vp.extract_message()
+            message: this.messenger.extract_message()
         });
 
         // If we still have parameters to confirm, we collect them.
@@ -256,7 +256,7 @@ module.exports = class Flow {
         // If we have no parameters to confirm, we finish this conversation using finish method of skill.
         debug("Going to perform final action.");
         let finished = new Promise((resolve, reject) => {
-            this.skill.finish(this.vp, this.bot_event, this.context, resolve, reject);
+            this.skill.finish(this.messenger, this.bot_event, this.context, resolve, reject);
         });
 
         return finished.then(

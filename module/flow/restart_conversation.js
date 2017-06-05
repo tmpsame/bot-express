@@ -14,7 +14,7 @@ module.exports = class RestartConversationFlow extends Flow {
     ** -> Run final action.
     */
 
-    constructor(vp, bot_event, intent, previous_context, options) {
+    constructor(messenger, bot_event, intent, previous_context, options) {
         let context = {
             _flow: "restart_conversation",
             intent: intent,
@@ -28,8 +28,8 @@ module.exports = class RestartConversationFlow extends Flow {
             _message_queue: [],
             sender_language: previous_context.sender_language
         };
-        vp.context = context;
-        super(vp, bot_event, context, options);
+        messenger.context = context;
+        super(messenger, bot_event, context, options);
     }
 
     run(){

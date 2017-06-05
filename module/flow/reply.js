@@ -17,31 +17,31 @@ module.exports = class ReplyFlow extends Flow {
     ** -> Run final action.
     */
 
-    constructor(vp, bot_event, context, options) {
+    constructor(messenger, bot_event, context, options) {
         context._flow = "reply";
-        super(vp, bot_event, context, options);
+        super(messenger, bot_event, context, options);
     }
 
     run(){
         debug("### This is Reply Flow. ###");
 
         // Check if this event type is supported in this flow.
-        if (!this.vp.check_supported_event_type("reply")){
+        if (!this.messenger.check_supported_event_type("reply")){
             debug(`This is unsupported event type in this flow so skip processing.`);
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
 
-        let param_value = this.vp.extract_param_value();
+        let param_value = this.messenger.extract_param_value();
 
         let is_postback = false;
-        if (this.vp.type == "line"){
+        if (this.messenger.type == "line"){
             if (this.bot_event.type == "postback") is_postback = true;
-        } else if (this.vp.type == "facebook"){
+        } else if (this.messenger.type == "facebook"){
             if (this.bot_event.postback) is_postback = true;
         }
 
         let translated;
-        if (!this.vp.translater || is_postback){
+        if (!this.messenger.translater || is_postback){
             translated = Promise.resolve(param_value);
         } else {
             // If sender language is different from bot language, we translate message into bot language.
@@ -51,7 +51,7 @@ module.exports = class ReplyFlow extends Flow {
                 translated = Promise.resolve(param_value);
             } else {
                 debug("Translating param value...");
-                translated = this.vp.translater.translate(param_value, this.options.nlp_options.language).then(
+                translated = this.messenger.translater.translate(param_value, this.options.nlp_options.language).then(
                     (response) => {
                         debug("Translater response follows.");
                         debug(response);

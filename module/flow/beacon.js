@@ -9,8 +9,8 @@ let Flow = require("./flow");
 
 module.exports = class BeaconFlow extends Flow {
 
-    constructor(vp, bot_event, context, options) {
-        super(vp, bot_event, context, options);
+    constructor(messenger, bot_event, context, options) {
+        super(messenger, bot_event, context, options);
         this.context._flow = "beacon";
     }
 
