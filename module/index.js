@@ -1,7 +1,7 @@
 'use strict';
 
 const REQUIRED_OPTIONS = {
-    common: ["apiai_client_access_token"]
+    common: []
 }
 const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
@@ -46,7 +46,7 @@ module.exports = (options) => {
     // Check if common required options are set.
     for (let req_opt of REQUIRED_OPTIONS["common"]){
         if (typeof options[req_opt] == "undefined"){
-            throw(`Required option: "${req_opt}" not set`);
+            throw new Error(`Required option: "${req_opt}" not set`);
         }
     }
     debug("Common required options all set.");
