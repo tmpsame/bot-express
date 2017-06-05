@@ -7,7 +7,7 @@ const DEFAULT_MEMORY_RETENTION = 60000;
 const DEFAULT_SKILL_PATH = "../../../../skill/";
 const DEFAULT_INTENT = "input.unknown";
 const DEFAULT_SKILL = "builtin_default";
-const DEFAULT_LANGUAGE = "ja";
+const DEFAULT_NLP = "apiai";
 
 let express = require("express");
 let router = express.Router();
@@ -28,7 +28,7 @@ module.exports = (options) => {
     options.default_intent = options.default_intent || DEFAULT_INTENT;
     options.default_skill = options.default_skill || DEFAULT_SKILL;
     options.memory_retention = options.memory_retention || DEFAULT_MEMORY_RETENTION;
-    options.language = options.language || DEFAULT_LANGUAGE;
+    options.nlp = options.nlp || DEFAULT_NLP;
     if (!!options.skill_path){
         options.skill_path = "../../../../" + options.skill_path;
     } else if (process.env.BOT_EXPRESS_ENV == "development"){

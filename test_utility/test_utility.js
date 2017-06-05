@@ -14,14 +14,17 @@ module.exports = class Test_Utility {
             facebook_page_access_token: [
                 {page_id: process.env.FACEBOOK_PAGE_ID, page_access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN}
             ],
-            apiai_client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
             default_intent: oneoff_options.default_intent || "input.unknown", // This is optional but required for this testing since test does not go through index.js which sets default parameter.
             default_skill: oneoff_options.default_skill || "builtin_default",
             beacon_skill: oneoff_options.beacon_skill || undefined,
             google_project_id: process.env.GOOGLE_PROJECT_ID,
             google_application_credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS,
             auto_translation: process.env.AUTO_TRANSLATION,
-            language: "ja"
+            nlp: "apiai",
+            nlp_options: {
+                client_access_token: process.env.APIAI_CLIENT_ACCESS_TOKEN,
+                language: "ja"
+            }
         }
         return options;
     }

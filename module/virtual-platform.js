@@ -1,7 +1,7 @@
 'use strict';
 
-let Line = require("./service/line");
-let Facebook = require("./service/facebook");
+let Line = require("./messenger/line");
+let Facebook = require("./messenger/facebook");
 let debug = require("debug")("bot-express:vp");
 let google_translate = require('@google-cloud/translate');
 
@@ -321,18 +321,6 @@ module.exports = class VirtualPlatform {
         return message_text;
     }
 
-    // Deprecated. DO NOT USE this method anymore. Use compile_message() instead.
-    /*
-    create_text_message(text_message){
-        let message_to_compile = {
-            type: "text",
-            text: text_message
-        }
-        let compiled_message = this.compile_message(message_to_compile);
-        return compiled_message;
-    }
-    */
-
     change_message_to_confirm(param_name, message){
         let param_index = this.context.to_confirm.findIndex(param => param.name === param_name);
         if (param_index === undefined){
@@ -361,7 +349,7 @@ module.exports = class VirtualPlatform {
         return Promise.all(messages_compiled).then(
             (response) => {
                 compiled_messages = response;
-                return this[`_${this.type}_reply`](this.bot_event, compiled_messages);
+                return this.service.reply(this.bot_event, compiled_messages);
             }
         ).then(
             (response) => {
@@ -377,14 +365,6 @@ module.exports = class VirtualPlatform {
         );
     }
 
-    _line_reply(bot_event, messages){
-        return this.service.reply(bot_event.replyToken, messages);
-    }
-
-    _facebook_reply(bot_event, messages){
-        return this.service.send(bot_event.recipient.id, {id: bot_event.sender.id}, messages);
-    }
-
     send(recipient_id, messages){
         let messages_compiled = [];
         for (let message of messages){
@@ -394,7 +374,7 @@ module.exports = class VirtualPlatform {
         return Promise.all(messages_compiled).then(
             (response) => {
                 compiled_messages = response;
-                return this[`_${this.type}_send`](recipient_id, compiled_messages);
+                return this.service.send(this.bot_event, recipient_id, compiled_messages);
             }
         ).then(
             (response) => {
@@ -407,14 +387,6 @@ module.exports = class VirtualPlatform {
                 return response;
             }
         );
-    }
-
-    _line_send(recipient_id, messages){
-        return this.service.send(recipient_id, messages);
-    }
-
-    _facebook_send(recipient_id, messages){
-        return this.service.send(this.bot_event.recipient.id, {id: recipient_id}, messages);
     }
 
     // While collect method exists in flow, this method is for developers to explicitly collect a parameter.
@@ -512,7 +484,7 @@ module.exports = class VirtualPlatform {
 
         if (this.translater){
             let sender_language = this.context.sender_language;
-            let bot_language = this.options.language;
+            let bot_language = this.options.nlp_options.language;
             if (sender_language && (sender_language != bot_language)){
                 debug(`Translating following message...`);
                 debug(compiled_message);

@@ -111,7 +111,10 @@ let bot_express = require('bot-express');
 
 ```
 app.use('/webhook', bot_express({
-    apiai_client_access_token: 'あなたのAPIAI Client Access Token', // 必須
+    nlp_options: { // 利用する自然言語解析サービスに必要な設定を入力
+        language: "言語識別子" // 必須
+        client_access_token: 'あなたのAPIAI Client Access Token', // API.AIを利用する場合必須
+    },
     line_channel_id: 'あなたのLINE Channel ID', // LINE対応の場合必須
     line_channel_secret: 'あなたのLINE Channel Secret', // LINE対応の場合必須
     line_channel_access_token: 'あなたのLINE Channel Access Token', // LINE対応の場合必須
@@ -126,7 +129,6 @@ app.use('/webhook', bot_express({
     beacon_skill: {'beaconイベントタイプ':'利用されるスキル'}, // オプション。beaconイベントとそのイベントで利用されるスキル。現在サポートされるbecaonイベントタイプはenterとleave。
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     memory_retention: ミリ秒, // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
-    language: '言語識別子' // オプション。会話の言語を指定。デフォルトは"ja"
 }));
 ```
 

@@ -19,9 +19,8 @@ let change_intent_flow = require('./flow/change_intent');
 let change_parameter_flow = require('./flow/change_parameter');
 let no_way_flow = require('./flow/no_way');
 
-// Import Services
-let Line = require("./service/line");
-let Apiai = require("./service/apiai");
+// Import NLP.
+let Nlp = require("./nlp");
 
 // Import Platform Abstraction.
 let Virtual_platform = require("./virtual-platform");
@@ -110,7 +109,7 @@ module.exports = class webhook {
 
                 // Instantiate the conversation object. This will be saved as Bot Memory.
                 context = {
-                    intent: {action: this.options.beacon_skill[beacon_event_type]},
+                    intent: {name: this.options.beacon_skill[beacon_event_type]},
                     confirmed: {},
                     to_confirm: [],
                     confirming: null,
@@ -175,15 +174,15 @@ module.exports = class webhook {
                             translated = vp.translater.detect(message_text).then(
                                 (response) => {
                                     context.sender_language = response[0].language;
-                                    debug(`Bot language is ${this.options.language} and sender language is ${context.sender_language}`);
+                                    debug(`Bot language is ${this.options.nlp_options.language} and sender language is ${context.sender_language}`);
 
                                     // If sender language is different from bot language, we translate message into bot language.
-                                    if (this.options.language === context.sender_language){
+                                    if (this.options.nlp_options.language === context.sender_language){
                                         debug("We do not translate message text.");
                                         return [message_text];
                                     } else {
                                         debug("Translating message text...");
-                                        return vp.translater.translate(message_text, this.options.language)
+                                        return vp.translater.translate(message_text, this.options.nlp_options.language)
                                     }
                                 }
                             ).then(
@@ -197,25 +196,27 @@ module.exports = class webhook {
 
                         promise_is_change_intent_flow = translated.then(
                             (message_text) => {
-                                // Instantiate api.ai instance
-                                let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
-                                debug("api.ai instantiated.");
-                                return apiai.identify_intent(session_id, message_text);
+                                // ### Identify Intent ###
+                                let nlp = new Nlp(this.options.nlp, this.options.nlp_options);
+                                debug("nlp instantiated.");
+                                return nlp.identify_intent(message_text, {
+                                    session_id: session_id
+                                });
                             }
                         ).then(
-                            (response) => {
-                                if (response.result.action != this.options.default_intent){
+                            (intent) => {
+                                if (intent.name != this.options.default_intent){
                                     // This is change intent flow or restart intent flow.
                                     debug("This is change intent flow or restart intent flow since we could identify intent.");
                                     return {
                                         result: true,
-                                        intent: response.result
+                                        intent: intent
                                     }
                                 } else {
                                     debug("This is not change intent flow since we could not identify intent.");
                                     return {
                                         result: false,
-                                        intent: response.result
+                                        intent: intent
                                     }
                                 }
                             }
@@ -225,7 +226,7 @@ module.exports = class webhook {
                     promise_flow_completed = promise_is_change_intent_flow.then(
                         (response) => {
                             if (response.result){
-                                if (response.intent.action == context.intent.action){
+                                if (response.intent.name == context.intent.name){
                                     /*
                                     ** Restart Conversation Flow
                                     */
@@ -255,7 +256,7 @@ module.exports = class webhook {
 
                                 // Check if this is Change Parameter Flow.
                                 let promise_is_change_parameter_flow;
-                                if (!context.previous.confirmed || context.previous.confirmed.length == 0 || context.intent.action == this.options.default_intent){
+                                if (!context.previous.confirmed || context.previous.confirmed.length == 0 || context.intent.name == this.options.default_intent){
                                     // This is not Change Parameter Flow.
                                     debug("This is not change parameter flow since we cannot find previously confirmed parameter. Or previous intent was default intent.")
                                     promise_is_change_parameter_flow = new Promise((resolve, reject) => {

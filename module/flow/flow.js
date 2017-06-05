@@ -3,7 +3,6 @@
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
 let BotExpressParseError = require("../error/parse");
-let apiai = require('apiai');
 
 module.exports = class Flow {
     constructor(vp, bot_event, context, options){
@@ -13,7 +12,7 @@ module.exports = class Flow {
         this.context = context;
 
         if (this.context.intent){
-            this.skill = this.instantiate_skill(this.context.intent.action);
+            this.skill = this.instantiate_skill(this.context.intent.name);
             this.vp.skill = this.skill;
 
             // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.

@@ -6,7 +6,7 @@
 let Promise = require("bluebird");
 let debug = require("debug")("bot-express:flow");
 let Flow = require("./flow");
-let Apiai = require("../service/apiai");
+let Nlp = require("../nlp");
 
 module.exports = class StartConversationFlow extends Flow {
     /*
@@ -54,15 +54,15 @@ module.exports = class StartConversationFlow extends Flow {
             translated = this.vp.translater.detect(message_text).then(
                 (response) => {
                     this.context.sender_language = response[0].language;
-                    debug(`Bot language is ${this.options.language} and sender language is ${this.context.sender_language}`);
+                    debug(`Bot language is ${this.options.nlp_options.language} and sender language is ${this.context.sender_language}`);
 
                     // If sender language is different from bot language, we translate message into bot language.
-                    if (this.options.language === this.context.sender_language){
+                    if (this.options.nlp_options.language === this.context.sender_language){
                         debug("We do not translate message text.");
                         return [message_text];
                     } else {
                         debug("Translating message text...");
-                        return this.vp.translater.translate(message_text, this.options.language)
+                        return this.vp.translater.translate(message_text, this.options.nlp_options.language)
                     }
                 }
             ).then(
@@ -77,16 +77,17 @@ module.exports = class StartConversationFlow extends Flow {
         return translated.then(
             (message_text) => {
                 // ### Identify Intent ###
-                let apiai = new Apiai(this.options.apiai_client_access_token, this.options.language);
-                debug("api.ai instantiated.");
-                let session_id = this.vp.extract_session_id();
-                return apiai.identify_intent(session_id, message_text);
+                let nlp = new Nlp(this.options.nlp, this.options.nlp_options);
+                debug("nlp instantiated.");
+                return nlp.identify_intent(message_text, {
+                    session_id: this.vp.extract_session_id()
+                });
             }
         ).then(
-            (response) => {
+            (intent) => {
                 // ### Instantiate Skill ###
-                this.context.intent = response.result;
-                this.skill = super.instantiate_skill(this.context.intent.action);
+                this.context.intent = intent;
+                this.skill = super.instantiate_skill(this.context.intent.name);
                 this.vp.skill = this.skill;
 
                 // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.

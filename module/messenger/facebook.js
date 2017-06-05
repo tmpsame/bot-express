@@ -3,7 +3,7 @@
 let Promise = require('bluebird');
 let request = require('request');
 let crypto = require('crypto');
-let debug = require("debug")("bot-express:service");
+let debug = require("debug")("bot-express:messenger");
 
 Promise.promisifyAll(request);
 
@@ -14,12 +14,15 @@ module.exports = class ServiceFacebook {
         this._page_access_token = page_access_token;
     }
 
-    send(page_id, recipient, messages){
+    send(event, to, messages){
         // If this is test, we will not actually issue call out.
         if (process.env.BOT_EXPRESS_ENV == "test"){
             debug("This is test so we skip the actual call out.");
             return Promise.resolve();
         }
+
+        let page_id = event.recipient.id
+        let recipient = {id: to};
 
         let page_access_token = this._page_access_token.find(token => token.page_id === page_id).page_access_token;
         if (!page_access_token){
@@ -72,6 +75,10 @@ module.exports = class ServiceFacebook {
                 return response;
             }
         )
+    }
+
+    reply(event, messages){
+        return this.send(event, event.sender.id, messages);
     }
 
     validate_signature(signature, raw_body){

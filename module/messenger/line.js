@@ -3,7 +3,7 @@
 let Promise = require('bluebird');
 let request = require('request');
 let crypto = require('crypto');
-let debug = require("debug")("bot-express:service");
+let debug = require("debug")("bot-express:messenger");
 
 Promise.promisifyAll(request);
 
@@ -15,7 +15,7 @@ module.exports = class ServiceLine {
         this._channel_access_token = channel_access_token;
     }
 
-    send(to, messages){
+    send(event, to, messages){
         // If this is test, we will not actually issue call out.
         if (process.env.BOT_EXPRESS_ENV == "test"){
             debug("This is test so we skip the actual call out.");
@@ -59,7 +59,7 @@ module.exports = class ServiceLine {
         );
     }
 
-    reply(reply_token, messages){
+    reply(event, messages){
         // If this is test, we will not actually issue call out.
         if (process.env.BOT_EXPRESS_ENV == "test"){
             debug("This is test so we skip the actual call out.");
@@ -71,7 +71,7 @@ module.exports = class ServiceLine {
             'Authorization': 'Bearer ' + this._channel_access_token
         };
         let body = {
-            replyToken: reply_token,
+            replyToken: event.replyToken,
             messages: messages
         }
         let url = 'https://api.line.me/v2/bot/message/reply';

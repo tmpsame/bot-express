@@ -29,7 +29,7 @@ for (let message_platform of message_platform_list){
                         response.should.have.property("confirming", null);
                         response.should.have.property("to_confirm").and.deep.equal([]);
                         response.previous.confirmed.should.deep.equal([]);
-                        response.should.have.property("intent").and.have.property("fulfillment").and.have.property("speech").and.equal("どうも。");
+                        response.intent.text_response.should.equal("どうも。");
                     }
                 );
             });
