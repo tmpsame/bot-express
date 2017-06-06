@@ -10,7 +10,7 @@ Promise.promisifyAll(request);
 module.exports = class MessengerFacebook {
 
     constructor(options){
-        this._app_secret = options.faceboo_app_secret;
+        this._app_secret = options.facebook_app_secret;
         this._page_access_token = options.facebook_page_access_token;
     }
 
