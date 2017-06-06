@@ -389,6 +389,12 @@ finish()には5つの引数が与えられます。第一引数（上記例で�
 現在のところこの翻訳機能はgoogle cloud translationを使って実装されているため、このサービスが対応する言語は自動的に検出され、翻訳可能です。
 *当該サービスの利用料は各自でお支払いいただく必要があります。*
 
+### 設定方法
+
+- メインスクリプトでgoogle_project_idに開発者のGoolge Project Idを設定し、auto_translationをenableに設定します。
+- Google API ConsoleにてApplication Default Credentialの認証ファイルを作成し、アプリケーションの任意の場所に配置します。
+- 環境変数GOOGLE_APPLICATION_CREDENTIALSに認証ファイルへのパスを設定します。
+
 ### 翻訳対象
 
 LINE
