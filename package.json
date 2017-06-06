@@ -1,5 +1,5 @@
 {
-  "description": "Chat Bot builder framework based on flow and skill model.",
+  "description": "Chatbot builder framework based on flow and skill model.",
   "main": "index.js",
   "name": "bot-express",
   "version": "0.0.93",

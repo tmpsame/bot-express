@@ -18,7 +18,6 @@ module.exports = class Test_Utility {
             default_skill: oneoff_options.default_skill || "builtin_default",
             beacon_skill: oneoff_options.beacon_skill || undefined,
             google_project_id: process.env.GOOGLE_PROJECT_ID,
-            google_application_credentials: process.env.GOOGLE_APPLICATION_CREDENTIALS,
             auto_translation: process.env.AUTO_TRANSLATION,
             nlp: "apiai",
             nlp_options: {
