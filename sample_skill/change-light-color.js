@@ -15,7 +15,7 @@ const COLOR_MAPPINGS = [
 */
 module.exports = class SkillChangeLightColor {
 
-    constructor(bot, bot_event) {
+    constructor(bot, event) {
         this.required_parameter = {
             color: {
                 message_to_confirm: {
@@ -31,7 +31,16 @@ module.exports = class SkillChangeLightColor {
                         ]
                     }
                 },
-                parse: this.parse_color
+                reaction: (error, parsed_value, context, resolve, reject) => {
+                    if (!error){
+                        if (parsed_value == "赤"){
+                            bot.queue([{
+                                text: "センスいいですね！"
+                            }]);
+                        }
+                    }
+                    return resolve();
+                }
             }
         };
     }
@@ -58,7 +67,7 @@ module.exports = class SkillChangeLightColor {
     }
 
     // IFTTT経由でHueのカラーを変更する
-    finish(bot, bot_event, context, resolve, reject){
+    finish(bot, event, context, resolve, reject){
         return hue.change_color(context.confirmed.color).then(
             (response) => {
                 let messages = [{

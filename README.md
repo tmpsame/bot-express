@@ -2,15 +2,15 @@
 
 # 概要
 
-bot-expressはNode.jsで稼働するChat Botを開発するためのフレームワークです。コンシェルジュ型のBotに必要とされる自然言語処理、文脈の理解、必要なパラメータの収集、LINEやFacebookを通じたメッセージ送受信機能などが搭載されており、開発者はフォーマットに従って「skillファイル」を追加するだけでBotの能力を拡張できることができます。
+bot-expressはNode.jsで稼働するChatbotを開発するためのフレームワークです。コンシェルジュ型のBotに必要とされる自然言語処理、文脈の理解、必要なパラメータの収集、LINEやFacebookを通じたメッセージ送受信機能などが搭載されており、開発者はフォーマットに従って「skillファイル」を追加するだけでBotの能力を拡張できることができます。
 
-bot-expressは複数のメッセージプラットフォームに対応しており、開発者が追加したスキルはサポートされるすべてのメッセージプラットフォームで動作します。現在対応しているメッセージプラットフォームはLINEとFacebookです。
+bot-expressは複数のメッセンジャーに対応しており、開発者が追加したスキルはサポートされるすべてのメッセンジャーで動作します。現在対応しているメッセンジャーはLINEとFacebookです。
 
 # アーキテクチャー
 
-![architecture of bot-express.png](https://qiita-image-store.s3.amazonaws.com/0/26079/6df2dc12-ad48-1f4c-86f4-10f6fda93465.png)
+![architecture of bot-express](https://dl.dropboxusercontent.com/u/149862/bot-express_architecture.png)
 
-bot-expressはNodeベースのアプリケーションにnpmでインストールできるフレームワークです。LINEやFacebookといったメッセージプラットフォーム、自然言語処理を担うapi.aiといった外部サービスとの連携が組み込まれており、スキルを作成しプラグインする形でBotを拡張できます。
+bot-expressはNodeベースのアプリケーションにnpmでインストールできるフレームワークです。LINEやFacebookといったメッセンジャー、自然言語処理を担うapi.aiといった外部サービスとの連携が組み込まれており、スキルを作成しプラグインする形でBotを拡張できます。
 
 # bot-expressを使うとどう幸せになれるのか？
 
@@ -20,6 +20,7 @@ bot-expressはNodeベースのアプリケーションにnpmでインストー�
 - Botに記憶と文脈を理解する能力を持たせることができます。
 - 任務の遂行に必要なパラメータを定義してあげることで適宜その情報を集めてくれます。
 - bot-expressを使って開発したBotはLINE, Facebook Messengerといったサポートしている全てのメッセージングプラットフォームで動作します。
+- オープンソース（MITライセンス）なので自由に改変して利用することができます。
 
 具体例で考えてみます。例えばスマートホームのコンシェルジュとなるBotを開発するとします。家にはPhilips社のHue（IoT電球。On/Offや照明色の変更が可能）が設置されており、プログラマティックに照明の色が変更できるようになっています。Botにこの照明の色を変更させるには、例えばユーザーは次のようにBotにリクエストすると予想されます。
 
@@ -66,16 +67,16 @@ this.required_parameter = {
 
 **最終処理**
 
-いよいよユーザーのリクエストに応えるときがきました。照明の色を変えるのです。この処理は開発者がfinish()という関数を実装することで自由に作成できます。bot-expressはfinish関数にこれまでに収集した情報を構造化して提供し、さらにLINEやFacebook Messengerといったメッセージプラットフォームを通じたメッセージの送信処理を統一したインターフェースで記述することができるサービスを提供します。これらの情報と機能利用しながら、単純な返信処理から照明の色を変えるIoT的な処理、他のクラウドサービスとの連携を含む処理など無限大の能力を追加することができます。
+いよいよユーザーのリクエストに応えるときがきました。照明の色を変えるのです。この処理は開発者がfinish()という関数を実装することで自由に作成できます。bot-expressはfinish関数にこれまでに収集した情報を構造化して提供し、さらにLINEやFacebook Messengerといったメッセンジャーを通じたメッセージの送信処理を統一したインターフェースで記述することができるサービスを提供します。これらの情報と機能利用しながら、単純な返信処理から照明の色を変えるIoT的な処理、他のクラウドサービスとの連携を含む処理など無限大の能力を追加することができます。
 
 ```
-finish(bot, bot_event, context, resolve, reject){
+finish(bot, event, context, resolve, reject){
     return hue.change_color(context.confirmed.color).then(
         (response) => {
             let messages = [{
                 text: "了解しましたー。"
             }];
-            // 送信元のメッセージプラットフォームを通じてメッセージが送信される。
+            // 送信元のメッセンジャーを通じてメッセージが送信される。
             return bot.reply(messages).then;
         }
     ).then(
@@ -145,7 +146,6 @@ api.aiでエージェントを作成したら次にIntentを作成します。
 ![register_user_says.png](https://qiita-image-store.s3.amazonaws.com/0/26079/30ea1a40-67b5-e75f-1c96-88e30913231c.png "register_user_says.png")
 
 
-
 同時に、各Intentには必ずactionを設定してください。actionに設定された文字列は、ユーザーの求めるIntentをBotが判断する際のキーになります。
 ![action.png](https://qiita-image-store.s3.amazonaws.com/0/26079/cba7ecce-a43d-861a-526a-325cf8d8fa8d.png "action.png")
 
@@ -166,13 +166,13 @@ Intentに対応するスキルを作成するため、skillディレクトリ直
 skillファイルはbot-expressフレームワークを使う中で開発者が唯一必ずBot独自の処理を記述する必要のあるファイルです。
 skillファイルは大きく3つのパートで構成されます。下記にパート毎のサンプルコードと説明がありますが、skillファイルの全体像を確認するには、[sample_skill/change-light-color.js](./sample_skill/change-light-color.js)を参照してみてください。
 
-**constructor(bot, bot_event, context)**
+**constructor(bot, event)**
 
 このスキルが完結するのに必要なパラメータ、およびそのパラメータを確認するためのメッセージを設定します。
 例えば「ライトの色を変更する」というスキルの場合、「色」の指定が不可欠となるので、これをrequired_parameterプロパティにcolorとして登録します。
 
 ```
-constructor(bot, bot_event) {
+constructor(bot, event) {
     this.required_parameter = {
         color: {
             message_to_confirm: {
@@ -187,14 +187,13 @@ constructor(bot, bot_event) {
                         {type:"postback",label:"黄",data:"黄"}
                     ]
                 }
-            },
-            parser: this.parse_color
+            }
         }
     };
 }
 ```
 
-パラメータを収集する際、ユーザーに確認するメッセージをそのプロパティ配下のmessage_to_confirmプロパティに設定します。message_to_confirmに設定するメッセージはサポートされているいずれかのメッセージプラットフォームのメッセージフォーマットに従ってください。上記はLINEのフォーマットに従った例です。Facebook Messengerのフォーマットで同様のメッセージを表現すると下記のようになります。
+パラメータを収集する際、ユーザーに確認するメッセージをそのプロパティ配下のmessage_to_confirmプロパティに設定します。message_to_confirmに設定するメッセージはサポートされているいずれかのメッセンジャーのメッセージフォーマットに従ってください。上記はLINEのフォーマットに従った例です。Facebook Messengerのフォーマットで同様のメッセージを表現すると下記のようになります。
 
 ```
 color: {
@@ -205,8 +204,7 @@ color: {
             {content_type:"text",title:"赤",payload:"赤"},
             {content_type:"text",title:"黄",payload:"黄"}
         ]
-    },
-    parser: this.parse_color
+    }
 }
 ```
 
@@ -215,7 +213,7 @@ color: {
 - LINE: https://devdocs.line.me/ja/#send-message-object
 - Facebook Messenger: https://developers.facebook.com/docs/messenger-platform/send-api-reference
 
-いずれのフォーマットで設定した場合でも、イベントの送信元がLINEであればLINEのフォーマットに、Facebook MessengerであればFacebook Messengerのフォーマットに **ベストエフォートで** 変換されます。ベストエフォートなのは、各メッセージプラットフォームによって当然差異があるため、すべて変換できるとは限らないためです。万全を期す場合は、下記のようにサポートされているメッセージプラットフォームごとにメッセージオブジェクトを設定することもできます。
+いずれのフォーマットで設定した場合でも、イベントの送信元がLINEであればLINEのフォーマットに、Facebook MessengerであればFacebook Messengerのフォーマットに **ベストエフォートで** 変換されます。ベストエフォートなのは、各メッセンジャーによって当然差異があるため、すべて変換できるとは限らないためです。万全を期す場合は、下記のようにサポートされているメッセンジャーごとにメッセージオブジェクトを設定することもできます。
 
 ```
 color: {
@@ -241,12 +239,11 @@ color: {
                 {content_type:"text",title:"黄",payload:"黄"}
             ]
         }
-    },
-    parser: this.parse_color
+    }
 }
 ```
 
-また、parserプロパティでこのパラメータを判定・変換するためのparse処理を指定できます。上記の例では明示的にthis.parse_colorと指定していますが、指定がない場合はデフォルトでthis.parse_パラメータ名のメソッドが実行されます。
+また、ユーザーが返答したパラメータの値を検証・判定・変換するためのparse処理を指定できます。デフォルトではこのskillファイルでparse_パラメータ名で定義したメソッドが実行されます。
 
 また、パラメーター収集後に何らかのリアクションを取りたい場合、下記のようにreactionプロパティで指定することができます。
 
@@ -265,7 +262,6 @@ color: {
             ]
         }
     },
-    parser: this.parse_color,
     reaction: (error, parsed_value, context, resolve, reject) => {
         if (!error){
             if (parsed_value == "赤"){
@@ -288,7 +284,7 @@ reactionは5つの引数を取ります。
 第四引数はreaction成功時のコールバック関数です。
 第五引数はreaction失敗時のコールバック関数です。
 
-パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。どちらかだけ設定することもできますし、両方同時に設定することもできます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは埋まらない限りユーザーに確認メッセージが送信されるのに対し、optional_parameterはBot側から能動的に確認することはないという点です。
+パラメータにはスキルの完結に不可欠なrequired_parameterと、補足的なoptional_parameterが指定できます。optional_parameterのフォーマットはrequired_parameterと全く同じです。両者の違いは、required_parameterは埋まらない限りユーザーに確認メッセージが送信されるのに対し、optional_parameterは開発者が明示的にcollect()で収集しない限りBotが能動的にユーザーに確認することはないという点です。
 
 いずれのパラメータも特定されればcontext.confirmedに登録され、後述のfinish()の中で参照することができます。
 
@@ -324,12 +320,12 @@ parse_color(value, context, resolve, reject){
 
 適切な値が判定できなかった場合にはreject()を実行してreturnしてください。
 
-**finish(bot, bot_event, context, resolve, reject)**
+**finish(bot, event, context, resolve, reject)**
 
 パラメータが全て揃ったら実行する最終処理を記述します。
 
 ```
-finish(bot, bot_event, context, resolve, reject){
+finish(bot, event, context, resolve, reject){
     return Hue.change_color(context.confirmed.color).then(
         (response) => {
             let messages = [{
@@ -347,25 +343,21 @@ finish(bot, bot_event, context, resolve, reject){
 
 上記の例では別途定義されているライトの色を変更するサービスであるHue.change_color(color)を実行し、成功したら「了解しましたー。」というメッセージをユーザーに返信しています。
 
-finish()には3つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。利用しているメッセージプラットフォームを意識せずに処理を記述することができます。このインスタンスの機能は下記になります。
+finish()には5つの引数が与えられます。第一引数（上記例ではbot）はメッセージ送信処理などが実装されたインスタンスです。利用しているメッセンジャーを意識せずに処理を記述することができます。このインスタンスの機能は下記になります。
 
-- **reply(messages)** : メッセージの返信をおこなうメソッドです。messagesにはいずれかのメッセージプラットフォームで定義されているフォーマットにメッセージオブジェクトを配列でセットします。
+- **reply(messages)** : メッセージの返信をおこなうメソッドです。messagesにはいずれかのメッセンジャーで定義されているフォーマットにメッセージオブジェクトを配列でセットします。
 - **queue(messages)** : 返信するメッセージをキュー（実行待ち）に入れるためのメソッドです。キューに入れておいたメッセージはreply()が実行された時に一括で送信されます。reply()は一度のイベントで一回しか実行できないため、複数のメッセージを返信する必要がある場合はこのメソッドを利用してください。
 - **change_message_to_confirm(parameter_name, message)** : parameter_nameで指定したパラメーターのmessage_to_confirmを一時的に変更します。これは主にparse処理が失敗した時にユーザーに再入力を促がす際に有用です。
 - **collect(parameter_name)** : 明示的にパラメーターを収集するメソッドです。parameter_nameにはconstructor()に記述したいずれかのoptional_parameterを指定します。指定できるパラメーターは一つだけです。条件に応じて動的にパラメーターを収集する場合に便利です。
 - **collect(parameter)** : 明示的にパラメーターを収集するメソッドです。parameterにはconstructor()に記述するのと同じ形式のパラメーターオブジェクトを指定します。動的にパラメーターを生成し、収集する場合に便利です。
 
-第二引数（上記例ではbot_event）はこの処理のトリガーとなったイベントです。例えばメッセージプラットフォームがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
+第二引数（上記例ではevent）はこの処理のトリガーとなったイベントです。例えばメッセンジャーがLINEの場合、Webhookに送信されたevents配列の中の一つのeventオブジェクトが収められています。Facebookの場合はEntry配列の中のmessaging配列の一つのmessageオブジェクトが収められています。
 
 第三引数（上記例ではcontext）はこれまでの会話から構造化された情報です。このcontextは下記のような構造になっています。
 
-第四引数（上記例ではresolve）は処理が成功した際のコールバックです。
-
-第五引数（上記例ではreject）は処理が失敗した際のコールバックです。
-
 ```
 {
-    intent: api.aiから返されたresult,
+    intent: ユーザーの意図を解析した結果,
     to_confirm: 確認しなければならないパラメータのリスト,
     confirmed: 確認済みのパラメータのリスト,
     confirming: 現在確認中のパラメータ
@@ -377,6 +369,10 @@ finish()には3つの引数が与えられます。第一引数（上記例で�
 ```
 
 おそらく必ず必要になるのがconfirmedです。ここにはconstructor()でこのスキルで必須とされたパラメータとその値が収められています。前述の例ではcontext.confirmed.colorとして特定した色を取得しています。
+
+第四引数（上記例ではresolve）は処理が成功した際のコールバックです。
+
+第五引数（上記例ではreject）は処理が失敗した際のコールバックです。
 
 このfinish()によって、開発者は自由に最終的なアクションを作成することができます。単に決まったフレーズを返信することもできますし、上記例のように他のクラウドサービスと連携して、IoTとドッキングさせることもできます。返信することだけが最終的なアクションではなく、アイデア次第で様々なモノ、サービスと連携できます。
 
