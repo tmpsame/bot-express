@@ -135,6 +135,30 @@ module.exports = class Messenger {
         );
     }
 
+    multicast(recipient_ids, messages){
+        let messages_compiled = [];
+        for (let message of messages){
+            messages_compiled.push(this.compile_message(message));
+        }
+        let compiled_messages;
+        return Promise.all(messages_compiled).then(
+            (response) => {
+                compiled_messages = response;
+                return this.service.multicast(this.bot_event, recipient_ids, compiled_messages);
+            }
+        ).then(
+            (response) => {
+                for (let compiled_message of compiled_messages){
+                    this.context.previous.message.unshift({
+                        from: "bot",
+                        message: compiled_message
+                    });
+                }
+                return response;
+            }
+        );
+    }
+
     // While collect method exists in flow, this method is for developers to explicitly collect a parameter.
     collect(arg){
         if (typeof arg == "string"){
