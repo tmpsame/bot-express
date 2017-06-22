@@ -129,6 +129,8 @@ app.use('/webhook', bot_express({
     default_intent: 'あなたのintent', // オプション。api.aiが意図を特定できなかった場合に返すresult.actionの値。デフォルトはinput.unknown
     default_skill: 'あなたのskill', // オプション。Intentが特定されなかった場合に使うスキル。デフォルトは組み込まれているdefaultスキル（api.aiからのText Reponseをそのまま返信するスキル）
     beacon_skill: {'beaconイベントタイプ':'利用されるスキル'}, // オプション。beaconイベントとそのイベントで利用されるスキル。現在サポートされるbecaonイベントタイプはenterとleave。
+    follow_skill: 'あなたのskill', // オプション。友達に追加された際に使うスキル。
+    unfollow_skill: 'あなたのskill', // オプション。ブロックされた際に使うスキル。
     skill_path: 'Skillのファイルが保存されるPATH', // オプション。Skillファイルが保存されるディレクトリをこのアプリのルートディレクトリからの相対PATHで指定。デフォルトは'./skill'
     memory_retention: ミリ秒, // オプション。Botが会話を記憶する期間をミリ秒で指定。デフォルトは60000 (60秒)
     google_project_id: 'あなたのGoogle Project Id', // オプション。自動翻訳を有効にする際に必要

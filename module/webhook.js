@@ -11,6 +11,8 @@ let memory = require("memory-cache");
 let debug = require("debug")("bot-express:webhook");
 
 // Import Flows
+let follow_flow = require('./flow/follow');
+let unfollow_flow = require('./flow/unfollow');
 let beacon_flow = require('./flow/beacon');
 let start_conversation_flow = require('./flow/start_conversation');
 let restart_conversation_flow = require('./flow/restart_conversation');
@@ -93,7 +95,37 @@ module.exports = class webhook {
             let promise_flow_completed;
             let flow;
 
-            if (messenger.extract_event_type() == "beacon"){
+            if (messenger.extract_event_type() == "follow"){
+                /*
+                ** Follow Flow
+                */
+                if (!this.options.follow_skill){
+                    return Promise.resolve(`This is follow flow but follow_skill not found so skip.`);
+                }
+
+                try {
+                    flow = new follow_flow(messenger, bot_event, this.options);
+                } catch(err) {
+                    return Promise.reject(err);
+                }
+                promise_flow_completed = flow.run();
+                // End of Follow Flow.
+            } else if (messenger.extract_event_type() == "unfollow"){
+                /*
+                ** Unfollow Flow
+                */
+                if (!this.options.unfollow_skill){
+                    return Promise.resolve(`This is Unfollow flow but unfollow_skill not found so skip.`);
+                }
+
+                try {
+                    flow = new unfollow_flow(messenger, bot_event, this.options);
+                } catch(err) {
+                    return Promise.reject(err);
+                }
+                promise_flow_completed = flow.run();
+                // End of Unfollow Flow.
+            } else if (messenger.extract_event_type() == "beacon"){
                 /*
                 ** Beacon Flow
                 */
