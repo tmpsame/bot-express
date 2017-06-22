@@ -43,7 +43,7 @@ module.exports = class Test_Utility {
             body: {
                 events: [{
                     "replyToken": "nHuyWiB7yP5Zw52FIkcQobQuGDXCTA",
-                    "type": (event_type == "unsupported") ? "follow" : event_type,
+                    "type": (event_type == "unsupported") ? "join" : event_type,
                     "timestamp": 1462629479859,
                     "source": {
                       "type": "user",
