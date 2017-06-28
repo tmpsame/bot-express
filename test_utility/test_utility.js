@@ -58,7 +58,11 @@ module.exports = class Test_Utility {
                 return header[param];
             }
         }
-        req.body.events[0][event_type] = Test_Utility["line_create_" + event_type + "_event_payload"](payload);
+
+        if (["message", "postback", "beacon"].indexOf(event_type) != -1){
+            req.body.events[0][event_type] = Test_Utility["line_create_" + event_type + "_event_payload"](payload);
+        }
+
         return req;
     }
 
