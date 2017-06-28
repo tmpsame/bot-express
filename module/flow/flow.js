@@ -237,7 +237,9 @@ module.exports = class Flow {
     }
 
     ask_retry(message_text){
-        let messages = [this.messenger.create_text_message(message_text)];
+        let messages = [{
+            text: context.intent.message_text
+        }];
         return this.messenger.reply(messages);
     }
 
