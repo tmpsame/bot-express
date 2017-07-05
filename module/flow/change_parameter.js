@@ -71,10 +71,10 @@ module.exports = class ChangeParameterFlow extends Flow {
         let parameters_processed = [];
         let all_param_keys = [];
         if (this.skill.required_parameter){
-            all_param_keys.concat(Object.keys(this.skill.required_parameter));
+            all_param_keys = all_param_keys.concat(Object.keys(this.skill.required_parameter));
         }
         if (this.skill.optional_parameter){
-            all_param_keys.concat(Object.keys(this.skill.optional_parameter));
+            all_param_keys = all_param_keys.concat(Object.keys(this.skill.optional_parameter));
         }
         debug("all_param_keys are following.");
         debug(all_param_keys);
