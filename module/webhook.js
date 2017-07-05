@@ -288,9 +288,9 @@ module.exports = class webhook {
 
                                 // Check if this is Change Parameter Flow.
                                 let promise_is_change_parameter_flow;
-                                if (!context.previous.confirmed || context.previous.confirmed.length == 0 || context.intent.name == this.options.default_intent){
+                                if (context.intent.name == this.options.default_intent){
                                     // This is not Change Parameter Flow.
-                                    debug("This is not change parameter flow since we cannot find previously confirmed parameter. Or previous intent was default intent.")
+                                    debug("This is not change parameter flow since previous intent was default intent.")
                                     promise_is_change_parameter_flow = new Promise((resolve, reject) => {
                                         resolve({
                                             result: false

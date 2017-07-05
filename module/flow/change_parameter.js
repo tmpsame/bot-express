@@ -69,12 +69,29 @@ module.exports = class ChangeParameterFlow extends Flow {
         // ### Change Parameter ###
         let is_fit = false;
         let parameters_processed = [];
-        for (let previously_confirmed_param_key of this.context.previous.confirmed){
-            debug(`Check if "${param_value}" is suitable for ${previously_confirmed_param_key}.`);
+        let all_param_keys = [];
+        if (this.skill.required_parameter){
+            all_param_keys.concat(Object.keys(this.skill.required_parameter));
+        }
+        if (this.skill.optional_parameter){
+            all_param_keys.concat(Object.keys(this.skill.optional_parameter));
+        }
+        debug("all_param_keys are following.");
+        debug(all_param_keys);
+        for (let param_key of all_param_keys){
+            debug(`Check if "${param_value}" is suitable for ${param_key}.`);
             parameters_processed.push(
                 translated.then(
                     (param_value) => {
-                        return super.change_parameter(previously_confirmed_param_key, param_value);
+                        if (this.context.previous.confirmed.indexOf(param_key) !== -1){
+                            // This parameter has already been confirmed.
+                            debug("This parameter has already been confirmed so use change_parameter.");
+                            return super.change_parameter(param_key, param_value);
+                        } else {
+                            // This parameter has not been confirmed yet.
+                            debug("This parameter has not been confirmed so use apply_parameter.");
+                            return super.apply_parameter(param_key, param_value);
+                        }
                     }
                 ).then(
                     (applied_parameter) => {
