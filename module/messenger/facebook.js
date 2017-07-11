@@ -425,14 +425,19 @@ module.exports = class MessengerFacebook {
                                 url: action.uri,
                                 title: action.label
                             });
-                        } else {
+                        } else if (action.type == "postback"){
                             compiled_message.attachment.payload.buttons.push({
                                 type: "postback",
                                 title: action.label,
                                 payload: action.data
                             });
+                        } else if (action.type == "message"){
+                            compiled_message.attachment.payload.buttons.push({
+                                type: "postback",
+                                title: action.label,
+                                payload: action.text
+                            });
                         }
-
                     }
                 } else {
                     // This template message does not include uri. Can be postback or message so we use quick reply.
