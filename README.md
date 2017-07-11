@@ -117,7 +117,6 @@ app.use('/webhook', bot_express({
         language: "言語識別子" // 必須
         client_access_token: 'あなたのAPIAI Client Access Token', // API.AIを利用する場合必須
     },
-    line_channel_id: 'あなたのLINE Channel ID', // LINE対応の場合必須
     line_channel_secret: 'あなたのLINE Channel Secret', // LINE対応の場合必須
     line_channel_access_token: 'あなたのLINE Channel Access Token', // LINE対応の場合必須
     facebook_app_secret: 'あなたのFacebook App Secret', // Facebook対応の場合必須
