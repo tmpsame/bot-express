@@ -47,6 +47,7 @@ module.exports = class StartConversationFlow extends Flow {
 
         // If this is not text message, we use default skill and just run finish();
         if (this.messenger.identify_message_type() != "text"){
+            debug("Since this is not a text message, we use default skill and just run finish().");
             // ### Instantiate Skill ###
             this.context.intent = {
                 name: this.options.default_intent

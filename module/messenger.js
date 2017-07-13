@@ -68,7 +68,7 @@ module.exports = class Messenger {
     }
 
     identify_message_type(){
-        return this.Messenger_classes[this.type].identify_message_type(this.bot_event);
+        return this.Messenger_classes[this.type].identify_message_type(this.bot_event.message);
     }
 
     change_message_to_confirm(param_name, message){
