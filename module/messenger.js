@@ -67,6 +67,10 @@ module.exports = class Messenger {
         return this.Messenger_classes[this.type].check_supported_event_type(flow, this.bot_event);
     }
 
+    identify_message_type(){
+        return this.Messenger_classes[this.type].identify_message_type(this.bot_event);
+    }
+
     change_message_to_confirm(param_name, message){
         let param_index = this.context.to_confirm.findIndex(param => param.name === param_name);
         if (param_index === undefined){

@@ -239,7 +239,7 @@ module.exports = class MessengerLine {
                 return false;
             break;
             case "start_conversation":
-                if ((event.type == "message" && event.message.type == "text") || event.type == "postback"){
+                if (event.type == "message" || event.type == "postback"){
                     return true;
                 }
                 return false;
@@ -269,7 +269,7 @@ module.exports = class MessengerLine {
                 return false;
             break;
             case "no_way":
-                if (event.type == "message" && event.message.type == "text"){
+                if (event.type == "message"){
                     return true;
                 }
                 return false;

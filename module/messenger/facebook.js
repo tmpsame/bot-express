@@ -224,7 +224,7 @@ module.exports = class MessengerFacebook {
                 return false;
             break;
             case "no_way":
-                if (event.message && event.message.text){
+                if (event.message){
                     return true;
                 }
                 return false;

@@ -18,7 +18,7 @@ module.exports = class StartConversationFlow extends Flow {
     ** -> Run final action.
     */
 
-    constructor(messenger, bot_event, options) {
+    constructor(messenger, event, options) {
         let context = {
             _flow: "start_conversation",
             intent: null,
@@ -33,7 +33,7 @@ module.exports = class StartConversationFlow extends Flow {
             sender_language: null
         };
         messenger.context = context;
-        super(messenger, bot_event, context, options);
+        super(messenger, event, context, options);
     }
 
     run(){
@@ -45,8 +45,19 @@ module.exports = class StartConversationFlow extends Flow {
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
 
-        let message_text = this.messenger.extract_message_text();
+        // If this is not text message, we use default skill and just run finish();
+        if (this.messenger.identify_message_type() != "text"){
+            // ### Instantiate Skill ###
+            this.context.intent = {
+                name: this.options.default_intent
+            }
+            this.skill = super.instantiate_skill(this.context.intent.name);
+            this.messenger.skill = this.skill;
 
+            return super.finish();
+        }
+
+        let message_text = this.messenger.extract_message_text();
         let translated;
         if (!this.messenger.translater){
             translated = Promise.resolve(message_text);
