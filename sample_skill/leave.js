@@ -1,7 +1,7 @@
 "use strict";
 
 let debug = require("debug")("bot-express:skill");
-let bot_user = require("../service/bot-user");
+let bot_user = require("../sample_service/bot-user");
 let Promise = require("bluebird");
 let request = require("request");
 let app_env = require("../environment_variables");
