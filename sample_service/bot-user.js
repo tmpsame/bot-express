@@ -22,7 +22,6 @@ module.exports = class ServiceBotUser {
             json: true
         }).then(
             (response) => {
-                debug(response);
                 if (response.statusCode != 200){
                     return Promise.reject(new Error("ServiceBotUser.get_list() failed."));
                 }
