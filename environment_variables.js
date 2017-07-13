@@ -19,3 +19,4 @@ exports.ORACLE_WORKSPACE = process.env.ORACLE_WORKSPACE;
 exports.DOCOMO_API_KEY = process.env.DOCOMO_API_KEY;
 exports.FAQ_MODE = process.env.FAQ_MODE;
 exports.FAQ_CONFIRM_AUTO_LEARN = process.env.FAQ_CONFIRM_AUTO_LEARN;
+exports.BOT_ID = process.env.BOT_ID;
