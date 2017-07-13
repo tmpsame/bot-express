@@ -31,6 +31,7 @@ app.use('/webhook', bot_express({
         enter: "survey",
         leave: "bye"
     },
+    default_skill: process.env.DEFAULT_SKILL,
     google_project_id: process.env.GOOGLE_PROJECT_ID,
     auto_translation: process.env.AUTO_TRANSLATION
 }));
