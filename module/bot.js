@@ -67,7 +67,7 @@ module.exports = class Bot {
     * @returns {Null}
     */
     change_message_to_confirm(parameter_name, message){
-        return this._messenger.collect(parameter_name, message);
+        return this._messenger.change_message_to_confirm(parameter_name, message);
     }
 
     /**
