@@ -145,6 +145,11 @@ module.exports = class Messenger {
     * @returns {Array.<Promise>}
     */
     send(recipient_id, messages){
+        // If messages is not array, we make it array.
+        if (messages.length === undefined){
+            messages = [messages];
+        }
+
         let messages_compiled = [];
         for (let message of messages){
             messages_compiled.push(this.compile_message(message));
@@ -175,6 +180,11 @@ module.exports = class Messenger {
     * @returns {Array.<Promise>}
     */
     multicast(recipient_ids, messages){
+        // If messages is not array, we make it array.
+        if (messages.length === undefined){
+            messages = [messages];
+        }
+
         let messages_compiled = [];
         for (let message of messages){
             messages_compiled.push(this.compile_message(message));
@@ -183,7 +193,6 @@ module.exports = class Messenger {
         return Promise.all(messages_compiled).then(
             (response) => {
                 compiled_messages = response;
-                debug(compiled_messages);
                 return this.service.multicast(this.bot_event, recipient_ids, compiled_messages);
             }
         ).then(

@@ -52,9 +52,7 @@ module.exports = class SkillBroadcast {
                 let orig_message = JSON.parse(JSON.stringify(event.message));
                 delete orig_message.id;
 
-                debug(user_ids);
-                debug(orig_message);
-                return bot.multicast(user_ids, [orig_message]);
+                return bot.multicast(user_ids, orig_message);
             }
         ).then(
             (response) => {
