@@ -38,7 +38,7 @@ module.exports = class Bot {
     * @param {MessageObject|Array.<MessageObject>} messages - Message object[s] to send.
     * @returns {Promise.<Response>} - Returns promise returning response from Messenger API.
     */
-    muticast(recipient_ids, messages){
+    multicast(recipient_ids, messages){
         return this._messenger.multicast(recipient_ids, messages);
     }
 
