@@ -183,6 +183,7 @@ module.exports = class Messenger {
         return Promise.all(messages_compiled).then(
             (response) => {
                 compiled_messages = response;
+                debug(compiled_messages);
                 return this.service.multicast(this.bot_event, recipient_ids, compiled_messages);
             }
         ).then(

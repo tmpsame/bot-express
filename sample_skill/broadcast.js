@@ -52,8 +52,8 @@ module.exports = class SkillBroadcast {
                 let orig_message = JSON.parse(JSON.stringify(event.message));
                 delete orig_message.id;
 
-                console.log(user_ids);
-                console.log(orig_message);
+                debug(user_ids);
+                debug(orig_message);
                 return bot.multicast(user_ids, [orig_message]);
             }
         ).then(
@@ -64,6 +64,7 @@ module.exports = class SkillBroadcast {
                 }]);
             },
             (response) => {
+                debug(response);
                 return bot.reply([{
                     type: "text",
                     text: "メッセージの送信に失敗しました。"
