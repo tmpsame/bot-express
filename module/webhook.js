@@ -95,7 +95,7 @@ module.exports = class webhook {
             let promise_flow_completed;
             let flow;
 
-            if (messenger.extract_event_type() == "follow"){
+            if (messenger.identify_event_type() == "follow"){
                 /*
                 ** Follow Flow
                 */
@@ -110,7 +110,7 @@ module.exports = class webhook {
                 }
                 promise_flow_completed = flow.run();
                 // End of Follow Flow.
-            } else if (messenger.extract_event_type() == "unfollow"){
+            } else if (messenger.identify_event_type() == "unfollow"){
                 /*
                 ** Unfollow Flow
                 */
@@ -125,7 +125,7 @@ module.exports = class webhook {
                 }
                 promise_flow_completed = flow.run();
                 // End of Unfollow Flow.
-            } else if (messenger.extract_event_type() == "beacon"){
+            } else if (messenger.identify_event_type() == "beacon"){
                 /*
                 ** Beacon Flow
                 */

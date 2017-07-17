@@ -169,7 +169,7 @@ module.exports = class MessengerLine {
         return body.events;
     }
 
-    static extract_event_type(event){
+    static identify_event_type(event){
         return event.type;
     }
 

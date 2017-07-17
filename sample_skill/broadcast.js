@@ -14,7 +14,7 @@ const SUPPORTED_MESSENGERS = ["line"];
 const SUPPORTED_MESSAGE_TYPES = ["text", "sticker", "location"];
 
 module.exports = class SkillBroadcast {
-    constructor(messenger, event){
+    constructor(bot, event){
         this.required_parameter = {
             message_text: {
                 message_to_confirm: {
@@ -25,9 +25,9 @@ module.exports = class SkillBroadcast {
         }
     }
 
-    finish(messenger, event, context, resolve, reject){
-        if (SUPPORTED_MESSENGERS.indexOf(messenger.type) === -1){
-            debug(`${event.message.type} messenger is not supported in broadcast skill. Supported messenger is LINE only. We just skip processing this event.`);
+    finish(bot, event, context, resolve, reject){
+        if (SUPPORTED_MESSENGERS.indexOf(bot.type) === -1){
+            debug(`${bot.type} messenger is not supported in broadcast skill. Supported messenger is LINE only. We just skip processing this event.`);
             return resolve();
         }
 
@@ -42,7 +42,7 @@ module.exports = class SkillBroadcast {
                 // Broadcast message !!!! We need to call multicast every 150 users. !!!!
                 for (let user of users){
                     // Skip myself.
-                    if (user.user_id == messenger.extract_sender_id()){
+                    if (user.user_id == bot.extract_sender_id()){
                         continue;
                     }
                     user_ids.push(user.user_id);
@@ -54,17 +54,17 @@ module.exports = class SkillBroadcast {
 
                 console.log(user_ids);
                 console.log(orig_message);
-                return messenger.multicast(user_ids, [orig_message]);
+                return bot.multicast(user_ids, [orig_message]);
             }
         ).then(
             (response) => {
-                return messenger.reply([{
+                return bot.reply([{
                     type: "text",
                     text: user_ids.length + "人にメッセージを送信しました。"
                 }]);
             },
             (response) => {
-                return messenger.reply([{
+                return bot.reply([{
                     type: "text",
                     text: "メッセージの送信に失敗しました。"
                 }]);

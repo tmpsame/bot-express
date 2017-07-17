@@ -15,17 +15,17 @@ Promise.promisifyAll(request);
 const SUPPORTED_MESSENGERS = ["line"];
 
 module.exports = class SkillLeave {
-    constructor(messenger, event){
+    constructor(bot, event){
         this.clear_context_on_finish = true;
     }
-    
-    finish(messenger, event, context, resolve, reject){
-        if (SUPPORTED_MESSENGERS.indexOf(messenger.type) === -1){
-            debug(`${event.message.type} messenger is not supported in leave skill. Supported messenger is LINE only. We just skip processing this event.`);
+
+    finish(bot, event, context, resolve, reject){
+        if (SUPPORTED_MESSENGERS.indexOf(bot.type) === -1){
+            debug(`${bot.type} messenger is not supported in leave skill. Supported messenger is LINE only. We just skip processing this event.`);
             return resolve();
         }
 
-        return bot_user.delete(messenger.extract_sender_id()).then(
+        return bot_user.delete(bot.extract_sender_id()).then(
             (response) => {
                 return resolve();
             }

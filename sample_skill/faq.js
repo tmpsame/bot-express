@@ -8,7 +8,7 @@ let app_env = require("../environment_variables");
 
 module.exports = class SkillFaq {
 
-    constructor(bot, bot_event){
+    constructor(bot, event){
         this.required_parameter = {
             question: {
                 message_to_confirm: {
@@ -53,9 +53,9 @@ module.exports = class SkillFaq {
 
                                 // Extract and save message_id to context.
                                 if (bot.type == "line"){
-                                    context.confirmed.message_id = bot_event.message.id;
+                                    context.confirmed.message_id = event.message.id;
                                 } else if (bot.type == "facebook"){
-                                    context.confirmed.message_id = bot_event.message.mid;
+                                    context.confirmed.message_id = event.message.mid;
                                 }
 
                                 // Save asnwer to context.
@@ -109,9 +109,9 @@ module.exports = class SkillFaq {
 
                                 // Extract and save message_id to context.
                                 if (bot.type == "line"){
-                                    context.confirmed.message_id = bot_event.message.id;
+                                    context.confirmed.message_id = event.message.id;
                                 } else if (bot.type == "facebook"){
-                                    context.confirmed.message_id = bot_event.message.mid;
+                                    context.confirmed.message_id = event.message.mid;
                                 }
 
                                 // Save asnwer to context.
@@ -189,9 +189,9 @@ module.exports = class SkillFaq {
                                 // Extract user_id.
                                 let user_id;
                                 if (bot.type == "line"){
-                                    user_id = bot_event.source.userId;
+                                    user_id = event.source.userId;
                                 } else if (bot.type == "facebook"){
-                                    user_id = bot_event.sender.id;
+                                    user_id = event.sender.id;
                                 }
                                 tasks.push(this.need_help(bot, "私の回答、微妙とのこと。", user_id, context.confirmed.question, context.confirmed.answer));
                             }
@@ -239,7 +239,7 @@ module.exports = class SkillFaq {
         return resolve(parsed_value);
     }
 
-    finish(bot, bot_event, context, resolve, reject){
+    finish(bot, event, context, resolve, reject){
         return bot.reply().then(
             (response) => {
                 return resolve();

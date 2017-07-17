@@ -6,7 +6,7 @@ let mecab = require("mecabaas-client");
 module.exports = class SkillHandlePizzaOrder {
 
     // コンストラクター。このスキルで必要とする、または指定することができるパラメータを設定します。
-    constructor(bot, bot_event) {
+    constructor(bot, event) {
         this.required_parameter = {
             pizza: {
                 message_to_confirm: {
@@ -138,7 +138,7 @@ module.exports = class SkillHandlePizzaOrder {
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。
-    finish(bot, bot_event, context, resolve, reject){
+    finish(bot, event, context, resolve, reject){
         let messages = [{
             text: `${context.confirmed.name} 様、ご注文ありがとうございました！${context.confirmed.pizza}の${context.confirmed.size}サイズを30分以内にご指定の${context.confirmed.address.address}までお届けに上がります。`
         }];

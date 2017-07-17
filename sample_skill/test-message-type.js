@@ -4,7 +4,7 @@ let debug = require("debug")("bot-express:skill");
 
 module.exports = class SkillCompileMessage {
 
-    constructor(bot, bot_event) {
+    constructor(bot, event) {
         this.required_parameter = {
             message_type: {
                 message_to_confirm: {
@@ -238,7 +238,7 @@ module.exports = class SkillCompileMessage {
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。
-    finish(bot, bot_event, context, resolve, reject){
+    finish(bot, event, context, resolve, reject){
         let messages = [{
             text: "完了"
         }];

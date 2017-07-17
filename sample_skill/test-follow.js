@@ -3,8 +3,8 @@
 let debug = require("debug")("bot-express:skill");
 
 module.exports = class SkillFollow {
-    finish(messenger, event, context, resolve, reject){
-        return messenger.reply([{
+    finish(bot, event, context, resolve, reject){
+        return bot.reply([{
             type: "text",
             text: "Welcome."
         }]).then(

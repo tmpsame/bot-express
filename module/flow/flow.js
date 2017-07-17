@@ -3,10 +3,12 @@
 let Promise = require('bluebird');
 let debug = require("debug")("bot-express:flow");
 let BotExpressParseError = require("../error/parse");
+let Bot = require("../bot"); // Libraries to be exposed to skill.
 
 module.exports = class Flow {
     constructor(messenger, bot_event, context, options){
         this.messenger = messenger;
+        this.bot = new Bot(messenger);
         this.bot_event = bot_event;
         this.options = options;
         this.context = context;
@@ -43,7 +45,7 @@ module.exports = class Flow {
         if (skill == "builtin_default"){
             debug("Use built-in default skill.");
             let skill_class = require("../skill/default");
-            skill_instance = new skill_class(this.messenger, this.bot_event);
+            skill_instance = new skill_class(this.bot, this.bot_event);
         } else {
             debug(`Look for ${skill} skill.`);
             let skill_class;
@@ -54,7 +56,7 @@ module.exports = class Flow {
                 debug("Skill not found.");
                 throw(exception);
             }
-            skill_instance = new skill_class(this.messenger, this.bot_event);
+            skill_instance = new skill_class(this.bot, this.bot_event);
         }
 
         return skill_instance;
@@ -258,7 +260,7 @@ module.exports = class Flow {
         // If we have no parameters to confirm, we finish this conversation using finish method of skill.
         debug("Going to perform final action.");
         let finished = new Promise((resolve, reject) => {
-            this.skill.finish(this.messenger, this.bot_event, this.context, resolve, reject);
+            this.skill.finish(this.bot, this.bot_event, this.context, resolve, reject);
         });
 
         return finished.then(

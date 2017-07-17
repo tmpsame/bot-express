@@ -16,14 +16,14 @@ const SUPPORTED_MESSENGERS = ["line"];
 const SUPPORTED_MESSAGE_TYPES = ["text", "sticker", "location"];
 
 module.exports = class SkillSimpleForward {
-    constructor(messenger, event){
+    constructor(bot, event){
         this.clear_context_on_finish = true;
     }
 
-    finish(messenger, event, context, resolve, reject){
-        if (SUPPORTED_MESSENGERS.indexOf(messenger.type) === -1){
+    finish(bot, event, context, resolve, reject){
+        if (SUPPORTED_MESSENGERS.indexOf(bot.type) === -1){
             // We do nothing in case of facebook since in Facebook, Admin can see and reply the messege by Facebook Page.
-            debug(`${event.message.type} messenger is not supported in simple-forward skill. Supported messenger is LINE only. We just skip processing this event.`);
+            debug(`${bot.type} messenger is not supported in simple-forward skill. Supported messenger is LINE only. We just skip processing this event.`);
             return resolve();
         }
 
@@ -33,7 +33,7 @@ module.exports = class SkillSimpleForward {
         }
 
         let admin_user_id = app_env.LINE_ADMIN_USER_ID;
-        let url = 'https://api.line.me/v2/bot/profile/' + messenger.extract_sender_id();
+        let url = 'https://api.line.me/v2/bot/profile/' + bot.extract_sender_id();
         let headers = {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + app_env.LINE_CHANNEL_ACCESS_TOKEN
@@ -56,7 +56,7 @@ module.exports = class SkillSimpleForward {
                 delete orig_message.id;
 
                 messages.push(orig_message);
-                return messenger.send(admin_user_id, messages);
+                return bot.send(admin_user_id, messages);
             }
         ).then(
             (response) => {

@@ -7,7 +7,7 @@ let is_email = require("isemail");
 
 module.exports = class SkillSurvey {
 
-    constructor(bot, bot_event){
+    constructor(bot, event){
         this.required_parameter = {
             satisfaction: {
                 message_to_confirm: {
@@ -147,7 +147,7 @@ module.exports = class SkillSurvey {
         return resolve(parsed_value);
     }
 
-    finish(bot, bot_event, context, resolve, reject){
+    finish(bot, event, context, resolve, reject){
         if (!!context.confirmed.suggestion && !context.confirmed.come_back){
             bot.collect({come_back: this.optional_parameter.come_back});
             return resolve();

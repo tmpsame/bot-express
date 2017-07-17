@@ -5,7 +5,7 @@ const debug = require("debug")("bot-express:skill");
 
 module.exports = class SkillResolveZipCode {
 
-    constructor(bot, bot_event) {
+    constructor(bot, event) {
         this.required_parameter = {
             zip_code: {
                 message_to_confirm: {
@@ -79,7 +79,7 @@ module.exports = class SkillResolveZipCode {
     }
 
     // パラメーターが全部揃ったら実行する処理を記述します。
-    finish(bot, bot_event, context, resolve, reject){
+    finish(bot, event, context, resolve, reject){
         let address = context.confirmed.city + context.confirmed.street;
         let messages = [{
             text: `ご注文ありがとうございました！30分以内にご指定の${address}までお届けに上がります。`

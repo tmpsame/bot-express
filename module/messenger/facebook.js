@@ -107,7 +107,7 @@ module.exports = class MessengerFacebook {
         return events;
     }
 
-    static extract_event_type(event){
+    static identify_event_type(event){
         let event_type;
         if (event.message){
             if (event.message.is_echo){
