@@ -15,7 +15,7 @@ module.exports = class SkillRealHumanReply {
                 },
                 reaction: (error, value, context, resolve, reject) => {
                     if (!error){
-                        if (!!app_env.FAQ_CONFIRM_AUTO_LEARN){
+                        if (app_env.FAQ_CONFIRM_AUTO_LEARN == "enable"){
                             bot.collect("auto_learn");
                         }
                     }
