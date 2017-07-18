@@ -158,8 +158,8 @@ module.exports = class SkillFaq {
                         type: "confirm",
                         text: "この回答、役に立ちました？",
                         actions: [
-                            {type: "message", label: "役立った", text: "役立った"},
-                            {type: "message", label: "微妙", text: "微妙"}
+                            {type: "message", label: "はい", text: "はい"},
+                            {type: "message", label: "いいえ", text: "いいえ"}
                         ]
                     }
                 },
