@@ -45,8 +45,8 @@ module.exports = class StartConversationFlow extends Flow {
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
 
-        // If this is not text message, we use default skill and just run finish();
-        if (this.messenger.identify_message_type() != "text"){
+        // If this is message event but not text, it's impossible to identify intent via NLP so we use default skill and just run finish();
+        if (this.messenger.identify_event_type() == "message" && this.messenger.identify_message_type() != "text"){
             debug("Since this is not a text message, we use default skill and just run finish().");
             // ### Instantiate Skill ###
             this.context.intent = {

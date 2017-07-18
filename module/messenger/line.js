@@ -282,7 +282,7 @@ module.exports = class MessengerLine {
 
     static identify_message_type(message){
         let message_type;
-        if (["text", "image", "audio", "video", "file", "location", "sticker", "imagemap", "postback"].indexOf(message.type) !== -1){
+        if (["text", "image", "audio", "video", "file", "location", "sticker", "imagemap"].indexOf(message.type) !== -1){
             message_type = message.type;
         } else if (message.type == "template"){
             if (["buttons", "confirm", "carousel"].indexOf(message.template.type) !== -1){
