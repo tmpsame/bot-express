@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: bot.js</title>
+    <title>JSDoc: Source: module/bot.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: bot.js</h1>
+    <h1 class="page-title">Source: module/bot.js</h1>
 
     
 
@@ -33,10 +33,10 @@
 * @class
 */
 class Bot {
-    /**
-    * @constructs
-    */
     constructor(messenger){
+        /**
+        @prop {String} type - Type of messenger. The value can be "line" or "facebook".
+        */
         this.type = messenger.type;
         this._messenger = messenger;
     }
@@ -44,7 +44,7 @@ class Bot {
     /**
     * Reply message to sender. This function can be called just once in a flow. To send multiple messages, give multiple messages to this function or use queue(MESSAGES) function instead.
     * @param {MessageObject|Array.&lt;MessageObject>} messages - Message object[s] to reply.
-    * @returns {Promise.&lt;Response>} - Returns promise returning response from Messenger API.
+    * @returns {Promise.&lt;Object>} - Returns promise returning response from Messenger API.
     */
     reply(messages){
         return this._messenger.reply(messages);
@@ -54,7 +54,7 @@ class Bot {
     * Send(Push) message to specified user.
     * @param {String} recipient_id - Recipient user id.
     * @param {MessageObject|Array.&lt;MessageObject>} messages - Messages object[s] to send.
-    * @returns {Promise.&lt;Response>} - Returns promise returning response from Messenger API.
+    * @returns {Promise.&lt;Object>} - Returns promise returning response from Messenger API.
     */
     send(recipient_id, messages){
         return this._messenger.send(recipient_id, messages);
@@ -64,7 +64,7 @@ class Bot {
     * Send(Push) messages to multiple users.
     * @param {Array.&lt;String>} recipient_ids - Array of recipent user id.
     * @param {MessageObject|Array.&lt;MessageObject>} messages - Message object[s] to send.
-    * @returns {Promise.&lt;Response>} - Returns promise returning response from Messenger API.
+    * @returns {Promise.&lt;Object>} - Returns promise returning response from Messenger API.
     */
     multicast(recipient_ids, messages){
         return this._messenger.multicast(recipient_ids, messages);
@@ -81,7 +81,7 @@ class Bot {
 
     /**
     * Make the specified skill paramter being collected next.
-    * @param {String|SkillParameterObject} arg - Name of the skill parameter or complete skill parameter object to collect.
+    * @param {String|Skill#skill_parameter_container} arg - Name of the skill parameter or skill_parameter_container object to collect.
     * @returns {Null}
     */
     collect(arg){
@@ -128,7 +128,7 @@ class Bot {
     /**
     * Identify the event type.
     * @param {EventObject} event - Event to identify event type.
-    * @returns {String} - Event type.
+    * @returns {String} - Event type. In case of LINE, it can be "message", "follow", "unfollow", "join", "leave", "postback", "beacon". In case of Facebook, it can be "echo", "message", "delivery", "read", "postback", "optin", "referral", "account_linking".
     */
     identify_event_type(event){
         return this._messenger.identify_event_type(event);
@@ -137,7 +137,7 @@ class Bot {
     /**
     * Identify the message type.
     * @param {MessageObject} message - Message Object to identify message type.
-    * @returns {String} - Message type. In case of LINE, it can be "text", "image", "audio", "video", "file", "location", "sticker", "imagemap", "buttons_template, "confirm_template" or "carousel_template". In case of Facebook, it can be "image", "audio", "video", "file", "button_template", "generic_template", "list_template", "open_graph_template", "receipt_template", "airline_boardingpass_template", "airline_checkin_template", "airline_itinerary_template", "airline_update_template".
+    * @returns {String} - Message type. In case of LINE, it can be "text", "image", "audio", "video", "file", "location", "sticker", "imagemap", "buttons_template, "confirm_template" or "carousel_template". In case of Facebook, it can be "text", "image", "audio", "video", "file", "button_template", "generic_template", "list_template", "open_graph_template", "receipt_template", "airline_boardingpass_template", "airline_checkin_template", "airline_itinerary_template", "airline_update_template".
     */
     identify_message_type(message){
         return this._messenger.identify_message_type(message);
@@ -154,13 +154,13 @@ module.exports = Bot;
 </div>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bot.html">Bot</a></li><li><a href="Skill.html">Skill</a></li></ul><h3><a href="global.html">Global</a></h3>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Mon Jul 17 2017 14:41:31 GMT+0900 (JST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> on Wed Jul 19 2017 13:52:04 GMT+0900 (JST)
 </footer>
 
 <script> prettyPrint(); </script>

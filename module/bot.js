@@ -5,10 +5,10 @@
 * @class
 */
 class Bot {
-    /**
-    * @constructs
-    */
     constructor(messenger){
+        /**
+        @prop {String} type - Type of messenger. The value can be "line" or "facebook".
+        */
         this.type = messenger.type;
         this._messenger = messenger;
     }
@@ -16,7 +16,7 @@ class Bot {
     /**
     * Reply message to sender. This function can be called just once in a flow. To send multiple messages, give multiple messages to this function or use queue(MESSAGES) function instead.
     * @param {MessageObject|Array.<MessageObject>} messages - Message object[s] to reply.
-    * @returns {Promise.<Response>} - Returns promise returning response from Messenger API.
+    * @returns {Promise.<Object>} - Returns promise returning response from Messenger API.
     */
     reply(messages){
         return this._messenger.reply(messages);
@@ -26,7 +26,7 @@ class Bot {
     * Send(Push) message to specified user.
     * @param {String} recipient_id - Recipient user id.
     * @param {MessageObject|Array.<MessageObject>} messages - Messages object[s] to send.
-    * @returns {Promise.<Response>} - Returns promise returning response from Messenger API.
+    * @returns {Promise.<Object>} - Returns promise returning response from Messenger API.
     */
     send(recipient_id, messages){
         return this._messenger.send(recipient_id, messages);
@@ -36,7 +36,7 @@ class Bot {
     * Send(Push) messages to multiple users.
     * @param {Array.<String>} recipient_ids - Array of recipent user id.
     * @param {MessageObject|Array.<MessageObject>} messages - Message object[s] to send.
-    * @returns {Promise.<Response>} - Returns promise returning response from Messenger API.
+    * @returns {Promise.<Object>} - Returns promise returning response from Messenger API.
     */
     multicast(recipient_ids, messages){
         return this._messenger.multicast(recipient_ids, messages);
@@ -53,7 +53,7 @@ class Bot {
 
     /**
     * Make the specified skill paramter being collected next.
-    * @param {String|SkillParameterObject} arg - Name of the skill parameter or complete skill parameter object to collect.
+    * @param {String|Skill#skill_parameter_container} arg - Name of the skill parameter or skill_parameter_container object to collect.
     * @returns {Null}
     */
     collect(arg){
