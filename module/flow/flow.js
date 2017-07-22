@@ -423,6 +423,9 @@ module.exports = class Flow {
         }
         this.context._message_queue = [];
 
+        this.skill = this.instantiate_skill(this.context.intent.name);
+        this.messenger.skill = this.skill;
+
         // If we find some parameters from initial message, add them to the conversation.
         let parameters_processed = [];
         if (this.context.intent.parameters && Object.keys(this.context.intent.parameters).length > 0){
