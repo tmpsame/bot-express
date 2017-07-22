@@ -367,7 +367,9 @@ module.exports = class Flow {
                 return Promise.all(parameters_parsed).then(
                     (responses) => {
                         let fit_parameters = [];
+                        debug(response);
                         fit_parameters.push(responses.find(response => response.is_fit === true));
+                        debug(fit_parameters);
                         debug(`There are ${fit_parameters.length} applicable parameters.`);
 
                         if (fit_parameters.length === 0){
