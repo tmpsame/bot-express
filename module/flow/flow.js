@@ -369,7 +369,7 @@ module.exports = class Flow {
                         let fit_parameters = [];
                         debug(responses);
                         for (let response of responses){
-                            if (resposne.is_fit === true){
+                            if (response.is_fit === true){
                                 fit_parameters.push(response);
                             }
                         }
