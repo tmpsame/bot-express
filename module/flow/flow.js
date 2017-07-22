@@ -380,7 +380,8 @@ module.exports = class Flow {
                             // This is no idea
                             debug("We conclude this is no idea.");
                             return {
-                                result: "no_idea"
+                                result: "no_idea",
+                                intent: intent
                             }
                         } else if (fit_parameters.length === 1){
                             // This is change parameter.
