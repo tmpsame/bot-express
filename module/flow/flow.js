@@ -423,8 +423,13 @@ module.exports = class Flow {
         }
         this.context._message_queue = [];
 
-        this.skill = this.instantiate_skill(this.context.intent.name);
-        this.messenger.skill = this.skill;
+        // At the very first time of the conversation, we identify to_confirm parameters by required_parameter in skill file.
+        // After that, we depend on context.to_confirm to identify to_confirm parameters.
+        if (this.context.to_confirm.length == 0){
+            this.context.to_confirm = this.identify_to_confirm_parameter(this.skill.required_parameter, this.context.confirmed);
+        }
+        debug(`We have ${this.context.to_confirm.length} parameters to confirm.`);
+
 
         // If we find some parameters from initial message, add them to the conversation.
         let parameters_processed = [];
