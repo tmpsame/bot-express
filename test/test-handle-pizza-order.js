@@ -75,7 +75,7 @@ for (let message_platform of message_platform_list){
                         response.to_confirm[1].should.have.property("name").and.equal("address");
                         response.to_confirm[2].should.have.property("name").and.equal("name");
                         response.previous.confirmed.should.deep.equal(["pizza"]);
-                        response.previous.message.should.have.lengthOf(6);
+                        response.previous.message.should.have.lengthOf(7);
                     }
                 );
             });

@@ -244,32 +244,14 @@ module.exports = class MessengerLine {
                 }
                 return false;
             break;
-            case "restart_conversation":
-                if ((event.type == "message" && event.message.type == "text") || event.type == "postback"){
-                    return true;
-                }
-                return false;
-            break;
             case "reply":
                 if (event.type == "message" || event.type == "postback") {
                     return true;
                 }
                 return false;
             break;
-            case "change_intent":
-                if ((event.type == "message" && event.message.type == "text") || event.type == "postback"){
-                    return true;
-                }
-                return false;
-            break;
-            case "change_parameter":
+            case "btw":
                 if (event.type == "message" || event.type == "postback"){
-                    return true;
-                }
-                return false;
-            break;
-            case "no_way":
-                if (event.type == "message"){
                     return true;
                 }
                 return false;

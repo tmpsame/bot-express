@@ -199,32 +199,14 @@ module.exports = class MessengerFacebook {
                 }
                 return false;
             break;
-            case "restart_conversation":
-                if ((event.message && event.message.text) || event.postback){
-                    return true;
-                }
-                return false;
-            break;
             case "reply":
                 if (event.message || event.postback){
                     return true;
                 }
                 return false;
             break;
-            case "change_intent":
-                if ((event.message && event.message.text) || event.postback){
-                    return true;
-                }
-                return false;
-            break;
-            case "change_parameter":
+            case "btw":
                 if (event.message || event.postback){
-                    return true;
-                }
-                return false;
-            break;
-            case "no_way":
-                if (event.message){
                     return true;
                 }
                 return false;

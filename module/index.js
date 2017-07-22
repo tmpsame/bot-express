@@ -83,12 +83,12 @@ module.exports = (options) => {
 
         let webhook = new Webhook(options);
         webhook.run(req).then(
-            (response) => {
-                debug("Successful End of Webhook.");
-                debug(response);
+            (context) => {
+                debug("Successful End of Webhook. Current context follows.");
+                debug(context);
             },
             (response) => {
-                debug("Abnormal End of Webhook.");
+                debug("Abnormal End of Webhook. Error follows.");
                 debug(response);
             }
         );

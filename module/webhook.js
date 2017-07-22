@@ -15,11 +15,12 @@ let follow_flow = require('./flow/follow');
 let unfollow_flow = require('./flow/unfollow');
 let beacon_flow = require('./flow/beacon');
 let start_conversation_flow = require('./flow/start_conversation');
-let restart_conversation_flow = require('./flow/restart_conversation');
 let reply_flow = require('./flow/reply');
-let change_intent_flow = require('./flow/change_intent');
-let change_parameter_flow = require('./flow/change_parameter');
-let no_way_flow = require('./flow/no_way');
+let btw_flow = require('./flow/btw');
+//let restart_conversation_flow = require('./flow/restart_conversation');
+//let change_intent_flow = require('./flow/change_intent');
+//let change_parameter_flow = require('./flow/change_parameter');
+//let no_way_flow = require('./flow/no_way');
 
 // Import NLP Abstraction.
 let Nlp = require("./nlp");
@@ -181,6 +182,19 @@ module.exports = class webhook {
                     promise_flow_completed = flow.run();
                     // End of Reply Flow
                 } else {
+                    /*
+                    ** Btw Flow
+                    */
+                    try {
+                        flow = new btw_flow(messenger, bot_event, context, this.options);
+                    } catch(err){
+                        return Promise.reject(err);
+                    }
+                    promise_flow_completed = flow.run();
+                }
+            }
+
+            /*
                     // Check if this is Change Intent Flow.
                     let promise_is_change_intent_flow;
 
@@ -259,9 +273,7 @@ module.exports = class webhook {
                         (response) => {
                             if (response.result){
                                 if (response.intent.name == context.intent.name){
-                                    /*
-                                    ** Restart Conversation Flow
-                                    */
+                                    // Restart Conversation Flow
                                     try {
                                         flow = new restart_conversation_flow(messenger, bot_event, response.intent, context, this.options);
                                     } catch(err) {
@@ -270,9 +282,7 @@ module.exports = class webhook {
                                     return flow.run();
                                     // End of Restart Conversation Flow
                                 } else {
-                                    /*
-                                    ** Change Intent Flow
-                                    */
+                                    // Change Intent Flow
                                     // Set new intent while keeping other data.
                                     context.intent = response.intent;
                                     try {
@@ -309,16 +319,12 @@ module.exports = class webhook {
                                 return promise_is_change_parameter_flow.then(
                                     (response) => {
                                         if (response.result){
-                                            /*
-                                            ** This was Change Parameter Flow
-                                            */
+                                            //This was Change Parameter Flow
                                             debug("This was change parameter flow since we could change parameter.");
                                             return response.response;
                                         }
 
-                                        /*
-                                        ** This is No Way Flow
-                                        */
+                                        // This is No Way Flow
                                         context.intent = identified_intent;
                                         try {
                                             flow = new no_way_flow(messenger, bot_event, context, this.options);
@@ -333,16 +339,17 @@ module.exports = class webhook {
                     );
                 }
             }
+            */
 
             // Completion of Flow
             return promise_flow_completed.then(
-                (response) => {
+                (context) => {
                     debug("Successful End of Flow.");
 
                     // Update memory.
-                    memory.put(memory_id, flow.context, this.options.memory_retention);
+                    memory.put(memory_id, context, this.options.memory_retention);
 
-                    return flow.context;
+                    return context;
                 },
                 (response) => {
                     debug("Abnormal End of Flow.");

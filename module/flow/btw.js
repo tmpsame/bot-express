@@ -8,9 +8,9 @@ let debug = require("debug")("bot-express:flow");
 let Flow = require("./flow");
 let Nlp = require("../nlp");
 
-module.exports = class ReplyFlow extends Flow {
+module.exports = class BtwFlow extends Flow {
     /*
-    ** ### Reply Flow ###
+    ** ### Btw Flow ###
     ** -> Check if the event is supported one in this flow.
     ** -> Translate param value.
     ** -> Add Parameter from message text or postback data.
@@ -18,15 +18,15 @@ module.exports = class ReplyFlow extends Flow {
     */
 
     constructor(messenger, bot_event, context, options) {
-        context._flow = "reply";
+        context._flow = "btw";
         super(messenger, bot_event, context, options);
     }
 
     run(){
-        debug("### This is Reply Flow. ###");
+        debug("### This is BTW Flow. ###");
 
         // Check if this event type is supported in this flow.
-        if (!this.messenger.check_supported_event_type("reply")){
+        if (!this.messenger.check_supported_event_type("btw")){
             debug(`This is unsupported event type in this flow so skip processing.`);
             return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
         }
@@ -65,47 +65,22 @@ module.exports = class ReplyFlow extends Flow {
         return translated.then(
             (response) => {
                 translated_param_value = response;
-                debug("Going to perform super.apply_parameter().");
-                return super.apply_parameter(this.context.confirming, translated_param_value);
+                return super.what_you_want(translated_param_value);
             }
         ).then(
-            (applied_parameter) => {
-                if (applied_parameter == null){
-                    debug("Parameter was not applicable. We skip reaction and go to finish.");
-                    return;
-                }
-                debug("Parser accepted the value.");
-                debug("Going to perform reaction.");
-                return super.react(null, applied_parameter.key, applied_parameter.value);
-            }
-        ).catch(
-            (error) => {
-                if (error.name == "BotExpressParseError"){
-                    debug("Parser rejected the value. We are going to identify what user wants.");
-
-                    return super.what_you_want(translated_param_value).then(
-                        (response) => {
-                            if (response.result == "restart_conversation"){
-                                return super.restart_conversation(response.intent);
-                            } else if (response.result == "change_intent"){
-                                return super.change_intent(response.intent);
-                            } else if (response.result == "change_parameter"){
-                                return super.react(error, this.context.confirming, translated_param_value);
-                                /*
-                                // Will be activated later.
-                                return super.change_parameter(response.parameter.key, translated_param_value).then(
-                                    (applied_parameter) => {
-                                        return super.react(null, applied_parameter.key, applied_parameter.value);
-                                    }
-                                );
-                                */
-                            } else if (response.result == "no_idea"){
-                                return super.react(error, this.context.confirming, translated_param_value);
-                            }
+            (response) => {
+                if (response.result == "restart_conversation"){
+                    return super.restart_conversation(response.intent);
+                } else if (response.result == "change_intent"){
+                    return super.change_intent(response.intent);
+                } else if (response.result == "change_parameter"){
+                    return super.change_parameter(response.parameter.key, response.parameter.value).then(
+                        (applied_parameter) => {
+                            return super.react(null, applied_parameter.key, applied_parameter.value);
                         }
                     );
-                } else {
-                    return Promise.reject(error);
+                } else if (response.result == "no_idea"){
+                    return super.change_intent(response.intent);
                 }
             }
         ).then(

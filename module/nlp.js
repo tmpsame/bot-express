@@ -8,7 +8,11 @@ const required_options = {
     apiai: ["client_access_token", "language"]
 };
 
-module.exports = class Nlp {
+/**
+* Natural Language Processing Abstraction Class
+* @class
+*/
+class Nlp {
     constructor(type, options){
         this.type = type; // The script having the filename identical to this type value has to exist under nlp dir.
 
@@ -23,15 +27,20 @@ module.exports = class Nlp {
         this.service = new Nlp_service(options);
     }
 
-    /*
-    ** indentify_intent - Need to return following object.
-        {
-            name: @string,
-            parameters: @object,
-            text_response: @string
-        }
+    /**
+    Identify the intent of given sentence.
+    @function
+    @param {String} sentence - Sentence to identify intent.
+    @param {Object} options - Option.
+    @param {String} options.session_id - Session id of this conversation.
+    @returns {Object} intent - Intent Object.
+    @returns {String} intent.name - Name of the intent.
+    @returns {Object} intent.parameters - Parameters found in the sentence.
+    @returns {String} intent.text_response - Text response to the sentence.
     */
     identify_intent(sentence, options){
         return this.service.identify_intent(sentence, options);
     }
 }
+
+module.exports = Nlp;

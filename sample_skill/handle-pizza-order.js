@@ -20,6 +20,15 @@ module.exports = class SkillHandlePizzaOrder {
                             {type:"message",label:"マリナーラ",text:"マリナーラ"}
                         ]
                     }
+                },
+                reaction: (error, value, context, resolve, reject) => {
+                    if (!error){
+                        bot.queue({
+                            type: "text",
+                            text: `${value}ですね。ありがとうございます。`
+                        });
+                    }
+                    return resolve();
                 }
             },
             size: {
