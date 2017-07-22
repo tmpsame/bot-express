@@ -368,7 +368,11 @@ module.exports = class Flow {
                     (responses) => {
                         let fit_parameters = [];
                         debug(responses);
-                        fit_parameters.push(responses.find(response => response.is_fit === true));
+                        for (let response of responses){
+                            if (resposne.is_fit === true){
+                                fit_parameters.push(response);
+                            }
+                        }
                         debug(fit_parameters);
                         debug(`There are ${fit_parameters.length} applicable parameters.`);
 
