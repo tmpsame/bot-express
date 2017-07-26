@@ -9,13 +9,6 @@ let Flow = require("./flow");
 let Nlp = require("../nlp");
 
 module.exports = class BtwFlow extends Flow {
-    /*
-    ** ### Btw Flow ###
-    ** -> Check if the event is supported one in this flow.
-    ** -> Translate param value.
-    ** -> Add Parameter from message text or postback data.
-    ** -> Run final action.
-    */
 
     constructor(messenger, bot_event, context, options) {
         context._flow = "btw";
@@ -28,7 +21,7 @@ module.exports = class BtwFlow extends Flow {
         // Check if this event type is supported in this flow.
         if (!this.messenger.check_supported_event_type("btw")){
             debug(`This is unsupported event type in this flow so skip processing.`);
-            return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
+            return Promise.resolve(this.context);
         }
 
         let param_value = this.messenger.extract_param_value();
@@ -74,7 +67,7 @@ module.exports = class BtwFlow extends Flow {
                 } else if (response.result == "change_intent"){
                     return super.change_intent(response.intent);
                 } else if (response.result == "change_parameter"){
-                    return super.change_parameter(response.parameter.key, response.parameter.value).then(
+                    return super.change_parameter(response.parameter.key, translated_param_value).then(
                         (applied_parameter) => {
                             return super.react(null, applied_parameter.key, applied_parameter.value);
                         }

@@ -124,26 +124,14 @@ for (let message_platform of message_platform_list){
             });
         });
         describe("中嶋一樹と申します", function(){
-            it("goes reply flow and name is set to 中嶋一樹.", function(){
+            it("goes reply flow and skill completed.", function(){
                 this.timeout(8000);
 
                 let options = Util.create_options();
                 let webhook = new Webhook(options);
                 return webhook.run(Util.create_req(message_platform, event_type, user_id, "中嶋一樹")).then(
                     function(response){
-                        response.should.have.property("confirmed").and.deep.equal({
-                            pizza:"マルゲリータ",
-                            size:"M",
-                            address:{
-                                address: "港区北青山1-1-1",
-                                latitude: null,
-                                longitude: null
-                            },
-                            name: "中嶋 一樹"
-                        });
-                        response.should.have.property("confirming", null);
-                        response.should.have.property("to_confirm").and.deep.equal([]);
-                        response.previous.confirmed.should.deep.equal(["name","address","size","pizza"]);
+                        should.not.exist(response);
                     }
                 );
             });

@@ -9,13 +9,6 @@ let Flow = require("./flow");
 let Nlp = require("../nlp");
 
 module.exports = class ReplyFlow extends Flow {
-    /*
-    ** ### Reply Flow ###
-    ** -> Check if the event is supported one in this flow.
-    ** -> Translate param value.
-    ** -> Add Parameter from message text or postback data.
-    ** -> Run final action.
-    */
 
     constructor(messenger, bot_event, context, options) {
         context._flow = "reply";
@@ -28,7 +21,7 @@ module.exports = class ReplyFlow extends Flow {
         // Check if this event type is supported in this flow.
         if (!this.messenger.check_supported_event_type("reply")){
             debug(`This is unsupported event type in this flow so skip processing.`);
-            return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
+            return Promise.resolve(this.context);
         }
 
         let param_value = this.messenger.extract_param_value();

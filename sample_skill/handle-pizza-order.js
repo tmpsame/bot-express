@@ -27,6 +27,11 @@ module.exports = class SkillHandlePizzaOrder {
                             type: "text",
                             text: `${value}ですね。ありがとうございます。`
                         });
+                    } else {
+                        bot.change_message_to_confirm("pizza", {
+                            type: "text",
+                            text: "恐れ入りますが当店ではマルゲリータかマリナーラしかございません。どちらになさいますか？"
+                        });
                     }
                     return resolve();
                 }
@@ -59,6 +64,8 @@ module.exports = class SkillHandlePizzaOrder {
                 }
             }
         }
+
+        this.clear_context_on_finish = true;
     }
 
     parse_pizza(value, context, resolve, reject){

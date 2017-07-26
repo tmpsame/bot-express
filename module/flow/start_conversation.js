@@ -42,7 +42,7 @@ module.exports = class StartConversationFlow extends Flow {
         // Check if this event type is supported in this flow.
         if (!this.messenger.check_supported_event_type("start_conversation")){
             debug(`This is unsupported event type in this flow so skip processing.`);
-            return Promise.resolve(`This is unsupported event type in this flow so skip processing.`);
+            return Promise.resolve(this.context);
         }
 
         // If this is message event but not text, it's impossible to identify intent via NLP so we use default skill and just run finish();
