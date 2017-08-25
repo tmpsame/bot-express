@@ -329,6 +329,8 @@ module.exports = class MessengerLine {
 
         let compiled_message;
 
+        debug("This is debug log. calling _compile_message_from_facebook_format." + message_type);
+        
         switch(message_type){
             case "text":
                 if (!message.quick_replies){
