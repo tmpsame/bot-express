@@ -244,6 +244,7 @@ module.exports = class MessengerFacebook {
     }
 
     static compile_message(message_format, message_type, message){
+        debug("This is debug log before call compile_msg_from." + message_format);
         return MessengerFacebook[`_compile_message_from_${message_format}_format`](message_type, message);
     }
 
