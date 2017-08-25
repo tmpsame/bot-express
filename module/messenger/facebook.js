@@ -24,6 +24,8 @@ module.exports = class MessengerFacebook {
         let page_id = event.recipient.id
         let recipient = {id: to};
 
+        debug(`page_id is ${page_id}. page_access_token is ${this._page_access_token}`);
+        
         let page_access_token = this._page_access_token.find(token => token.page_id === page_id).page_access_token;
         if (!page_access_token){
             return Promise.reject(new Error("page access token not found."));
