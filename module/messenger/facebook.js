@@ -443,6 +443,10 @@ module.exports = class MessengerFacebook {
                                 title: action.label,
                                 payload: action.text
                             });
+                        } else if (action.type == "location"){
+                            compiled_message.quick_replies.push({
+                                content_type: "location"
+                            });
                         }
                     }
                 }
